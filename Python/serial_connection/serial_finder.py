@@ -5,10 +5,9 @@ from serial.tools import list_ports
 def get_ports(available_ports):
     # Get all connected com ports
     new_ports = find_available_ports()
-
     all_ports = check_ports(available_ports, new_ports)
 
-    result = new_ports
+    result = all_ports
 
     return result
 
@@ -29,14 +28,22 @@ def find_available_ports():
 def check_ports(available_ports, new_ports):
     ports_to_remove = []
 
-    #For each old port
     for port in available_ports:
         if port in new_ports:
+            # if we still have it, we dont need to check it again
             new_ports.remove(port)
         else:
+            # it seems that this port has been disconnected
             ports_to_remove.append(port)
 
+
+    # Delete disconnected ports
     for port in ports_to_remove:
         available_ports.pop(port)
 
-    return avaible_ports
+    #Test new port and get it's type, then add it to available_ports
+    for port in new_ports:
+        print('Need to test:', port)
+        available_ports[port] = 'type'
+
+    return available_ports

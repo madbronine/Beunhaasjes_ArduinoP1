@@ -6,6 +6,7 @@ from serial_connection.serial_handler import *
 #Dictionary with avaible ports and type
 avaible_ports = {}
 
+
 #Dictionary with identify code and type
 controller_types =	{
   "TEMP": "Temperature",
