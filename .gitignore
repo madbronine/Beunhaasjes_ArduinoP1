@@ -1,3 +1,2 @@
 # ignore generated folders:
-python/__pycache__
-python/serial_connection/__pycache__
+__pycache__/
