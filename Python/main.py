@@ -8,7 +8,14 @@ def main():
 
         #Refresh the port list
         controller.run()
-        print('Current com devices: {0}'.format(controller.get_modules()))
+        curDevices = controller.get_modules()
+        print('Current com devices: {0}'.format(curDevices))
+
+        #read module data
+        for comPort in curDevices:
+            result = controller.read_module(comPort)
+            print(result)
+
 
         print('===========')
         print('')

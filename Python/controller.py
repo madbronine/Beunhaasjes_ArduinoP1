@@ -5,6 +5,7 @@ from serial_connection.serial_handler import *
 
 #Dictionary with avaible ports and type
 avaible_ports = {}
+# avaible_ports = { "COM0" : "Temperature" }
 
 
 #Dictionary with identify code and type
@@ -27,3 +28,11 @@ def refresh_ports():
 
 def get_modules():
     return avaible_ports
+
+# Returns the value of the sensor
+def read_module(comport):
+    #To-do: communicate with the arduino!
+    if comport in avaible_ports:
+        return ({'Port': comport, 'type-code': avaible_ports[comport], 'type': controller_types[avaible_ports[comport]], 'sensor': 'TO-DO'})
+
+    return None

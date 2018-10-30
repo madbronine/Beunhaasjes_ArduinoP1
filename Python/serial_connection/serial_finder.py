@@ -1,3 +1,5 @@
+# © Jeroen - 30-10-2018
+
 import serial
 from serial.tools import list_ports
 
@@ -44,6 +46,6 @@ def check_ports(available_ports, new_ports):
     #Test new port and get it's type, then add it to available_ports
     for port in new_ports:
         print('Need to test:', port)
-        available_ports[port] = 'type'
+        available_ports[port] = 'TEMP'
 
     return available_ports
