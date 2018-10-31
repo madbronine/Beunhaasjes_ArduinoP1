@@ -1,10 +1,14 @@
 # © Jeroen - 30-10-2018
-# This file handles connections by itself, run should be called in the main program loop
-# This file can used to interact
+# This file is used to interact with the modules
 
 import serial_connection.serial_handler as ser_hand
-import serial_connection.serial_finder as ser_find
+import serial_connection.serial_scanner as ser_find
+
+from module import *
+
 import messages as msg
+
+
 
 # Dictionary containing all devices currently found
 current_devices = {} # Example data: {'COM5' : 'Temperature'}
@@ -12,7 +16,9 @@ current_devices = {} # Example data: {'COM5' : 'Temperature'}
 #       Code below is handled by the program
 #------------------------------------------------------
 
-#Run the controller
+
+
+#Run the controller (call with program loop)
 def run():
     print('running the controller (updating connections)')
     refresh_ports()
@@ -20,7 +26,7 @@ def run():
 # Returns dictionary with all connected devices
 def get_devices():
     print('Get all connected devices')
-    return None # Example value:    {'com1' : Temperature, 'com2' : Light}
+    return current_devices # Example value:    {'com1' : Temperature, 'com2' : Light}
 
 # Reads the sensor data from the given device
 def get_sensor_data(device_com_port):
@@ -52,15 +58,16 @@ def refresh_ports():
     current_devices['COM3'] = 'TYPE'
 
     #Find new devices
-    new_devices = ser_find.get_new_ports(current_devices) # Get a list of all com ports in use
+    new_devices = ser_find.get_new_ports(current_devices) # Get a list of all new connected com ports
+
 
     # Refresh our current connections (and check for changes)
-    print('Before testing: ', current_devices)
-    current_devices = ser_find.check_ports(current_devices, new_devices) # Get a list of all com ports in use
-    print('After testing: ', current_devices)
+    #print('Before testing cur devices: ', current_devices)
+    #current_devices = ser_find.check_ports(current_devices, new_devices) # Get a list of all com ports in use (deleted not used!)
+    #print('After testing cur devices: ', current_devices)
 
     # Check the new com devices
-    print('Check for type: ', new_devices)
+    
 
 
     #current_devices

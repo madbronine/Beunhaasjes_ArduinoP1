@@ -1,26 +1,26 @@
 # © Jeroen - 31-10-2018
-#handles serial connection
+#handles serial connection (wip)
 
 import serial
 from serial.tools import list_ports
-from serial_connection.serial_finder import *
+
+
+import serial
+
+class Serial_Handler:
+    def __init__(self):
+        print('init')
+
+
+class Serial_Communication:
+    def __init__(self):
+        print('init')
 
 #----------------------------------------------
 
 def get_devices():
     print('Check arduino connection and type')
     return None
-
-def get_message():
-    return get_response();
-
-def send_command(command_to_send):
-    send_to_module('test')
-
-#Handles sending data
-def send_data(data_to_send):
-    send_command('test') # Set arduino to receive state
-    response = get_message()
 
 #---------------------------------------------
 
