@@ -1,18 +1,18 @@
 # © Jeroen - 30-10-2018
+# This file handles new, existing or disconnected serial comports
 
 import serial
 from serial.tools import list_ports
 
 # Returns a list with ports that are currently attached
-def get_ports(available_ports):
-    # Get all connected com ports
+def get_new_ports(existing_ports):
     new_ports = find_available_ports()
-    all_ports = check_ports(available_ports, new_ports)
 
-    result = all_ports
+    for port in existing_ports:
+        if port in new_ports:
+            new_ports.remove(port)
 
-    return result
-
+    return new_ports
 
 # Handles module searching
 def find_available_ports():
@@ -26,7 +26,7 @@ def find_available_ports():
 
     return result
 
-# Check if ports are new, existing or disconnected
+# Check if ports are disconnected
 def check_ports(available_ports, new_ports):
     ports_to_remove = []
 
@@ -38,14 +38,18 @@ def check_ports(available_ports, new_ports):
             # it seems that this port has been disconnected
             ports_to_remove.append(port)
 
-
     # Delete disconnected ports
     for port in ports_to_remove:
         available_ports.pop(port)
 
-    #Test new port and get it's type, then add it to available_ports
-    for port in new_ports:
-        print('Need to test:', port)
-        available_ports[port] = 'TEMP'
-
     return available_ports
+
+# Check if port is still connected
+def check_connection(comport):
+    # Get all connected com ports
+    all_ports = find_available_ports()
+
+    if comport in all_ports:
+        return True
+    else:
+        return False

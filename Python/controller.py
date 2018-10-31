@@ -1,38 +1,96 @@
 # © Jeroen - 30-10-2018
+# This file handles connections by itself, run should be called in the main program loop
+# This file can used to interact
 
-from serial_connection.serial_finder import *
-from serial_connection.serial_handler import *
+import serial_connection.serial_handler as ser_hand
+import serial_connection.serial_finder as ser_find
+import messages as msg
 
-#Dictionary with avaible ports and type
-avaible_ports = {}
-# avaible_ports = { "COM0" : "Temperature" }
+# Dictionary containing all devices currently found
+current_devices = {} # Example data: {'COM5' : 'Temperature'}
 
-
-#Dictionary with identify code and type
-controller_types =	{
-  "TEMP": "Temperature",
-  "LIGHT": "Light",
-}
+#       Code below is handled by the program
+#------------------------------------------------------
 
 #Run the controller
 def run():
+    print('running the controller (updating connections)')
     refresh_ports()
 
-#Refresh our dictionary (Check if there are new modules connected or old modules disconnected)
+# Returns dictionary with all connected devices
+def get_devices():
+    print('Get all connected devices')
+    return None # Example value:    {'com1' : Temperature, 'com2' : Light}
+
+# Reads the sensor data from the given device
+def get_sensor_data(device_com_port):
+    print('Gets all sensor data')
+    return None # Example value:    namedtuple('sensor_value' : 5)
+
+# Sets the max value with parameter data for the sensor of given device
+def set_sensor_max(device_com_port, value):
+    command = msg.send_code('set_sensor_max')
+    print('Set sensor max value. Command: {0}  value: {1}   device: {2}'.format(command, value, device_com_port))
+
+    return None # Returns error true or false
+
+# Sets the min value with parameter data for the sensor of given device
+def set_sensor_min(device_com_port, value):
+    print('Set sensor min value')
+    return None # Returns error true or false
+
+#       Code below is handled by the controller
+#------------------------------------------------------
+
+# Refreshes the dectionary devices
 def refresh_ports():
-    print('Refreshing com ports...')
+    # First check if we still have every device!
+    print('@ Scanning devices...')
 
-    # In get_ports() they should be tested to check if they are controll units
-    global avaible_ports
-    avaible_ports = get_ports(avaible_ports);
+    global current_devices
 
-def get_modules():
-    return avaible_ports
+    current_devices['COM3'] = 'TYPE'
 
-# Returns the value of the sensor
-def read_module(comport):
-    #To-do: communicate with the arduino!
-    if comport in avaible_ports:
-        return ({'Port': comport, 'type-code': avaible_ports[comport], 'type': controller_types[avaible_ports[comport]], 'sensor': 'TO-DO'})
+    #Find new devices
+    new_devices = ser_find.get_new_ports(current_devices) # Get a list of all com ports in use
 
-    return None
+    # Refresh our current connections (and check for changes)
+    print('Before testing: ', current_devices)
+    current_devices = ser_find.check_ports(current_devices, new_devices) # Get a list of all com ports in use
+    print('After testing: ', current_devices)
+
+    # Check the new com devices
+    print('Check for type: ', new_devices)
+
+
+    #current_devices
+    print('@ done scanning')
+
+
+# Prepares the ardiuno for sending data
+def prepare_sending(device_com_port, send_command, data):
+    print('preparing to send')
+    #can_send = serial_communication.send(port, command)
+    print('Did we get response 10 (succeed)?, if not throw an error!')
+
+    can_send = False # Response from arduino!
+
+    if can_send == True:
+        print('Sending data')
+        send_data(device_com_port, data)
+    else:
+        print('Communication denied? throw error!')
+
+# Sends data to the ardiuno
+def send_data(device_com_port, data):
+    print('sending data: {0} to {1}'.format(data, device_com_port))
+    #result = serial_communication.send(port, command)
+    # if result = response 10 (succeed), return True
+
+    print('sending {1} to {0}')
+    print('received {0}')
+    print('sending data {0}')
+    print('result {0}')
+
+# DEBUG
+set_sensor_max('com4', 5)
