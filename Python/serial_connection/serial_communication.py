@@ -19,6 +19,8 @@ def initialize_serial(com_port, time_out):
 
 # Sends data to the module
 def send_data(ser, data_to_send, response_length):
+    ser.flushInput(); # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
+
     print('Going to send int: ', data_to_send)
 
     #converted_data = [data_to_send]
@@ -28,6 +30,8 @@ def send_data(ser, data_to_send, response_length):
     ser.write(converted_data)
 
     msg = get_message(ser, response_length)
+
+
     return msg
 
 # Returns data from the module
@@ -57,9 +61,10 @@ def test_loop():
     while True:
         print('start')
         time.sleep(2)
-        result = send_data(test_ser, 5, 4) # Debug case -> 5 returns TYPE
+        dataLength = 4
+        result = send_data(test_ser, 5, dataLength) # Debug case -> 5 returns TYPE if dataLength = 2 it returns TY 
         time.sleep(2)
-        result = send_data(test_ser, 6, 4)
+        result = send_data(test_ser, 6, 4) # expect response of 2 bytes
 
 
         time.sleep(5)
