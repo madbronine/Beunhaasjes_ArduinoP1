@@ -34,15 +34,3 @@ def check_connection(comport):
         return True
     else:
         return False
-
-
-
-#       Code below is for DEBUGGING
-#------------------------------------------------------
-existing_ports = {'COM4' : 'TEMP'}
-print('existing ports before:', existing_ports)
-existing_ports = get_new_ports(existing_ports)
-print('existing ports after:', existing_ports)
-
-print('Avaible ports:', find_available_ports())
-print('Com0 -> com4:', check_connection('COM0'), check_connection('COM1'), check_connection('COM2'), check_connection('COM3'), check_connection('COM4'))

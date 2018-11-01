@@ -1,17 +1,14 @@
 # © Jeroen - 30-10-2018
 # This file is used to interact with the modules
 
-import serial_connection.serial_handler as ser_hand
-import serial_connection.serial_scanner as ser_find
-
+import serial_connection.serial_communication as ser_com
+import serial_connection.serial_scanner as ser_scan
+import serial_connection.messages as msg
 from module import *
 
-import messages as msg
-
-
-
 # Dictionary containing all devices currently found
-current_devices = {} # Example data: {'COM5' : 'Temperature'}
+current_devices = {} # Example data: {'COM5' : MODULE}
+
 
 #       Code below is handled by the program
 #------------------------------------------------------
@@ -21,7 +18,20 @@ current_devices = {} # Example data: {'COM5' : 'Temperature'}
 #Run the controller (call with program loop)
 def run():
     print('running the controller (updating connections)')
-    refresh_ports()
+
+    # Find all currently attached ports and check if our current devices are still connected
+    all_ports = ser_scan.find_available_ports()
+    not_used_ports = remove_disconnected_devices(all_ports)
+
+    if len(not_used_ports) > 0:
+        print('UNUSED: ' , not_used_ports)
+        # Now we test or new devices
+        new_devices = identify_devices(not_used_ports)
+        current_devices.update(new_devices)
+    else:
+        print('No unused devices!')
+
+
 
 # Returns dictionary with all connected devices
 def get_devices():
@@ -48,56 +58,60 @@ def set_sensor_min(device_com_port, value):
 #       Code below is handled by the controller
 #------------------------------------------------------
 
-# Refreshes the dectionary devices
-def refresh_ports():
-    # First check if we still have every device!
-    print('@ Scanning devices...')
+# Removes disconnected devices from current_devices, returns port not scanned yet
+def remove_disconnected_devices(all_ports):
+    to_remove = []
+    ports_not_used = all_ports
 
-    global current_devices
-
-    current_devices['COM3'] = 'TYPE'
-
-    #Find new devices
-    new_devices = ser_find.get_new_ports(current_devices) # Get a list of all new connected com ports
-
-
-    # Refresh our current connections (and check for changes)
-    #print('Before testing cur devices: ', current_devices)
-    #current_devices = ser_find.check_ports(current_devices, new_devices) # Get a list of all com ports in use (deleted not used!)
-    #print('After testing cur devices: ', current_devices)
-
-    # Check the new com devices
-    
+    # Loop through existing devices
+    for device in current_devices:
+        # If the device isn't connected anymore, remove it
+        if device not in all_ports:
+            # Disconnected
+            to_remove.append(device)
+        else:
+            # We already have this port, (we are using it)
+            ports_not_used.remove(device)
 
 
-    #current_devices
-    print('@ done scanning')
+    # For reach device in to_remove, remove it from current_devices
+    for dev in to_remove:
+        if dev in current_devices:
+            # Delete our disconnected device
+            current_devices.pop(dev)
 
+    return ports_not_used
 
-# Prepares the ardiuno for sending data
-def prepare_sending(device_com_port, send_command, data):
-    print('preparing to send')
-    #can_send = serial_communication.send(port, command)
-    print('Did we get response 10 (succeed)?, if not throw an error!')
+# Removes disconnected devices from current_devices, returns port not scanned yet
+def identify_devices(comports):
+    print('Identifying: ', comports)
 
-    can_send = False # Response from arduino!
+    # Dict containing new devices
+    new_devices = {}
 
-    if can_send == True:
-        print('Sending data')
-        send_data(device_com_port, data)
-    else:
-        print('Communication denied? throw error!')
+    # Identify every comport
+    for comport in comports:
+        new_module = identy_device(comport)
+        new_devices[comport] = new_module
 
-# Sends data to the ardiuno
-def send_data(device_com_port, data):
-    print('sending data: {0} to {1}'.format(data, device_com_port))
-    #result = serial_communication.send(port, command)
-    # if result = response 10 (succeed), return True
+    return new_devices
 
-    print('sending {1} to {0}')
-    print('received {0}')
-    print('sending data {0}')
-    print('result {0}')
+def identy_device(comport):
+    #First send identify message
+    send_code = msg.send_code('detect') # Debug 5 we will see
+    resp_code = msg.response_code('succeed')
+
+    result = ser_com.identify_device(comport, send_code['code'], resp_code['code'])
+
+    if result['error'] == False:
+        return create_module(result['serial'], result['type'])
+
+    return None
+
+def create_module(ser, type):
+    # TO-DO: Create module data! (or use default...?)
+    new_module = Module(ser, type, None)
+    return new_module
 
 # DEBUG
-set_sensor_max('com4', 5)
+# set_sensor_max('com4', 5)

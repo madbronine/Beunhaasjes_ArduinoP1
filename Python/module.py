@@ -1,14 +1,13 @@
 # © Jeroen - 30-10-2018
 # file containing class for modules
-import messages
 
 #Class containg modules
 class Module:
     # Module contains its data, so we can use it
-    def __init__(self, port, type, serial_com):
+    def __init__(self, port, type, module_data):
         self.port = port    # com-port
         self.type = type    # com-type
-        self.serial_com = serial_com      # serial class
+        self.module_data = module_data      # serial class
 
     # returns the com-port
     def get_port(self):
@@ -19,11 +18,14 @@ class Module:
         return self.type
 
     # returns the serial
-    def get_ser(self):
-        return self.ser
+    def get_data(self):
+        return self.module_data
 
     def send_message(self):
         print('abc')
+
+    def __str__(self):
+        return "Port: {0} type: {1} data: {2}".format(self.port, self.type, self.module_data)
 
 
 
@@ -53,3 +55,6 @@ class Module_Data:
 
     def get_setting_max(self):
         return self.sensor_max
+
+    def __str__(self):
+        return "Port: {0} type: {1} data: {2}".format(self.timer, self.sensor_min, self.sensor_max)

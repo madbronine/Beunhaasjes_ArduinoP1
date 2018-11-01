@@ -4,6 +4,35 @@
 import serial
 import time
 
+
+def identify_device(com_port, cmd, res):
+    result = {}
+
+    # create serial with comport and max timeout 2 seconds
+    ser = initialize_serial(com_port, 2)
+
+    # Give serial Initialize time
+    time.sleep(2)
+
+    #expect 1 bit data back!
+    datalength = 1
+    # Send our command + expected result length
+    response = send_data(ser, cmd, datalength)
+
+    # if response matched expected result command
+    if response == res:
+        msg = get_message(ser,  4) # expect 4 bits return result
+        result['error'] = False
+        result['type'] = msg
+        result['serial'] = ser
+    else:
+        result['error'] = True
+
+    # returns error, type and serial
+    return result
+
+
+
 def initialize_serial(com_port, time_out):
     #Initialize serial connection
     ser = serial.Serial(
@@ -31,7 +60,6 @@ def send_data(ser, data_to_send, response_length):
 
     msg = get_message(ser, response_length)
 
-
     return msg
 
 # Returns data from the module
@@ -46,50 +74,3 @@ def get_message(ser, length):
         dec_msg = ord(msg.decode())
         print('Module returns:', msg, '- Decoded:', dec_msg)
         return dec_msg # message is an int
-
-
-
-
-
-#       Code below is for DEBUGGING
-#------------------------------------------------------
-
-def test_loop():
-
-    test_ser = initialize_serial('COM4', 2)
-
-    while True:
-        print('start')
-        time.sleep(2)
-        dataLength = 4
-        result = send_data(test_ser, 5, dataLength) # Debug case -> 5 returns TYPE if dataLength = 2 it returns TY 
-        time.sleep(2)
-        result = send_data(test_ser, 6, 4) # expect response of 2 bytes
-
-
-        time.sleep(5)
-        print('stop')
-        time.sleep(5)
-
-
-        # send_data(ser, 5, 4)
-        #
-        # print('-------------')
-        #
-        # time.sleep(2)
-        # send_data(ser, 1, 4)
-        #
-        # print('-------------')
-        #
-        # time.sleep(2)
-        # send_data(ser, 102, 4)
-        #
-        # print('-------------')
-
-
-        #time.sleep(2)
-        #send_data(ser, 5, 4)
-
-
-
-test_loop()

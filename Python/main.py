@@ -6,11 +6,16 @@ def main():
     while(True):
         print('=============')
 
-        #Refresh the port list
+        #Refresh the port list, could be threaded?
         ser_con.run()
 
-        curDevices = ser_con.get_devices()
-        print('Current com devices: {0}'.format(curDevices))
+        #Returns an list of all connected devices
+        current_devices = ser_con.get_devices()
+        print('Current com devices: {0}'.format(current_devices))
+        #print('Test:', current_devices['COM4'])
+
+        # handle data of devices:
+        print('data not handled')
 
         print('===========')
         print('')

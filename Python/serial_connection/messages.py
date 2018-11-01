@@ -12,6 +12,15 @@ def send_code(message):
         # Not existing message return error
         return {'error' : True}
 
+def response_code(code):
+    if code in response_messages:
+        # Response exists. Fill response
+        return {'error' : False, 'message': code, 'code' : response_messages[code]}
+    else:
+        # Not existing message return error
+        return {'error' : True}
+
+
 
 # messages modules can receive
 send_messages = {
@@ -28,9 +37,9 @@ send_messages = {
 
 # messages modules can send
 response_messages = {
-10 : "succeed", # Getting data
-11 : "error",   # Error received
-12 : "data",    # Incomming data (send 11 to receive data)
+"succeed" : 10, # Getting data
+"error" : 11,   # Error received
+"data" : 12,    # Incomming data (send 11 to receive data)
 
-20 : "sensor"   # Request sensor data
+"sensor" : 20   # Request sensor data
 }
