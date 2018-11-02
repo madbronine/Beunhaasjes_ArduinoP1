@@ -4,11 +4,10 @@
 #Class containg modules
 class Module:
     # Module contains its data, so we can use it
-    def __init__(self, ser, port, type, module_data):
+    def __init__(self, ser, port, type):
         self.ser = ser    # com-port
         self.port = port    # com-port
         self.type = type    # com-type
-        self.module_data = module_data      # serial class
 
     # returns the com-port
     def get_ser(self):
@@ -22,12 +21,13 @@ class Module:
     def get_type(self):
         return self.type
 
-    # returns the serial
+    # returns the data
     def get_data(self):
         return self.module_data
 
-    def send_message(self):
-        print('abc')
+    # Sets the data
+    def set_data(self, module_data):
+        self.module_data = module_data
 
     def __str__(self):
         return "Port: {0} \nser: {1} \ntype: {2} \ndata: {3}".format(self.port, self.ser, self.type, self.module_data)
