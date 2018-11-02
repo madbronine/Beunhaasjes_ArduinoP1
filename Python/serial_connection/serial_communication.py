@@ -14,14 +14,12 @@ def identify_device(com_port, cmd, res):
     # Give serial Initialize time
     time.sleep(2)
 
-    #expect 1 bit data back!
-    datalength = 1
     # Send our command + expected result length
-    response = send_data(ser, cmd, datalength)
+    response = send_data(ser, cmd)
 
     # if response matched expected result command
     if response == res:
-        msg = get_message(ser,  4) # expect 4 bits return result
+        msg = get_text_message(ser,  4) # expect 4 bits return result
         result['error'] = False
         result['type'] = msg
         result['serial'] = ser
@@ -47,7 +45,7 @@ def initialize_serial(com_port, time_out):
 
 
 # Sends data to the module
-def send_data(ser, data_to_send, response_length):
+def send_data(ser, data_to_send):
     ser.flushInput(); # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
 
     print('Going to send int: ', data_to_send)
@@ -58,19 +56,26 @@ def send_data(ser, data_to_send, response_length):
     print('converted:', converted_data, '- type:', type(converted_data))
     ser.write(converted_data)
 
-    msg = get_message(ser, response_length)
+    response = get_message(ser)
 
-    return msg
+    return response
 
 # Returns data from the module
-def get_message(ser, length):
-    msg = ser.read(length) # read max (length) bytes
+def get_message(ser):
+    msga = ser.readline() # Retrieves data!
 
-    if len(msg) > 1:
-        dec_msg = msg.decode()
-        print('Module returns:', msg, '- Decoded:', dec_msg)
-        return msg.decode() # message is an int
-    else:
-        dec_msg = ord(msg.decode())
-        print('Module returns:', msg, '- Decoded:', dec_msg)
-        return dec_msg # message is an int
+    print('received: ', msga, type(msga))
+    #print('received: ',msga.decode('utf-8', errors='replace'))
+    b = bytearray(msga)
+    print(b, type(b))
+
+    val = int.from_bytes(msga, "little") # retrieve little endian!
+    return val
+
+
+# Get an character messe
+def get_text_message(ser, length):
+    msg = ser.readline()
+    dec_msg = msg.decode()
+    print('Module returns:', msg, '- Decoded:', dec_msg)
+    return msg.decode()

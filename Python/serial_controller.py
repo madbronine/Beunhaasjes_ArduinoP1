@@ -62,11 +62,12 @@ def get_distance_max(module, value):
         send_code = msg.send_code('get_distance_max')
         resp_code = msg.response_code('succeed')
 
-        response = ser_com.send_data(ser, send_code['code'], 1) # Expect 1 bit?
+        # Send code
+        response = ser_com.send_data(ser, send_code['code']) # Expect 1 bit?
         print('-- Response @@@@@@@@@@@', response, '---', resp_code['code'])
         if response == resp_code['code']:
             print('Response correct!')
-            data = ser_com.get_message(ser, 1) # Expect 1 bit?
+            data = ser_com.get_message(ser) # Expect 1 bit?
             print('DATA: ', data)
         else:
             result = {"error" : True, "msg" : 'Wrong response'}
