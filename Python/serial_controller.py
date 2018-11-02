@@ -41,29 +41,6 @@ def get_sensor_data(device_com_port):
 
 
 
-# Sets the max value with parameter data for the sensor of given device
-def get_distance_max(module):
-    isConnected = ser_scan.check_connection(module.get_port()) #Check connection
-    result = {} # Place to store the result!
-
-    if isConnected == True:
-        #print('Set sensor max value. Command: {0}  value: {1}   device: {2}'.format(command, value, device_com_port))
-        print('Is connected, trying to send!')
-        ser = module.get_ser() # Get serial
-        send_code = msg.send_code('get_distance_max')   # Get send code
-        resp_code = msg.response_code('succeed')        # Get response code
-        response = ser_com.send_data(ser, send_code['code']) # Send command code
-
-        if response == resp_code['code']:              # Check if the response code matches
-            data = ser_com.get_message(ser) # Retrieve message
-            result = {"error" : False, "data" : data}
-        else:
-            result = {"error" : True, "msg" : 'Wrong response'}
-    else:
-        result = {"error" : True, "msg" : 'Not connected'}
-
-    return data
-
 
 #       Code below is handled by the controller
 #------------------------------------------------------
@@ -131,18 +108,66 @@ def identy_device(comport):
 def create_module(ser, type, comport):
     # TO-DO: Create module data! (or use default...?)
     new_module = Module(ser,comport, type)
-    data = get_data(new_module)
+    data = create_data(new_module)
 
+    new_module.set_data(data)
     return new_module
 
 # Get all data from the arduino to initialize the module class
-def get_data(module):
-    print('IMPORTANT: No data yet')
+def create_data(module):
+    print('IMPORTANT: Not correct data yet')
+    timer = get_sensor_setting(module, 'get_timer')
+    sensor_min = get_sensor_setting(module, 'get_distance_max')
+    sensor_max = get_sensor_setting(module, 'get_distance_max')
+    distance_min = get_sensor_setting(module, 'get_distance_max')
+    distance_max = get_sensor_setting(module, 'get_distance_max')
 
-    timer = 0
-    sensor_min = 0
-    sensor_max = 0
-    distance_min = 0;
-    distance_max = get_distance_max(module)
-    data = Module_Data(timer, sensor_min, sensor_max)
+    data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
     return data
+
+# Get given sensor setting from specified module
+def get_sensor_setting(module, send_cmd):
+    result = {} # Store result!
+
+    isConnected = ser_scan.check_connection(module.get_port()) #Check connection
+
+    if isConnected == True: # are we connected
+        send_code = msg.send_code(send_cmd)   # Get send code
+        resp_code = msg.response_code('succeed') # Get response code
+
+        if  send_code['error'] == False and resp_code['error'] == False: # No error
+            response = get_value(module, send_code['code'], resp_code['code']) # Get data
+
+            if response['error'] == False:
+                result['error'] = False
+                result['data'] = response['data']
+            else:
+                result['error'] = True
+                result['message'] = "---"
+        else:
+            # Invalid code
+            result['error'] = True
+            result['message'] = "Invalid send code!"
+    else:
+        result['error'] = True
+        result['message'] = "No connection!"
+
+    return result
+
+
+
+
+# Handles sending and receiving
+def get_value(module, send_code, resp_code):
+    result = {}
+
+    resp = ser_com.send_data(module.get_ser(), send_code) # Retrieve message
+
+    if resp == resp_code:
+        data = ser_com.get_message(module.get_ser()) # Retrieve message
+        result['error'] = False
+        result['data'] = data
+    else:
+        result['error'] = True
+
+    return result

@@ -20,8 +20,6 @@ def main():
         for port, device in current_devices.items():
             print('---------')
             print(device)
-            data_max = ser_con.get_distance_max(device, 5)
-            print('Our max distance', data_max, 'cm')
             print('---------')
 
         # handle data of devices:

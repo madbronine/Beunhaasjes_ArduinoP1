@@ -17,12 +17,39 @@
 #define TRUE 1
 #define FALSE 0
 
+// Send  commands
+#define succeed 10	// Received
+#define wrong 11	// Error
+#define data_cmd 12		// Incoming data ?
+
+// Receive  commands
+#define detect 10
+
+#define request_id 12
+
+#define set_timer 20
+#define get_timer 21
+
+#define set_sensor_min 22
+#define get_sensor_min 23
+
+#define set_sensor_max 24
+#define get_sensor_max 25
+
+#define set_distance_min 26
+#define get_distance_min 27
+
+#define set_distance_max 28
+#define get_distance_max 29
+
+#define get_current_state 30
+
 
 uint8_t sensor_value = 0; // Can we handle light sensor in 8 bit?
 uint8_t sensor_max_value = 0;
 uint8_t sensor_min_value = 0;
 
-uint8_t measure_timer = 0; // 40 for temperature and 30 for light sensor
+uint8_t measure_timer = 40; // 40 for temperature and 30 for light sensor
 uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
 
 // Min and max and current distance of the sunscreen
@@ -37,10 +64,6 @@ uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indic
 
 // Identifier
 char id[4] = "TEMP"; // TEMP for temperature and LIGHT for light
-
-
-
-
 
 
 
@@ -109,15 +132,18 @@ int main(void)
 		uint8_t data = receive();
 		
 		// if: detect
-		if(data == 10){
+		if(data == detect){
 			// send succeed
-			transmit(10);
+			transmit(succeed);
 			// send id
 			transmit_id();
-		}else if(data == 29)
+		}else if(data == get_distance_max)
 		{ // get distance max
-			transmit(10); // Send succeed
+			transmit(succeed); // Send succeed
 			transmit_word(max_distance); // Send highest possible value
+		}else if(data == get_timer){
+			transmit(succeed); // Send succeed
+			transmit_word(measure_timer); // Send highest possible value
 		}
 		
 		// Just wait for input i guess

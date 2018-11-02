@@ -81,6 +81,7 @@ def get_message(ser):
     #print('received: ', msga, type(msga))
     # Create int from 2 bytes (little endian)
     val = int.from_bytes(msga, "little")
+
     return val
 
 

@@ -36,10 +36,12 @@ class Module:
 
 # Class containing the data of the modules
 class Module_Data:
-    def __init__(self, timer, sensor_min, sensor_max):
-        self.timer = timer    # com-port
-        self.sensor_min = sensor_min    # com-type
-        self.sensor_max = sensor_max      # serial class
+    def __init__(self, timer, sensor_min, sensor_max, distance_min, distance_max):
+        self.timer = timer                  # Timer value in MS ??
+        self.sensor_min = sensor_min        # Sensor min value
+        self.sensor_max = sensor_max        # Sensor max value
+        self.distance_min = distance_min    # Distance sensor min value
+        self.distance_max = distance_max    # Distance sensor max value
 
     # Sets the timer setting
     def set_timer(self, timer):
@@ -62,4 +64,4 @@ class Module_Data:
         return self.sensor_max
 
     def __str__(self):
-        return "Port: {0} type: {1} data: {2}".format(self.timer, self.sensor_min, self.sensor_max)
+        return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}  dist_max: {4} ".format(self.timer, self.sensor_min, self.sensor_max, self.distance_min, self.distance_max)

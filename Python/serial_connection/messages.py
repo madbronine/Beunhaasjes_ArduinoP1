@@ -42,7 +42,9 @@ send_messages = {
 "get_distance_min" : 27,  # Request to get sensor min value (should response with 11)
 
 "set_distance_max" : 28,  # Request to change sensor max value (should response with 11)
-"get_distance_max" : 29  # Request to change sensor max value (should response with 11)
+"get_distance_max" : 29,  # Request to change sensor max value (should response with 11)
+
+"get_current_state" : 30  # Request current sunscreen state
 
 }
 
@@ -50,7 +52,7 @@ send_messages = {
 response_messages = {
 "succeed" : 10, # Getting data
 "error" : 11,   # Error received
-"data" : 12,    # Incomming data (send 11 to receive data)
+"data" : 12,    # Send data
 
 "sensor" : 20   # Request sensor data
 }
