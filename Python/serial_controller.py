@@ -46,7 +46,7 @@ def get_sensor_data(device_com_port):
 
 
 # Sets the max value with parameter data for the sensor of given device
-def set_timer(module, value):
+def get_distance_max(module, value):
 
     #Check connection
     isConnected = ser_scan.check_connection(module.get_port())
@@ -59,7 +59,7 @@ def set_timer(module, value):
         # Get serial
         ser = module.get_ser()
         # Get codes
-        send_code = msg.send_code('set_timer')
+        send_code = msg.send_code('get_distance_max')
         resp_code = msg.response_code('succeed')
 
         response = ser_com.send_data(ser, send_code['code'], 1) # Expect 1 bit?

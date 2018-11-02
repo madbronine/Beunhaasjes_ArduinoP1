@@ -21,7 +21,7 @@ def main():
             print('---------')
             print(device)
             print('---------')
-            ser_con.set_timer(device, 5)
+            ser_con.get_distance_max(device, 5)
 
         # handle data of devices:
         # print('data not handled')

@@ -30,10 +30,19 @@ send_messages = {
 
 "set_timer" : 20,       # Request to change timer (should response with 11)
 "get_timer" : 21,       # Request to change timer (should response with 11)
+
 "set_sensor_min" : 22,  # Request to change sensor min value (should response with 11)
-"get_sensor_min" : 23,  # Request to get sensor min value (should response with 11)
-"set_sensor_max" : 24,  # Request to change sensor max value (should response with 11)
+"get_sensor_min" : 23,  # Request to change sensor max value (should response with 11)
+
+"set_sensor_max" : 24,  # Request to change sensor min value (should response with 11)
 "get_sensor_max" : 25,  # Request to change sensor max value (should response with 11)
+
+
+"set_distance_min" : 26,  # Request to get sensor min value (should response with 11)
+"get_distance_min" : 27,  # Request to get sensor min value (should response with 11)
+
+"set_distance_max" : 28,  # Request to change sensor max value (should response with 11)
+"get_distance_max" : 29  # Request to change sensor max value (should response with 11)
 
 }
 
