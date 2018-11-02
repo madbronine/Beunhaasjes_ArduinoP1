@@ -117,7 +117,7 @@ int main(void)
 		}else if(data == 29)
 		{ // get distance max
 			transmit(10); // Send succeed
-			transmit_word(65535); // Send highest possible value
+			transmit_word(max_distance); // Send highest possible value
 		}
 		
 		// Just wait for input i guess

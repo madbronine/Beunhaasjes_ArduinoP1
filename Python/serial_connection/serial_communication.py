@@ -4,8 +4,9 @@
 import serial
 import time
 
-
+# Identifies the device on comport
 def identify_device(com_port, cmd, res):
+    # Here do we store results
     result = {}
 
     # create serial with comport and max timeout 2 seconds
@@ -19,20 +20,23 @@ def identify_device(com_port, cmd, res):
 
     # if response matched expected result command
     if response == res:
+        # Get the next text messages with the ID
         msg = get_text_message(ser,  4) # expect 4 bits return result
+        # Fill in the result
         result['error'] = False
         result['type'] = msg
         result['serial'] = ser
     else:
+        # Not expected! Fill in the result
         result['error'] = True
 
-    # returns error, type and serial
+    # returns the message: error, type and serial
     return result
 
 
-
+# Creates a serial connection
 def initialize_serial(com_port, time_out):
-    #Initialize serial connection
+    #Initialize serial connection based on parameters
     ser = serial.Serial(
        port = com_port,
        baudrate = 19200,
@@ -41,41 +45,54 @@ def initialize_serial(com_port, time_out):
        stopbits = serial.STOPBITS_ONE,
        timeout = time_out
     )
+    # Returns serial connection
     return ser
 
 
 # Sends data to the module
 def send_data(ser, data_to_send):
-    ser.flushInput(); # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
+    # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
+    ser.flushInput();
 
-    print('Going to send int: ', data_to_send)
+    # Debug line:
+    #print('Going to send int: ', data_to_send)
 
-    #converted_data = [data_to_send]
+    # Convert data to bytes
     converted_data = bytearray([data_to_send])
 
-    print('converted:', converted_data, '- type:', type(converted_data))
+    # Debug line:
+    #print('converted:', converted_data, '- type:', type(converted_data))
+
+    # Send data
     ser.write(converted_data)
 
+    # Get response message
     response = get_message(ser)
 
+    # Return the response message
     return response
 
 # Returns data from the module
 def get_message(ser):
-    msga = ser.readline() # Retrieves data!
+    # Retrieve data!
+    msga = ser.readline()
 
-    print('received: ', msga, type(msga))
-    #print('received: ',msga.decode('utf-8', errors='replace'))
-    b = bytearray(msga)
-    print(b, type(b))
-
-    val = int.from_bytes(msga, "little") # retrieve little endian!
+    # Debug line:
+    #print('received: ', msga, type(msga))
+    # Create int from 2 bytes (little endian)
+    val = int.from_bytes(msga, "little")
     return val
 
 
 # Get an character messe
 def get_text_message(ser, length):
+    # Retrieve data!
     msg = ser.readline()
+    val = int.from_bytes(msg, "little")
+
+    # Decode the message
     dec_msg = msg.decode()
-    print('Module returns:', msg, '- Decoded:', dec_msg)
+
+    # Debug line:
+    #print('Module returns:', msg, '- Decoded:', dec_msg)
     return msg.decode()
