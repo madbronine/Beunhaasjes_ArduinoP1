@@ -24,18 +24,17 @@ def run():
     not_used_ports = remove_disconnected_devices(all_ports)
 
     if len(not_used_ports) > 0:
-        print('UNUSED: ' , not_used_ports)
+    #    print('UNUSED: ' , not_used_ports)
         # Now we test or new devices
         new_devices = identify_devices(not_used_ports)
         current_devices.update(new_devices)
-    else:
-        print('No unused devices!')
-
+    #else:
+    #    print('No unused devices!')
 
 
 # Returns dictionary with all connected devices
 def get_devices():
-    print('Get all connected devices')
+    # print('Getting all connected devices')
     return current_devices # Example value:    {'com1' : Temperature, 'com2' : Light}
 
 # Reads the sensor data from the given device
@@ -43,17 +42,39 @@ def get_sensor_data(device_com_port):
     print('Gets all sensor data')
     return None # Example value:    namedtuple('sensor_value' : 5)
 
+
+
+
 # Sets the max value with parameter data for the sensor of given device
-def set_sensor_max(device_com_port, value):
-    command = msg.send_code('set_sensor_max')
-    print('Set sensor max value. Command: {0}  value: {1}   device: {2}'.format(command, value, device_com_port))
+def set_timer(module, value):
 
-    return None # Returns error true or false
+    #Check connection
+    isConnected = ser_scan.check_connection(module.get_port())
+    result = {}
 
-# Sets the min value with parameter data for the sensor of given device
-def set_sensor_min(device_com_port, value):
-    print('Set sensor min value')
-    return None # Returns error true or false
+    if isConnected == True:
+        #print('Set sensor max value. Command: {0}  value: {1}   device: {2}'.format(command, value, device_com_port))
+        print('Is connected, trying to send!')
+
+        # Get serial
+        ser = module.get_ser()
+        # Get codes
+        send_code = msg.send_code('set_timer')
+        resp_code = msg.response_code('succeed')
+
+        response = ser_com.send_data(ser, send_code['code'], 1) # Expect 1 bit?
+        print('-- Response @@@@@@@@@@@', response, '---', resp_code['code'])
+        if response == resp_code['code']:
+            print('Response correct!')
+            data = ser_com.get_message(ser, 1) # Expect 1 bit?
+            print('DATA: ', data)
+        else:
+            result = {"error" : True, "msg" : 'Wrong response'}
+    else:
+        result = {"error" : True, "msg" : 'Not connected'}
+
+    return result
+
 
 #       Code below is handled by the controller
 #------------------------------------------------------
@@ -104,14 +125,23 @@ def identy_device(comport):
     result = ser_com.identify_device(comport, send_code['code'], resp_code['code'])
 
     if result['error'] == False:
-        return create_module(result['serial'], result['type'])
+        return create_module(result['serial'], result['type'], comport)
 
     return None
 
-def create_module(ser, type):
+def create_module(ser, type, comport):
     # TO-DO: Create module data! (or use default...?)
-    new_module = Module(ser, type, None)
+    data = get_data(ser)
+
+    new_module = Module(ser,comport, type, data)
     return new_module
 
-# DEBUG
-# set_sensor_max('com4', 5)
+# Get all data from the arduino to initialize the module class
+def get_data(ser):
+    #
+
+    timer = 0
+    sensor_min = 0
+    sensor_max = 0
+    data = Module_Data(timer, sensor_min, sensor_max)
+    return data

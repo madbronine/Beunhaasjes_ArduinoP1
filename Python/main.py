@@ -1,9 +1,12 @@
 import serial_controller as ser_con
 import time
+import module
 
 def main():
+
     # program loop
     while(True):
+
         print('=============')
 
         #Refresh the port list, could be threaded?
@@ -11,19 +14,26 @@ def main():
 
         #Returns an list of all connected devices
         current_devices = ser_con.get_devices()
-        print('Current com devices: {0}'.format(current_devices))
-        #print('Test:', current_devices['COM4'])
+
+        print('Current identified devices: {0}'.format(current_devices))
+        print('ALL DEVICE INFO:')
+        for port, device in current_devices.items():
+            print('---------')
+            print(device)
+            print('---------')
+            ser_con.set_timer(device, 5)
 
         # handle data of devices:
-        print('data not handled')
+        # print('data not handled')
 
         print('===========')
         print('')
         print('')
 
-        time.sleep(2) #This and import time should be removed (when main program loop is added + timed)
+        time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
+
 
 # Start program!
 main()
