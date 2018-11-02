@@ -1,2 +1,27 @@
 # ignore generated folders:
 __pycache__/
+
+
+
+
+### AtmelStudio ###
+## Ignore Atmel Studio temporary files and build results
+
+#Build Directories
+[Dd]ebug/
+[Rr]elease/
+
+#Build Results
+*.o
+*.d
+*.eep
+*.elf
+*.hex
+*.map
+*.srec
+*.xml
+
+#User Specific Files
+*.atsuo
+
+# End of https://www.gitignore.io/api/atmelstudio
