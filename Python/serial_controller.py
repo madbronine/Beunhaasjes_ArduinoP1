@@ -117,9 +117,9 @@ def create_module(ser, type, comport):
 def create_data(module):
     print('IMPORTANT: Not correct data yet')
     timer = get_sensor_setting(module, 'get_timer')
-    sensor_min = get_sensor_setting(module, 'get_distance_max')
-    sensor_max = get_sensor_setting(module, 'get_distance_max')
-    distance_min = get_sensor_setting(module, 'get_distance_max')
+    sensor_min = get_sensor_setting(module, 'get_sensor_min')
+    sensor_max = get_sensor_setting(module, 'get_sensor_max')
+    distance_min = get_sensor_setting(module, 'get_distance_min')
     distance_max = get_sensor_setting(module, 'get_distance_max')
 
     data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
