@@ -132,6 +132,12 @@
     <Compile Include="communication.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="getTemp.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="getTemp.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

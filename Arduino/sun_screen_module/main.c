@@ -12,6 +12,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "AVR_TTC_scheduler.h"
+#include "getTemp.h"
 
 
 #define TRUE 1
@@ -128,6 +129,7 @@ int main(void)
 	/* Replace with your application code */
 	while (1)
 	{
+		sensor_value = readTemp();
 		if(current_state == id_state){
 			// send succeed
 			transmit(succeed);
