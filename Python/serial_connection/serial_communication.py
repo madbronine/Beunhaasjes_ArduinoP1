@@ -97,4 +97,4 @@ def get_text_message(ser, length):
 
     # Debug line:
     #print('Module returns:', msg, '- Decoded:', dec_msg)
-    return msg.dec_msg()
+    return dec_msg
