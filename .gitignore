@@ -25,3 +25,4 @@ __pycache__/
 *.atsuo
 
 # End of https://www.gitignore.io/api/atmelstudio
+Python/.idea/Python.iml
