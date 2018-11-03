@@ -26,6 +26,7 @@
 #define detect 10
 
 #define request_id 12
+#define get_sensor_value 13
 
 #define set_timer 20
 #define get_timer 21
@@ -189,6 +190,12 @@ ISR (USART_RX_vect)
 		case detect :
 		old_state = current_state;
 		current_state = id_state;
+		break;
+		
+		case get_sensor_value:
+		old_state = current_state;
+		current_state = send_state;
+		send_value = sensor_value;
 		break;
 	
 		case get_timer :

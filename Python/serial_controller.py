@@ -32,11 +32,10 @@ def get_devices():
     return current_devices # Example value:    {'com1' : Temperature, 'com2' : Light}
 
 # Reads the sensor data from the given device
-def get_sensor_data(device_com_port):
-    result = {}
-    result = {"error" : True, "msg" : None}
-
-    return result # Example value:    namedtuple('sensor_value' : 5)
+def get_sensor_data(module):
+    distance_min = get_sensor_setting(module, 'get_sensor_value')
+    
+    return distance_min['data'] # Example value:    namedtuple('sensor_value' : 5)
 
 
 

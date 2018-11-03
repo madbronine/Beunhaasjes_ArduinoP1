@@ -27,6 +27,7 @@ send_messages = {
 "detect" : 10,      # Send detecton message (module should response with a 10)
 "succeed" : 11,
 "request_id" : 12,   # Request id (module should response with response with 12)
+"get_sensor_value" : 13,  # Request sensor value
 
 "set_timer" : 20,       # Request to change timer (should response with 11)
 "get_timer" : 21,       # Request to change timer (should response with 11)
@@ -45,6 +46,7 @@ send_messages = {
 "get_distance_max" : 29,  # Request to change sensor max value (should response with 11)
 
 "get_current_state" : 30  # Request current sunscreen state
+
 
 }
 
