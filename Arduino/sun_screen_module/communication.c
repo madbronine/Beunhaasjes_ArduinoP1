@@ -31,7 +31,7 @@ void transmit_eol() {
 }
 
 // Transmit character
-void transmit(char c) {
+void transmit(int c) {
 	loop_until_bit_is_set(UCSR0A, UDRE0); // Wait until data register empty
 	UDR0 = c;
 }
@@ -39,8 +39,8 @@ void transmit(char c) {
 // Transmit 16 bit int
 void transmit_word(int value){
 	// Split int into two values (low and high byte)
-	uint8_t low_byte = value & 0xFF;
-	uint8_t high_byte = value >> 8;
+	int low_byte = value & 0xFF;
+	int high_byte = value >> 8;
 	
 	transmit(low_byte);		// Transmit low byte
 	transmit(high_byte);	// Transmit high byte

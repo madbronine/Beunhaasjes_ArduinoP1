@@ -45,11 +45,11 @@
 #define get_current_state 30
 
 
-uint8_t sensor_value = 0; // Can we handle light sensor in 8 bit?
-uint8_t sensor_min_value = 10;
-uint8_t sensor_max_value = 20;
+int sensor_value = 0; // Can we handle light sensor in 8 bit?
+int sensor_min_value = -10;
+int sensor_max_value = 20;
 
-uint8_t measure_timer = 40; // 40 for temperature and 30 for light sensor
+int measure_timer = 40; // 40 for temperature and 30 for light sensor
 //uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
 
 // Min and max and current distance of the sunscreen

@@ -82,7 +82,7 @@ def get_message(ser, msg_length = 2):
     # Debug line:
     #print('received: ', msga, type(msga))
     # Create int from 2 bytes (little endian)
-    val = int.from_bytes(bytes, "little")
+    val = int.from_bytes(bytes, "little", signed=True)
     print('Value is: ', val)
 
     # Debug value
