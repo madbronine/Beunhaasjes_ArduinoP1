@@ -122,6 +122,8 @@ def create_data(module):
     distance_min = get_sensor_setting(module, 'get_distance_min')
     distance_max = get_sensor_setting(module, 'get_distance_max')
 
+    print('@@@$%#!%^$^#% MESSAGE:' , distance_min['message'])
+
     data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
     return data
 
@@ -143,7 +145,7 @@ def get_sensor_setting(module, send_cmd):
                 result['data'] = response['data']
             else:
                 result['error'] = True
-                result['message'] = "---"
+                result['message'] = response['message']
         else:
             # Invalid code
             result['error'] = True
@@ -168,6 +170,7 @@ def get_value(module, send_code, resp_code):
         result['error'] = False
         result['data'] = data
     else:
+        result['message'] = "Invalid response code: {0} - asked for {1}".format(resp, resp_code)
         result['error'] = True
 
     return result

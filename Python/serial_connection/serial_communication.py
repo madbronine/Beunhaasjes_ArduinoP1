@@ -75,14 +75,15 @@ def send_data(ser, data_to_send):
 # Returns data from the module, msg_length is by default high and low byte
 def get_message(ser, msg_length = 2):
     # Retrieve data!
-    print('Get messagee', msg_length)
-
-    msga = ser.readline(msg_length)
+    print('Get Message ofaaaa: ', msg_length)
+    bytes = read_untill_eol(ser)
+    print('Message isaaa: ', bytes)
 
     # Debug line:
     #print('received: ', msga, type(msga))
     # Create int from 2 bytes (little endian)
-    val = int.from_bytes(msga, "little")
+    val = int.from_bytes(bytes, "little")
+    print('Value is: ', val)
 
     # Debug value
     # print('Value:', val)
@@ -92,9 +93,27 @@ def get_message(ser, msg_length = 2):
 
 # Get an character messe
 def get_text_message(ser, length):
-    msg = ser.read(4) # Retrieve data!
-    dec_msg = msg.decode() # Decode the message
+    bytes = read_untill_eol(ser)
+    dec_msg = bytes.decode() # Decode the message
+
+    print('Dec: ', dec_msg)
 
     # Debug line:
     #print('Module returns:', msg, '- Decoded:', dec_msg)
     return dec_msg
+
+def read_untill_eol(ser):
+    eol = '\r'
+    eol = str.encode(eol)
+    done = False
+
+    bytes = bytearray()
+
+    while done == False:
+        value = ser.read(1) # Retrieve data! (4 bits)
+        if value == eol:
+            done = True
+        else:
+            bytes.extend(value)
+
+    return bytes # return the message

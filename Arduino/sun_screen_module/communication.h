@@ -12,6 +12,7 @@
 // Initialise function
 
 void uart_init(void);
+void transmit_eol(void);
 void transmit(char c);
 void transmit_word(int);
 void receive_word();

@@ -7,6 +7,7 @@
 #include <avr/interrupt.h>
 #define UBBRVAL 51
 
+
 // Initialize the UART
 void uart_init()
 {
@@ -24,6 +25,11 @@ void uart_init()
 
 }
 
+// Transmit end of line
+void transmit_eol() {
+	transmit('\r');
+}
+
 // Transmit character
 void transmit(char c) {
 	loop_until_bit_is_set(UCSR0A, UDRE0); // Wait until data register empty
@@ -38,7 +44,7 @@ void transmit_word(int value){
 	
 	transmit(low_byte);		// Transmit low byte
 	transmit(high_byte);	// Transmit high byte
-
+	transmit_eol();
 }
 
 // Receive 16 bit int

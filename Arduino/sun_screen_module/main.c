@@ -68,22 +68,53 @@ char id[4] = "TEMP"; // TEMP for temperature and LIGHT for light
 
 
 
+enum comm_states{
+	default_state = 0,
+	id_state = 1,
+	send_state = 2,
+};
 
-uint8_t oldState = 0;
-uint8_t temp_state = 0;
-uint8_t identify_state = 1;
-uint8_t send_state = 2;
+enum comm_states old_state = default_state;
+enum comm_states current_state = default_state;
+
 int send_value = 0;
 
+// Initialize/Reset all variables
+void initialize_default(){
+	 sensor_value = 0; // Can we handle light sensor in 8 bit?
+	 sensor_min_value = 10;
+	 sensor_max_value = 20;
+
+	 measure_timer = 40;
+	 min_distance = 5;
+	 max_distance = 160;
+	 cur_distance = 0;
+	 led_pin_out = 0;	
+	 led_pin_in = 0;
+	 led_pin_rolling = 0;
+
+	 id[4] = "TEMP"; 
+	
+	reset_state();
+}
+
+void reset_state(){
+	current_state = default_state;
+	old_state = default_state;
+	
+	send_value = 0;
+}
 
 void transmit_id(){
+	// On identification, reset all variables
+	
 	for (int i = 0; i < 4; i++)
 	{
 		transmit(id[i]);
 	}
+	
+	transmit_eol();
 }
-
-
 
 int main(void)
 {
@@ -96,18 +127,23 @@ int main(void)
 	/* Replace with your application code */
 	while (1)
 	{
-		if(temp_state == identify_state){
+		if(current_state == id_state){
 			// send succeed
 			transmit(succeed);
+			transmit_eol();
+	
 			// send id
 			transmit_id();
-			temp_state = oldState;
+			current_state = old_state;
 		}
 		
-		if(temp_state == send_state){
+		if(current_state == send_state){
 			transmit(succeed); // Send succeed
+			
+			transmit_eol();
+			
 			transmit_word(send_value); // Send highest possible value
-			temp_state = oldState;
+			current_state = old_state;
 		}
 		
 		
@@ -143,54 +179,58 @@ ISR (USART_RX_vect)
 {
 	uint8_t command = receive(); // Check the message
 	
+	// If we are sending, dont do anything!
+	if(current_state == send_state){
+		return;
+	}
 	
 	switch(command) {
 	
 		case detect :
-		oldState = temp_state;
-		temp_state = identify_state;
+		old_state = current_state;
+		current_state = id_state;
 		break;
 	
 		case get_timer :
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = measure_timer;
 		break;
 		
 		case get_sensor_min :
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = sensor_min_value;
 		break;
 		
 		case get_sensor_max :
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = sensor_max_value;
 		break;
 		
 		case get_distance_min :
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = min_distance;
 		break;
 		
 		case get_distance_max :
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = max_distance;
 		break;
 		
 		case get_current_state :
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = 100;
 		break;
 		
 		
 		default : /* Error */
-		oldState = temp_state;
-		temp_state = send_state;
+		old_state = current_state;
+		current_state = send_state;
 		send_value = wrong;
 	}
 }
