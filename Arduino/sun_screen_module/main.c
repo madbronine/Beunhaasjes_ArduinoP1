@@ -11,6 +11,7 @@
 #define F_CPU 16E6
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "AVR_TTC_scheduler.h"
 
 #define UBBRVAL 51
 

@@ -120,6 +120,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AVR_TTC_scheduler.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="AVR_TTC_scheduler.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
