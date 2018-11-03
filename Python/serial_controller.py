@@ -127,7 +127,7 @@ def create_data(module):
 
 # Get given sensor setting from specified module
 def get_sensor_setting(module, send_cmd):
-    result = {} # Store result!
+    result = {'error' : False, 'message' : None, 'data' : None} # Store result!
 
     isConnected = ser_scan.check_connection(module.get_port()) #Check connection
 
