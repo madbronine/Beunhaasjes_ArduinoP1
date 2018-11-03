@@ -15,5 +15,5 @@ void uart_init(void);
 void transmit_eol(void);
 void transmit(char c);
 void transmit_word(int);
-void receive_word();
-uint8_t receive();
+void receive_word(void);
+uint8_t receive(void);
