@@ -67,20 +67,23 @@ def send_data(ser, data_to_send):
     ser.write(converted_data)
 
     # Get response message
-    response = get_message(ser)
+    response = get_message(ser) 
 
     # Return the response message
     return response
 
-# Returns data from the module
-def get_message(ser):
+# Returns data from the module, msg_length is by default high and low byte
+def get_message(ser, msg_length = 2):
     # Retrieve data!
-    msga = ser.readline()
+    print('Get messagee', msg_length)
+
+    msga = ser.readline(msg_length)
 
     # Debug line:
     #print('received: ', msga, type(msga))
     # Create int from 2 bytes (little endian)
     val = int.from_bytes(msga, "little")
+    print('ASfasf', val)
 
     return val
 
@@ -88,7 +91,7 @@ def get_message(ser):
 # Get an character messe
 def get_text_message(ser, length):
     # Retrieve data!
-    msg = ser.readline()
+    msg = ser.read(4)
     val = int.from_bytes(msg, "little")
 
     # Decode the message
