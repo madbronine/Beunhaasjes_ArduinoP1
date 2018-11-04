@@ -9,47 +9,38 @@
 
 // sensor variables
 uint8_t low;
-int voltage;
 int analogValue;
 float temperatureC;
 float temperatureF;
-int temp_temperatureC;
-int temp_temperatureF; 
 
 void conversion(int x){
-	voltage = x * (5000/1024);
-	voltage = (voltage - 500) / 10;
-	// converting voltage to millivolts
-	//voltage = x * 5.0;
-	//voltage /= 1024.0;
+	
+	 // Convert the reading to voltage
+	float voltage = x * 5;
+	voltage = voltage / 1024;
+	
 	// now convert to Celcius & fahrenheit
 	temperatureC = (voltage - 0.5) * 100;
 	temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
 }
 
 void initSensor(void){
-	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // Set ADC prescaler to 128 - 125KHz sample rate @ 16MHz
-	ADMUX |= (1 << REFS0); // Set ADC reference to AVCC
-	ADMUX |= (1 << ADLAR); // Left adjust ADC result to allow easy 8 bit reading
-	// No MUX values needed to be changed to use ADC0
-	//ADCSRA |= (1 << ADFR);  // Set ADC to Free-Running Mode
-	ADCSRA |= (1 << ADEN);  // Enable ADC
-	ADCSRA |= (1 << ADIE);  // Enable ADC Interrupt
-	ADCSRA |= (1 << ADSC);  // Start A2D Conversions
+	  ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));    //Prescaler at 128 so we have an 125Khz clock source
+	  ADMUX |= (0<<REFS1) | (1<<REFS0);					//  voltage reference for the ADC,  Avcc(+5v) as voltage reference
+	  ADCSRB &= ~((1<<ADTS2)|(1<<ADTS1)|(1<<ADTS0));    //ADC in free-running mode
+	  
+	  ADCSRA |= (1<<ADEN);                //Turn on ADC
+	  ADCSRA |= (1<<ADSC);                //Start conversion
+	  ADCSRA |= (1<<ADATE);               //Signal source, in this case is the free-running | Auto Triggering of the ADC is enabled. 
 }
 
-void analogToDigital(void){
-	uint8_t low = ADCL;
-	analogValue = (ADCH << 2) | (low >> 6);
-}
-
-int readTemp(void){
-	analogToDigital();
+float readTemp(void){
+	analogValue = ADCW; // Read analog value
+	
 	conversion(analogValue);
-	// temporary int casting for debugging
-	int temp_temperatureC = (int)temperatureC;
-	int temp_temperatureF = (int)temperatureF;
+	
 	// return value
-	return temp_temperatureC;
+	return (int)(temperatureC * 10);
+	//return temperatureF;
 }
 

@@ -47,7 +47,7 @@
 #define get_current_state 30
 
 
-int sensor_value = 0; // Can we handle light sensor in 8 bit?
+float sensor_value = 0; // Can we handle light sensor in 8 bit?
 int sensor_min_value = -10;
 int sensor_max_value = 20;
 
@@ -125,11 +125,11 @@ int main(void)
 	
 	SCH_Start(); // Starts SEI
 
-	
+	initSensor();
+		
 	/* Replace with your application code */
 	while (1)
 	{
-		initSensor();
 		sensor_value = readTemp();
 		if(current_state == id_state){
 			// send succeed

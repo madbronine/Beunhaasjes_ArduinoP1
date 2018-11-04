@@ -24,7 +24,6 @@ def main():
             print('Sensor reading:', ser_con.get_sensor_data(device))
             print('---------')
 
-
         # handle data of devices:
         # print('data not handled')
 
