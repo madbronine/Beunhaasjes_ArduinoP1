@@ -129,6 +129,7 @@ int main(void)
 	/* Replace with your application code */
 	while (1)
 	{
+		initSensor();
 		sensor_value = readTemp();
 		if(current_state == id_state){
 			// send succeed
