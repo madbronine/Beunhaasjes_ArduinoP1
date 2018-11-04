@@ -81,13 +81,6 @@ enum comm_states current_state = default_state;
 
 int send_value = 0;
 
-void transmit_id(){
-	// Debug: get amount of characters
-	max_distance = strlen(id);
-	
-	transmit_array(id);
-}
-
 int main(void)
 {
 	SCH_Init_T1();
@@ -104,7 +97,7 @@ int main(void)
 			transmit_word(succeed);
 	
 			// send id
-			transmit_id();
+			transmit_array(id);
 			current_state = old_state;
 		}
 		
