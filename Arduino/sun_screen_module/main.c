@@ -82,21 +82,18 @@ enum comm_states current_state = default_state;
 int send_value = 0;
 
 void transmit_id(){
-	// On identification, reset all variables
+	// Debug: get amount of characters
+	max_distance = strlen(id);
+	
 	transmit_array(id);
-}
-
-void initialize(){
-	SCH_Init_T1();	// Initialize scheduler
-	uart_init(); // Initialize Uart
-	initSensor(); // Initialize Sensor
-	SCH_Start(); // Start scheduler// Starts SEI
 }
 
 int main(void)
 {
-	initialize();
-	
+	SCH_Init_T1();
+	uart_init();
+	SCH_Start(); // Starts SEI
+	initSensor();
 		
 	/* Replace with your application code */
 	while (1)
@@ -104,17 +101,21 @@ int main(void)
 		sensor_value = readTemp();
 		if(current_state == id_state){
 			// send succeed
-			transmit(succeed);
+			transmit_word(succeed);
+	
 			// send id
 			transmit_id();
 			current_state = old_state;
 		}
 		
 		if(current_state == send_state){
-			transmit(succeed); // Send succeed
+			// Send succeed
+			transmit_word(succeed);
+			
 			transmit_word(send_value); // Send highest possible value
 			current_state = old_state;
 		}
+		
 	}
 }
 
