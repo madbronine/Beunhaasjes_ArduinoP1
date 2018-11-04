@@ -13,7 +13,7 @@
 #include <avr/interrupt.h>
 #include "AVR_TTC_scheduler.h"
 #include "getTemp.h"
-
+#include "getLDR.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -46,6 +46,7 @@
 
 #define get_current_state 30
 
+int module_type = 1;
 
 float sensor_value = 0; // Can we handle light sensor in 8 bit?
 int sensor_min_value = -10;
@@ -89,7 +90,11 @@ void transmit_id(){
 void initialize(){
 	SCH_Init_T1();	// Initialize scheduler
 	uart_init(); // Initialize Uart
-	initSensor(); // Initialize Sensor
+	if(module_type == 0){
+		initSensorTMP();
+	} else if (module_type == 1){
+		initSensorLDR();
+	} else {}
 	SCH_Start(); // Start scheduler// Starts SEI
 }
 
@@ -97,11 +102,13 @@ int main(void)
 {
 	initialize();
 	
-		
-	/* Replace with your application code */
 	while (1)
-	{
-		sensor_value = readTemp();
+	{	
+		if (module_type == 0){
+			sensor_value = readTemp();		
+		} else if (module_type == 1) {
+			sensor_value = readLDR();
+		} else {  }
 		if(current_state == id_state){
 			// send succeed
 			transmit(succeed);

@@ -126,10 +126,16 @@
     <Compile Include="AVR_TTC_scheduler.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="getLDR.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="communication.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="communication.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="getLDR.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="getTemp.c">

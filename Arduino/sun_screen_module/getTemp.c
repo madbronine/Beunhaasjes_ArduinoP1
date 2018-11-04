@@ -24,7 +24,7 @@ void conversion(int x){
 	temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
 }
 
-void initSensor(void){
+void initSensorTMP(void){
 	  ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));    //Prescaler at 128 so we have an 125Khz clock source
 	  ADMUX |= (0<<REFS1) | (1<<REFS0);					//  voltage reference for the ADC,  Avcc(+5v) as voltage reference
 	  ADCSRB &= ~((1<<ADTS2)|(1<<ADTS1)|(1<<ADTS0));    //ADC in free-running mode
