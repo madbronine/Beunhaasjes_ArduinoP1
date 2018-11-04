@@ -5,6 +5,16 @@
 * Author : jeroe
 */
 
+// Compile helpers
+#define TEMP 0
+#define LIGHT 1
+
+// Change this to compile for other module
+#define TYPE 0		// Set to temp
+// #define TYPE 1	// Set to light
+
+
+
 #include <avr/io.h>
 #include <stdlib.h>
 #include <avr/sfr_defs.h>
@@ -56,7 +66,7 @@ int measure_timer = 40; // 40 for temperature and 30 for light sensor
 
 // Min and max and current distance of the sunscreen
 int min_distance = 5;	//	min: 0.05m =    5cm
-int max_distance = 160;	//  max: 1.60m		= 160cm
+//int max_distance = 160;	//  max: 1.60m		= 160cm
 int cur_distance = 0;	//
 
 // Pins to indicate if the sunscreen is rolling, out or in
@@ -64,10 +74,24 @@ uint8_t led_pin_out = 0;		// Red led
 uint8_t led_pin_in = 0;			// Green led
 uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indicating it's rolling out or in
 
+#if TYPE == TEMP // Handle temperature
 // Identifier
 char id[] = "TEMP"; // TEMP for temperature and LIGHT for light
 
+#else if  TYPE == LIGHT // Handle light
+// Identifier
+char id[] = "LIGHT"; // TEMP for temperature and LIGHT for light
 
+#endif // End statement
+
+
+#define module_type 0
+
+#if module_type==0
+int max_distance = 20;
+#else if module_type == 1
+int max_distance = 40;
+#endif
 
 
 enum comm_states{
@@ -87,15 +111,23 @@ int main(void)
 	uart_init();
 	SCH_Start(); // Starts SEI
 	initSensor();
-		
+	
 	/* Replace with your application code */
 	while (1)
 	{
+		#if TYPE == TEMP // Handle temperature 
+			sensor_value = readTemp();
+		#else if  TYPE == LIGHT // Handle light 
+			// Handle light sensor
+			sensor_value = 1000; // Example
+		#endif // End statement
+
+		
 		sensor_value = readTemp();
 		if(current_state == id_state){
 			// send succeed
 			transmit_word(succeed);
-	
+			
 			// send id
 			transmit_array(id);
 			current_state = old_state;
@@ -112,8 +144,6 @@ int main(void)
 	}
 }
 
-
-
 ISR (USART_RX_vect)
 {
 	uint8_t command = receive(); // Check the message
@@ -124,7 +154,7 @@ ISR (USART_RX_vect)
 	}
 	
 	switch(command) {
-	
+		
 		case detect :
 		old_state = current_state;
 		current_state = id_state;
@@ -135,7 +165,7 @@ ISR (USART_RX_vect)
 		current_state = send_state;
 		send_value = sensor_value;
 		break;
-	
+		
 		case get_timer :
 		old_state = current_state;
 		current_state = send_state;
