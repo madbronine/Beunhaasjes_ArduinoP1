@@ -65,7 +65,7 @@ uint8_t led_pin_in = 0;			// Green led
 uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indicating it's rolling out or in
 
 // Identifier
-char id[4] = "TEMP"; // TEMP for temperature and LIGHT for light
+char id[] = "TEMP"; // TEMP for temperature and LIGHT for light
 
 
 
@@ -81,51 +81,22 @@ enum comm_states current_state = default_state;
 
 int send_value = 0;
 
-// Initialize/Reset all variables
-void initialize_default(){
-	 sensor_value = 0; // Can we handle light sensor in 8 bit?
-	 sensor_min_value = 10;
-	 sensor_max_value = 20;
-
-	 measure_timer = 40;
-	 min_distance = 5;
-	 max_distance = 160;
-	 cur_distance = 0;
-	 led_pin_out = 0;	
-	 led_pin_in = 0;
-	 led_pin_rolling = 0;
-
-	 id[4] = "TEMP"; 
-	
-	reset_state();
-}
-
-void reset_state(){
-	current_state = default_state;
-	old_state = default_state;
-	
-	send_value = 0;
-}
-
 void transmit_id(){
 	// On identification, reset all variables
-	
-	for (int i = 0; i < 4; i++)
-	{
-		transmit(id[i]);
-	}
-	
-	transmit_eol();
+	transmit_array(id);
+}
+
+void initialize(){
+	SCH_Init_T1();	// Initialize scheduler
+	uart_init(); // Initialize Uart
+	initSensor(); // Initialize Sensor
+	SCH_Start(); // Start scheduler// Starts SEI
 }
 
 int main(void)
 {
-	SCH_Init_T1();
-	uart_init();
+	initialize();
 	
-	SCH_Start(); // Starts SEI
-
-	initSensor();
 		
 	/* Replace with your application code */
 	while (1)
@@ -134,8 +105,6 @@ int main(void)
 		if(current_state == id_state){
 			// send succeed
 			transmit(succeed);
-			transmit_eol();
-	
 			// send id
 			transmit_id();
 			current_state = old_state;
@@ -143,37 +112,9 @@ int main(void)
 		
 		if(current_state == send_state){
 			transmit(succeed); // Send succeed
-			
-			transmit_eol();
-			
 			transmit_word(send_value); // Send highest possible value
 			current_state = old_state;
 		}
-		
-		
-		/*
-		uint8_t data = receive();
-		
-		
-		// if: detect
-		if(data == detect){
-		// send succeed
-		transmit(succeed);
-		// send id
-		transmit_id();
-		}else if(data == get_distance_max)
-		{ // get distance max
-		transmit(succeed); // Send succeed
-		transmit_word(max_distance); // Send highest possible value
-		}else if(data == get_timer){
-		transmit(succeed); // Send succeed
-		transmit_word(measure_timer); // Send highest possible value
-		}
-		*/
-		
-		// Just wait for input i guess
-		// Send some signal back
-		// etc
 	}
 }
 

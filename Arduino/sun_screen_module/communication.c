@@ -34,7 +34,23 @@ void transmit_eol() {
 void transmit(int c) {
 	loop_until_bit_is_set(UCSR0A, UDRE0); // Wait until data register empty
 	UDR0 = c;
+	transmit_eol();
+			
 }
+
+// Transmit character
+void transmit_array(char c[]) {
+	size_t len = strlen(c);
+	
+	for (int i = 0; i < len; i++)
+	{
+		loop_until_bit_is_set(UCSR0A, UDRE0); // Wait until data register empty
+		UDR0 = c[i];
+	}
+	
+	transmit_eol();
+}
+
 
 // Transmit 16 bit int
 void transmit_word(int value){

@@ -34,7 +34,7 @@ def get_devices():
 # Reads the sensor data from the given device
 def get_sensor_data(module):
     distance_min = get_sensor_setting(module, 'get_sensor_value')
-    
+
     return distance_min['data'] # Example value:    namedtuple('sensor_value' : 5)
 
 
@@ -114,14 +114,11 @@ def create_module(ser, type, comport):
 
 # Get all data from the arduino to initialize the module class
 def create_data(module):
-    print('IMPORTANT: Not correct data yet')
     timer = get_sensor_setting(module, 'get_timer')
     sensor_min = get_sensor_setting(module, 'get_sensor_min')
     sensor_max = get_sensor_setting(module, 'get_sensor_max')
     distance_min = get_sensor_setting(module, 'get_distance_min')
     distance_max = get_sensor_setting(module, 'get_distance_max')
-
-    print('@@@$%#!%^$^#% MESSAGE:' , distance_min['message'])
 
     data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
     return data
