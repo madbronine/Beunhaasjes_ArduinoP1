@@ -5,6 +5,16 @@
 * Author : jeroe
 */
 
+// Compile helpers
+#define TEMP 0
+#define LIGHT 1
+
+// Change this to compile for other module
+#define TYPE 0		// Set to temp
+// #define TYPE 1	// Set to light
+
+
+
 #include <avr/io.h>
 #include <stdlib.h>
 #include <avr/sfr_defs.h>
@@ -14,6 +24,7 @@
 #include "AVR_TTC_scheduler.h"
 #include "getTemp.h"
 #include "getLDR.h"
+
 
 #define TRUE 1
 #define FALSE 0
@@ -46,7 +57,6 @@
 
 #define get_current_state 30
 
-int module_type = 1;
 
 float sensor_value = 0; // Can we handle light sensor in 8 bit?
 int sensor_min_value = -10;
@@ -57,7 +67,7 @@ int measure_timer = 40; // 40 for temperature and 30 for light sensor
 
 // Min and max and current distance of the sunscreen
 int min_distance = 5;	//	min: 0.05m =    5cm
-int max_distance = 160;	//  max: 1.60m		= 160cm
+//int max_distance = 160;	//  max: 1.60m		= 160cm
 int cur_distance = 0;	//
 
 // Pins to indicate if the sunscreen is rolling, out or in
@@ -65,10 +75,24 @@ uint8_t led_pin_out = 0;		// Red led
 uint8_t led_pin_in = 0;			// Green led
 uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indicating it's rolling out or in
 
+#if TYPE == TEMP // Handle temperature
 // Identifier
 char id[] = "TEMP"; // TEMP for temperature and LIGHT for light
 
+#else if  TYPE == LIGHT // Handle light
+// Identifier
+char id[] = "LIGHT"; // TEMP for temperature and LIGHT for light
 
+#endif // End statement
+
+
+#define module_type 0
+
+#if module_type==0
+int max_distance = 20;
+#else if module_type == 1
+int max_distance = 40;
+#endif
 
 
 enum comm_states{
@@ -82,50 +106,51 @@ enum comm_states current_state = default_state;
 
 int send_value = 0;
 
-void transmit_id(){
-	// On identification, reset all variables
-	transmit_array(id);
-}
-
-void initialize(){
-	SCH_Init_T1();	// Initialize scheduler
-	uart_init(); // Initialize Uart
-	if(module_type == 0){
-		initSensorTMP();
-	} else if (module_type == 1){
-		initSensorLDR();
-	} else {}
-	SCH_Start(); // Start scheduler// Starts SEI
-}
-
 int main(void)
 {
-	initialize();
+	SCH_Init_T1();
+	uart_init();
+	SCH_Start(); // Starts SEI
 	
+	#if TYPE == TEMP // Handle temperature
+	// init temp sensor
+	initSensorTMP();
+	#else if  TYPE == LIGHT // Handle light
+	// init ldr sensor
+	initSensorLDR();
+	#endif // End statement
+	
+	/* Replace with your application code */
 	while (1)
-	{	
-		if (module_type == 0){
-			sensor_value = readTemp();		
-		} else if (module_type == 1) {
-			sensor_value = readLDR();
-		} else {  }
+	{
+		#if TYPE == TEMP // Handle temperature 
+			sensor_value = readTemp();
+		#else if  TYPE == LIGHT // Handle light 
+			// Handle light sensor
+			sensor_value = readLDR(); // Example
+		#endif // End statement
+
+		
+		sensor_value = readTemp();
 		if(current_state == id_state){
 			// send succeed
-			transmit(succeed);
+			transmit_word(succeed);
+			
 			// send id
-			transmit_id();
+			transmit_array(id);
 			current_state = old_state;
 		}
 		
 		if(current_state == send_state){
-			transmit(succeed); // Send succeed
+			// Send succeed
+			transmit_word(succeed);
+			
 			transmit_word(send_value); // Send highest possible value
 			current_state = old_state;
 		}
+		
 	}
 }
-
-
 
 ISR (USART_RX_vect)
 {
@@ -137,7 +162,7 @@ ISR (USART_RX_vect)
 	}
 	
 	switch(command) {
-	
+		
 		case detect :
 		old_state = current_state;
 		current_state = id_state;
@@ -148,7 +173,7 @@ ISR (USART_RX_vect)
 		current_state = send_state;
 		send_value = sensor_value;
 		break;
-	
+		
 		case get_timer :
 		old_state = current_state;
 		current_state = send_state;
