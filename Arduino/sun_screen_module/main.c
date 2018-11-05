@@ -70,9 +70,6 @@ int measure_timer = 30;
 #endif
 
 
-
-
-
 float sensor_value = 0; // Can we handle light sensor in 8 bit?
 int sensor_min_value = -10;
 int sensor_max_value = 20;
@@ -116,20 +113,27 @@ enum screen_states{
 enum screen_states old_screen_state = rolled_in;
 enum screen_states current_screen_state = rolled_in;
 
+// Initializes all defaults
+void initialize(){
+		SCH_Init_T1();
+		uart_init();
+		
+		
+		#if MODULE_TYPE == TEMP // Handle temperature
+		// init temp sensor
+		initSensorTMP();
+		#elif  MODULE_TYPE == LIGHT // Handle light
+		// init ldr sensor
+		initSensorLDR();
+		#endif // End statement
+		
+		
+		SCH_Start(); // Starts SEI
+}
 
 int main(void)
 {
-	SCH_Init_T1();
-	uart_init();
-	SCH_Start(); // Starts SEI
-	
-	#if MODULE_TYPE == TEMP // Handle temperature
-	// init temp sensor
-	initSensorTMP();
-	#elif  MODULE_TYPE == LIGHT // Handle light
-	// init ldr sensor
-	initSensorLDR();
-	#endif // End statement
+	initialize();
 	
 	while (1)
 	{
