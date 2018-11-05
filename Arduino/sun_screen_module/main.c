@@ -9,9 +9,9 @@
 #define TEMP 0
 #define LIGHT 1
 
-// Change this to compile for other module
-#define TYPE 0		// Set to temp
-// #define TYPE 1	// Set to light
+// Change this to compile for other modules
+#define MODULE_TYPE 0 // Set to temp
+// #define MODULE_TYPE 1 // Set to light
 
 
 
@@ -58,64 +58,64 @@
 
 #define get_current_state 30
 
+// Initialize variables
+#if MODULE_TYPE == TEMP // Handle temperature
+// Identifier
+char id[] = "TEMP"; 
+int measure_timer = 40;
+#elif MODULE_TYPE == LIGHT // handle ldr
+// Identifier
+char id[] = "LIGHT";
+int measure_timer = 30;
+#endif
+
+
+
+
 
 float sensor_value = 0; // Can we handle light sensor in 8 bit?
 int sensor_min_value = -10;
 int sensor_max_value = 20;
 
-int measure_timer = 40; // 40 for temperature and 30 for light sensor
+ // 40 for temperature and 30 for light sensor
 //uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
 
 // Min and max and current distance of the sunscreen
 int min_distance = 5;	//	min: 0.05m =    5cm
-//int max_distance = 160;	//  max: 1.60m		= 160cm
+int max_distance = 160;	//  max: 1.60m		= 160cm
 int cur_distance = 0;	//
+
+// Temp variable to store our sending value
+int send_value = 0;
+
 
 // Pins to indicate if the sunscreen is rolling, out or in
 uint8_t led_pin_out = 0;		// Red led
 uint8_t led_pin_in = 0;			// Green led
 uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indicating it's rolling out or in
 
-#if TYPE == TEMP // Handle temperature
-// Identifier
-char id[] = "TEMP"; // TEMP for temperature and LIGHT for light
-
-#elif  TYPE == LIGHT // Handle light
-// Identifier
-char id[] = "LIGHT"; // TEMP for temperature and LIGHT for light
-
-#endif // End statement
 
 
-#define module_type 0
 
-#if module_type==0
-int max_distance = 20;
-#elif module_type == 1
-int max_distance = 40;
-#endif
-
-
+// Communication state
 enum comm_states{
 	default_state = 0,
 	id_state = 1,
 	send_state = 2,
 };
-
 enum comm_states old_comm_state = default_state;
 enum comm_states current_comm_state = default_state;
 
+
+// Sunscreen state
 enum screen_states{
 	rolled_in = 0,
 	rolling = 1,
 	rolled_out = 2
 };
+enum screen_states old_screen_state = rolled_in;
+enum screen_states current_screen_state = rolled_in;
 
-enum screen_states old_screen_state = default_state;
-enum screen_states current_screen_state = default_state;
-
-
-int send_value = 0;
 
 int main(void)
 {
@@ -123,20 +123,19 @@ int main(void)
 	uart_init();
 	SCH_Start(); // Starts SEI
 	
-	#if TYPE == TEMP // Handle temperature
+	#if MODULE_TYPE == TEMP // Handle temperature
 	// init temp sensor
 	initSensorTMP();
-	#elif  TYPE == LIGHT // Handle light
+	#elif  MODULE_TYPE == LIGHT // Handle light
 	// init ldr sensor
 	initSensorLDR();
 	#endif // End statement
 	
-	/* Replace with your application code */
 	while (1)
 	{
-		#if TYPE == TEMP // Handle temperature
+		#if MODULE_TYPE == TEMP // Handle temperature
 		sensor_value = readTemp();
-		#elif  TYPE == LIGHT // Handle light
+		#elif  MODULE_TYPE == LIGHT // Handle light
 		// Handle light sensor
 		sensor_value = readLDR(); // Example
 		#endif // End statement

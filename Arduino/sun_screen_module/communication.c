@@ -5,6 +5,7 @@
 *  Author: Jeroen
 */
 #include <avr/interrupt.h>
+#include <string.h>
 #define UBBRVAL 51
 
 
