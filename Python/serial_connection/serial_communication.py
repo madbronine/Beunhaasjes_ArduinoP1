@@ -18,16 +18,23 @@ def identify_device(com_port, cmd, res):
     # Send our command + expected result length
     response = send_data(ser, cmd)
 
-    # if response matched expected result command
-    if response == res:
-        # Get the next text messages with the ID
-        msg = get_text_message(ser,  4) # expect 4 bits return result
-        # Fill in the result
-        result['error'] = False
-        result['type'] = msg
-        result['serial'] = ser
+    if response['error'] == False:
+        # if response matched expected result command
+        if response['data'] == res:
+            # Get the next text messages with the ID
+            msg = get_text_message(ser,  4) # expect 4 bits return result
+
+            if msg['error'] == False:
+                # Fill in the result
+                result['error'] = False
+                result['type'] = msg['data']
+                result['serial'] = ser
+            else:
+                result['error'] = True
+        else:
+            # Not expected! Fill in the result
+            result['error'] = True
     else:
-        # Not expected! Fill in the result
         result['error'] = True
 
     # returns the message: error, type and serial
@@ -51,6 +58,8 @@ def initialize_serial(com_port, time_out):
 
 # Sends data to the module
 def send_data(ser, data_to_send):
+    response = {'error' : True, 'data' : None}
+
     # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
     ser.flushInput();
 
@@ -74,29 +83,41 @@ def send_data(ser, data_to_send):
 
 # Returns data from the module, msg_length is by default high and low byte
 def get_message(ser, msg_length = 2):
+    response = {'error' : True, 'data' : None}
     # Retrieve data!
     bytes = read_untill_eol(ser)
 
+    if bytes['error'] == True: # Got an error
+        response['error'] = True
+        return response
     # Debug line:
     #print('received: ', msga, type(msga))
     # Create signed int from 2 bytes (little endian)
-    val = int.from_bytes(bytes, "little", signed=True)
+    val = int.from_bytes(bytes['data'], "little", signed=True)
     # Debug value
     #print('Value is: ', val)
+    response['error'] = False;
+    response['data'] = val;
 
-    return val
+
+    return response
 
 
 # Get an character messe
 def get_text_message(ser, length):
+    response = {'error': True, 'data' : None}
     bytes = read_untill_eol(ser)
-    dec_msg = bytes.decode() # Decode the message
+
+    if bytes['error'] == False:
+        response['data'] = bytes['data'].decode() # Decode the message
+        response['error'] = False
 
     # Debug line:
     #print('Module returns:', msg, '- Decoded:', dec_msg)
-    return dec_msg
+    return response
 
 def read_untill_eol(ser):
+    message = {'error' : False, 'data' : None}
     eol = '\r'
     eol = str.encode(eol)
     done = False
@@ -105,9 +126,16 @@ def read_untill_eol(ser):
 
     while done == False:
         value = ser.read(1) # Retrieve data! (4 bits)
+
         if value == eol:
+            done = True
+        elif value == b'': # if we got an empty byte
+            message['error'] = True
             done = True
         else:
             bytes.extend(value)
 
-    return bytes # return the message
+    message['data'] = bytes
+
+
+    return message # return the message

@@ -152,21 +152,23 @@ def get_sensor_setting(module, send_cmd):
 
     return result
 
-
-
-
 # Handles sending and receiving
 def get_value(module, send_code, resp_code):
     result = {}
 
     resp = ser_com.send_data(module.get_ser(), send_code) # Retrieve message
 
-    if resp == resp_code:
-        data = ser_com.get_message(module.get_ser()) # Retrieve message
-        result['error'] = False
-        result['data'] = data
+
+    if resp['error'] == False:
+        if resp['data'] == resp_code:
+            data = ser_com.get_message(module.get_ser()) # Retrieve message
+            result['error'] = False
+            result['data'] = data['data']
+        else:
+            result['message'] = "Invalid response code: {0} - asked for {1}".format(resp[data], resp_code)
+            result['error'] = True
     else:
-        result['message'] = "Invalid response code: {0} - asked for {1}".format(resp, resp_code)
+        result['message'] = "Invalid device"
         result['error'] = True
 
     return result
