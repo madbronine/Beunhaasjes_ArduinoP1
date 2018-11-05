@@ -23,6 +23,7 @@
 #include <avr/interrupt.h>
 #include "AVR_TTC_scheduler.h"
 #include "getTemp.h"
+#include "communication.h"
 #include "getLDR.h"
 
 
@@ -79,7 +80,7 @@ uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indic
 // Identifier
 char id[] = "TEMP"; // TEMP for temperature and LIGHT for light
 
-#else if  TYPE == LIGHT // Handle light
+#elif  TYPE == LIGHT // Handle light
 // Identifier
 char id[] = "LIGHT"; // TEMP for temperature and LIGHT for light
 
@@ -90,7 +91,7 @@ char id[] = "LIGHT"; // TEMP for temperature and LIGHT for light
 
 #if module_type==0
 int max_distance = 20;
-#else if module_type == 1
+#elif module_type == 1
 int max_distance = 40;
 #endif
 
@@ -101,8 +102,18 @@ enum comm_states{
 	send_state = 2,
 };
 
-enum comm_states old_state = default_state;
-enum comm_states current_state = default_state;
+enum comm_states old_comm_state = default_state;
+enum comm_states current_comm_state = default_state;
+
+enum screen_states{
+	rolled_in = 0,
+	rolling = 1,
+	rolled_out = 2
+};
+
+enum screen_states old_screen_state = default_state;
+enum screen_states current_screen_state = default_state;
+
 
 int send_value = 0;
 
@@ -115,7 +126,7 @@ int main(void)
 	#if TYPE == TEMP // Handle temperature
 	// init temp sensor
 	initSensorTMP();
-	#else if  TYPE == LIGHT // Handle light
+	#elif  TYPE == LIGHT // Handle light
 	// init ldr sensor
 	initSensorLDR();
 	#endif // End statement
@@ -123,30 +134,30 @@ int main(void)
 	/* Replace with your application code */
 	while (1)
 	{
-		#if TYPE == TEMP // Handle temperature 
-			sensor_value = readTemp();
-		#else if  TYPE == LIGHT // Handle light 
-			// Handle light sensor
-			sensor_value = readLDR(); // Example
+		#if TYPE == TEMP // Handle temperature
+		sensor_value = readTemp();
+		#elif  TYPE == LIGHT // Handle light
+		// Handle light sensor
+		sensor_value = readLDR(); // Example
 		#endif // End statement
 
 		
 		sensor_value = readTemp();
-		if(current_state == id_state){
+		if(current_comm_state == id_state){
 			// send succeed
 			transmit_word(succeed);
 			
 			// send id
 			transmit_array(id);
-			current_state = old_state;
+			current_comm_state = old_comm_state;
 		}
 		
-		if(current_state == send_state){
+		if(current_comm_state == send_state){
 			// Send succeed
 			transmit_word(succeed);
 			
 			transmit_word(send_value); // Send highest possible value
-			current_state = old_state;
+			current_comm_state = old_comm_state;
 		}
 		
 	}
@@ -157,63 +168,56 @@ ISR (USART_RX_vect)
 	uint8_t command = receive(); // Check the message
 	
 	// If we are sending, dont do anything!
-	if(current_state == send_state){
+	if(current_comm_state == send_state){
 		return;
 	}
+	
+	old_comm_state = current_comm_state;
 	
 	switch(command) {
 		
 		case detect :
-		old_state = current_state;
-		current_state = id_state;
+		current_comm_state = id_state;
 		break;
 		
 		case get_sensor_value:
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = sensor_value;
 		break;
 		
 		case get_timer :
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = measure_timer;
 		break;
 		
 		case get_sensor_min :
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = sensor_min_value;
 		break;
 		
 		case get_sensor_max :
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = sensor_max_value;
 		break;
 		
 		case get_distance_min :
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = min_distance;
 		break;
 		
 		case get_distance_max :
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = max_distance;
 		break;
 		
 		case get_current_state :
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = 100;
 		break;
 		
 		
 		default : /* Error */
-		old_state = current_state;
-		current_state = send_state;
+		current_comm_state = send_state;
 		send_value = wrong;
 	}
 }
