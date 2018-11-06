@@ -116,23 +116,6 @@ enum screen_states{
 enum screen_states old_screen_state = rolled_in;
 enum screen_states current_screen_state = rolled_in;
 
-// Initializes all defaults
-void initialize(){
-	SCH_Init_T1();
-	uart_init();
-	
-	#if MODULE_TYPE == TEMP // Handle temperature
-	// init temp sensor
-	initSensorTMP();
-	#elif  MODULE_TYPE == LIGHT // Handle light
-	// init ldr sensor
-	initSensorLDR();
-	#endif // End statement
-	
-	
-	SCH_Start(); // Starts SEI
-}
-
 
 // Can be used to edit or parse value pack
 void handle_value(int *value){
@@ -146,7 +129,7 @@ void handle_value(int *value){
 	}
 }
 
-
+// Selecteds data based on message
 void select_data(){
 	
 	switch (message)
@@ -164,6 +147,12 @@ void select_data(){
 		break;
 		
 		case send_sensor_value:
+		#if MODULE_TYPE == TEMP // Handle temperature
+		sensor_value = (int)(get_temp() * 10);
+		#elif  MODULE_TYPE == LIGHT // Handle light
+		// Handle light sensor
+		sensor_value = readLDR(); // Example
+		#endif // End statement
 		handle_value(&sensor_value);
 		break;
 		
@@ -215,22 +204,34 @@ void handle_state(){
 	}
 }
 
+// Initializes all defaults
+void initialize(){
+	SCH_Init_T1();
+	uart_init();
+	
+	SCH_Add_Task(handle_state, 0, 10);
+	SCH_Add_Task(update_temp, 0, measure_timer);
+	
+	// Initialize sensor type
+	#if MODULE_TYPE == TEMP // Handle temperature
+	// init temp sensor
+	initSensorTMP();
+	#elif  MODULE_TYPE == LIGHT // Handle light
+	// init ldr sensor
+	initSensorLDR();
+	#endif // End statement
+	
+	
+	SCH_Start(); // Starts SEI
+}
+
 int main(void)
 {
 	initialize();
 	
 	while (1)
 	{
-		#if MODULE_TYPE == TEMP // Handle temperature
-		sensor_value = (int)(readTemp() * 10);
-		#elif  MODULE_TYPE == LIGHT // Handle light
-		// Handle light sensor
-		sensor_value = readLDR(); // Example
-		#endif // End statement
-		sensor_value = (int)(readTemp() * 10);
-		
-		handle_state();
-		
+		SCH_Dispatch_Tasks();
 	}
 }
 
