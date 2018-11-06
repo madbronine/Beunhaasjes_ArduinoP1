@@ -56,10 +56,21 @@ def initialize_serial(com_port, time_out):
     return ser
 
 
-# Sends data to the module
+# Sends data to the module with a response
 def send_data(ser, data_to_send):
     response = {'error' : True, 'data' : None}
 
+    transmit_data(ser, data_to_send);
+
+    # Get response message
+    response = get_message(ser)
+
+    # Return the response message
+    return response
+
+
+# Sends data to the module (doesn't handle any responses)
+def transmit_data(ser, data_to_send):
     # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
     ser.flushInput();
 
@@ -75,11 +86,6 @@ def send_data(ser, data_to_send):
     # Send data
     ser.write(converted_data)
 
-    # Get response message
-    response = get_message(ser)
-
-    # Return the response message
-    return response
 
 # Returns data from the module, msg_length is by default high and low byte
 def get_message(ser, msg_length = 2):
@@ -139,3 +145,21 @@ def read_untill_eol(ser):
 
 
     return message # return the message
+
+# Sends an 16 bit signed int (in low and high byte)
+def send_word(ser, value):
+    #print('result', value)
+
+    # Split int to two bytes
+    result = split_int(value);
+    print('result (split)', result)
+
+    #Send low and high byte
+    transmit_data(ser, result['low'])
+    transmit_data(ser, result['high'])
+
+
+# Splits value in 2 bytes (low, high)
+def split_int(value):
+    result = {'low' : value // 256, 'high' : value % 256}
+    return result

@@ -71,13 +71,11 @@ uint8_t receive() {
 // Receive 16 bit int
 int receive_word(){
 	uint8_t high = receive();
-	transmit_word(high);
+	//transmit_word(high);
 	uint8_t low = receive();
-	transmit_word(low);
+	//transmit_word(low);
 	
-	
-	// merge two char into short
-	// value = highbyte << 8 places | low byte;
+	// Make on bit
 	int received = (high << 8) | low;
 	
 	return received;

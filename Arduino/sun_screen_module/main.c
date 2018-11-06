@@ -78,7 +78,8 @@ enum com_messages{
 	// Receive  commands
 	detect = 10,
 	request_id = 12,
-	get_sensor_value = 13,
+	send_sensor_value = 13,
+	
 	timer_value = 20,
 	sensor_min = 22,
 	sensor_max = 24,
@@ -86,7 +87,7 @@ enum com_messages{
 	distance_max = 28,
 	current_state = 30
 };
-enum com_messages message = 0;
+enum com_messages message = no_message;
 
 
 // Communication state
@@ -164,6 +165,12 @@ void select_data(){
 }
 
 void handle_state(){
+	if(current_comm_state == id_state){
+		transmit_word(succeed);
+		transmit_array(id);
+		current_comm_state = default_state;
+	}
+	
 	if(current_comm_state == receive_state){
 		transmit_word(succeed);
 		old_comm_state = current_comm_state; // set old state to current state

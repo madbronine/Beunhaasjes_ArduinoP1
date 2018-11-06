@@ -20,8 +20,8 @@ def main():
         for port, device in current_devices.items():
             print('---------')
             print(device)
-            print('---------')
-            print('Sensor reading:', ser_con.get_sensor_data(device))
+            #print('---------')
+            #print('Sensor reading:', ser_con.get_sensor_data(device))
             print('---------')
 
         # handle data of devices:
