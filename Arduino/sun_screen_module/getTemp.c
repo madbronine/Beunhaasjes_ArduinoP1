@@ -40,7 +40,7 @@ float readTemp(void){
 	conversion(analogValue);
 	
 	// return value
-	return (int)(temperatureC * 10);
+	return temperatureC;
 	//return temperatureF;
 }
 

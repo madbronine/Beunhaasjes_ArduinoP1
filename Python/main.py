@@ -27,6 +27,9 @@ def main():
             testValue += 300
             ser_con.set_sensor_data(device, 'timer', testValue)
             print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
+
+            print('Temperature reading:', ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
+
             print('---------')
 
         # handle data of devices:
