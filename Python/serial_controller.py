@@ -127,8 +127,9 @@ def create_data(module):
 # Get given sensor setting from specified module
 def get_sensor_setting(module, send_cmd):
     result = {'error' : False, 'message' : None, 'data' : None} # Store result!
+    port = module.get_port()
 
-    isConnected = ser_scan.check_connection(module.get_port()) #Check connection
+    isConnected = ser_scan.check_connection(port) #Check connection
     send_code = msg.send_code(send_cmd)   # Get send code
     resp_code = msg.response_code('succeed') # Get response code
 
@@ -181,3 +182,21 @@ def get_value(module, send_code, resp_code):
     print('000------------000')
     print(result['data'])
     return result;
+
+
+
+
+# Handles sending and receiving
+def set_sensor_data(module, send_code, value):
+    ser = module.get_ser()
+    var = msg.send_code(send_code)['code']
+
+    res = ser_com.send_data(ser, 14) # Get var
+    print('Sending SET (14), result: ', res)
+
+    if res['data'] == 10:
+        rest = ser_com.send_data(ser, var) # Get var
+        print('Sending 20 result: ', rest)
+        if rest['data'] == 10:
+            #final = get_message(ser)['data']
+            ser_com.send_word(ser, value)

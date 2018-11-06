@@ -4,6 +4,8 @@ import module
 
 def main():
 
+    testValue = 50
+
     # program loop
     while(True):
 
@@ -21,7 +23,9 @@ def main():
             print('---------')
             print(device)
             #print('---------')
-            #print('Sensor reading:', ser_con.get_sensor_data(device))
+            print('Time reading:', ser_con.get_sensor_setting(module, 'timer'))
+            ser_con.set_sensor_data(device, 'timer', testValue)
+            print('Time reading:', ser_con.get_sensor_setting(module, 'timer'))
             print('---------')
 
         # handle data of devices:
