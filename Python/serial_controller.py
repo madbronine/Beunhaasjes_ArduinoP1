@@ -137,7 +137,7 @@ def get_sensor_setting(module, send_cmd):
     if isConnected == True: # are we connected
         if  send_code['error'] == False and resp_code['error'] == False: # No error
             response = get_value(module, send_code['code'], resp_code['code']) # Get data
-            print('My response: ', response)
+            #print('My response: ', response)
             if response['error'] == False:
                 result['error'] = False
                 result['data'] = response['data']
@@ -178,9 +178,6 @@ def get_value(module, send_code, resp_code):
         result['message'] = "Invalid get code!"
         print(result['message'])
 
-
-    print('000------------000')
-    print(result['data'])
     return result;
 
 
@@ -192,11 +189,9 @@ def set_sensor_data(module, send_code, value):
     var = msg.send_code(send_code)['code']
 
     res = ser_com.send_data(ser, 14) # Get var
-    print('Sending SET (14), result: ', res)
 
     if res['data'] == 10:
         rest = ser_com.send_data(ser, var) # Get var
-        print('Sending 20 result: ', rest)
         if rest['data'] == 10:
             #final = get_message(ser)['data']
             ser_com.send_word(ser, value)

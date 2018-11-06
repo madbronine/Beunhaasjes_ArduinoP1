@@ -152,7 +152,7 @@ def send_word(ser, value):
 
     # Split int to two bytes
     result = split_int(value);
-    print('result (split)', result)
+    #print('result (split)', result)
 
     #Send low and high byte
     transmit_data(ser, result['low'])

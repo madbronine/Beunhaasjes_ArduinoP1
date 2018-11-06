@@ -1,6 +1,6 @@
 import serial_controller as ser_con
 import time
-import module
+from module import *
 
 def main():
 
@@ -23,9 +23,10 @@ def main():
             print('---------')
             print(device)
             #print('---------')
-            print('Time reading:', ser_con.get_sensor_setting(module, 'timer'))
+            print('Time reading:', ser_con.get_sensor_setting(device, 'timer')['data'])
+            testValue += 300
             ser_con.set_sensor_data(device, 'timer', testValue)
-            print('Time reading:', ser_con.get_sensor_setting(module, 'timer'))
+            print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
             print('---------')
 
         # handle data of devices:
