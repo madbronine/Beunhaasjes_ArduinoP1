@@ -7,6 +7,7 @@
 
 int readLDR(void);
 void initSensorLDR(void);
+void luxConversion(void);
 
 #ifndef GETLDR_H_
 #define GETLDR_H_

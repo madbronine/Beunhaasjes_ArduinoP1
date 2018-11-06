@@ -7,7 +7,11 @@
 
 #include <avr/io.h>
 
-int analogValue;
+float analogValue;
+float lux;
+float LDRValue = 20000;
+
+
 
 void initSensorLDR(void){
 	ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0));    //Prescaler at 128 so we have an 125Khz clock source
@@ -19,7 +23,13 @@ void initSensorLDR(void){
 	ADCSRA |= (1<<ADATE);               //Signal source, in this case is the free-running | Auto Triggering of the ADC is enabled.
 }
 
+void luxConversion(void){
+	lux = (250.0/(analogValue*LDRValue))-50.0;	
+}
+
 int readLDR(void){
 	analogValue = ADCW; // Read analog value
-	return analogValue;	
+	luxConversion();
+	// temporary int casting for debugging
+	return lux = (int)lux*10;	
 }
