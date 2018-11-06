@@ -46,7 +46,7 @@ int measure_timer = 30;
 
 
 float sensor_value = 0; // Can we handle light sensor in 8 bit?
-int sensor_min_value = -10;
+int sensor_min_value = -5;
 int sensor_max_value = 20;
 
 // 40 for temperature and 30 for light sensor
@@ -153,13 +153,37 @@ void select_data(){
 	switch (message)
 	{
 		case timer_value:
-		
 		handle_value(&measure_timer);
 		break;
 		
+		case sensor_min:
+		handle_value(&sensor_min_value);
+		break;
+		
+		case sensor_max:
+		handle_value(&sensor_max_value);
+		break;
+		
+		case send_sensor_value:
+		handle_value(&sensor_value);
+		break;
+		
+		case distance_min:
+		handle_value(&min_distance);
+		break;
+		
+		case distance_max:
+		handle_value(&max_distance);
+		break;
+		
+		case current_state:
+		handle_value(&current_screen_state);
+		break;
+		
+		
 		default:
 		/* Your code here */
-		transmit_word(50);
+		transmit_word(0);
 		break;
 	}
 }

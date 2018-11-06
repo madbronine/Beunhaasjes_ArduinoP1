@@ -115,14 +115,13 @@ def create_module(ser, type, comport):
 # Get all data from the arduino to initialize the module class
 def create_data(module):
     timer = get_sensor_setting(module, 'timer')
+    sensor_min = get_sensor_setting(module, 'sensor_min')
+    sensor_max = get_sensor_setting(module, 'sensor_max')
+    distance_min = get_sensor_setting(module, 'distance_min')
+    distance_max = get_sensor_setting(module, 'distance_max')
 
-    #sensor_min = get_sensor_setting(module, 'sensor_min')
-    #sensor_max = get_sensor_setting(module, 'sensor_max')
-    #distance_min = get_sensor_setting(module, 'distance_min')
-    #distance_max = get_sensor_setting(module, 'distance_max')
-
-    #data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
-    data = Module_Data(timer['data'], 0,0,0,0)
+    data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
+    #data = Module_Data(timer['data'], 0,0,0,0)
     return data
 
 # Get given sensor setting from specified module
@@ -164,11 +163,10 @@ def get_value(module, send_code, resp_code):
 
     if getCode['error'] == False: #Code exists
         res = ser_com.send_data(ser, getCode['code']) # Get var
-        print('Sending GET (15), result: ', res)
 
         if res['data'] == 10:
             rest = ser_com.send_data(ser, send_code) # Get var
-            print('Sending 20 result: ', rest)
+
             if rest['data'] == 10:
                 result['data'] = ser_com.get_message(ser)['data']
                 result['error'] = False
@@ -181,5 +179,5 @@ def get_value(module, send_code, resp_code):
 
 
     print('000------------000')
-    print(result)
+    print(result['data'])
     return result;
