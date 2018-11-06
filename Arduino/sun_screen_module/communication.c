@@ -62,18 +62,23 @@ void transmit_word(int value){
 	transmit_eol();
 }
 
-// Receive 16 bit int
-void receive_word(){
-	uint8_t high = 0;
-	uint8_t low = 0;
-	
-	// merge two char into short
-	// value = highbyte << 8 places | low byte;
-	int received = (high << 8) | low;
-}
-
 // Receive uint
 uint8_t receive() {
 	loop_until_bit_is_set(UCSR0A, RXC0); // Wait until data exists
 	return UDR0;
+}
+
+// Receive 16 bit int
+int receive_word(){
+	uint8_t high = receive();
+	transmit_word(high);
+	uint8_t low = receive();
+	transmit_word(low);
+	
+	
+	// merge two char into short
+	// value = highbyte << 8 places | low byte;
+	int received = (high << 8) | low;
+	
+	return received;
 }

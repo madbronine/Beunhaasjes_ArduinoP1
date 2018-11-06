@@ -31,38 +31,12 @@
 #define TRUE 1
 #define FALSE 0
 
-// Send  commands
-#define succeed 10	// Received
-#define wrong 11	// Error
-#define data_cmd 12		// Incoming data ?
 
-// Receive  commands
-#define detect 10
-
-#define request_id 12
-#define get_sensor_value 13
-
-#define set_timer 20
-#define get_timer 21
-
-#define set_sensor_min 22
-#define get_sensor_min 23
-
-#define set_sensor_max 24
-#define get_sensor_max 25
-
-#define set_distance_min 26
-#define get_distance_min 27
-
-#define set_distance_max 28
-#define get_distance_max 29
-
-#define get_current_state 30
 
 // Initialize variables
 #if MODULE_TYPE == TEMP // Handle temperature
 // Identifier
-char id[] = "TEMP"; 
+char id[] = "TEMP";
 int measure_timer = 40;
 #elif MODULE_TYPE == LIGHT // handle ldr
 // Identifier
@@ -75,7 +49,7 @@ float sensor_value = 0; // Can we handle light sensor in 8 bit?
 int sensor_min_value = -10;
 int sensor_max_value = 20;
 
- // 40 for temperature and 30 for light sensor
+// 40 for temperature and 30 for light sensor
 //uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
 
 // Min and max and current distance of the sunscreen
@@ -93,6 +67,26 @@ uint8_t led_pin_in = 0;			// Green led
 uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indicating it's rolling out or in
 
 
+enum com_messages{
+	no_message = 0,
+	
+	// Send  commands
+	succeed = 10,	// Received
+	wrong = 11,	// Error
+	data_cmd = 12,		// Incoming data ?
+
+	// Receive  commands
+	detect = 10,
+	request_id = 12,
+	get_sensor_value = 13,
+	timer_value = 20,
+	sensor_min = 22,
+	sensor_max = 24,
+	distance_min = 26,
+	distance_max = 28,
+	current_state = 30
+};
+enum com_messages message = 0;
 
 
 // Communication state
@@ -100,9 +94,16 @@ enum comm_states{
 	default_state = 0,
 	id_state = 1,
 	send_state = 2,
+	receive_state = 3,
+	send_data_state = 4,
+	receive_data_state = 5,
+	wait_for_index_state = 6
 };
 enum comm_states old_comm_state = default_state;
 enum comm_states current_comm_state = default_state;
+
+int wait_for_message = FALSE;
+
 
 
 // Sunscreen state
@@ -116,20 +117,72 @@ enum screen_states current_screen_state = rolled_in;
 
 // Initializes all defaults
 void initialize(){
-		SCH_Init_T1();
-		uart_init();
+	SCH_Init_T1();
+	uart_init();
+	
+	
+	#if MODULE_TYPE == TEMP // Handle temperature
+	// init temp sensor
+	initSensorTMP();
+	#elif  MODULE_TYPE == LIGHT // Handle light
+	// init ldr sensor
+	initSensorLDR();
+	#endif // End statement
+	
+	
+	SCH_Start(); // Starts SEI
+}
+
+
+// Can be used to edit or parse value pack
+void handle_value(int *value){
+
+	if(current_comm_state == send_data_state){
+		transmit_word(*value);
+
+		}else if(current_comm_state == receive_data_state){
+		*value = receive_word(); // receives data
+		//transmit_word(100);
+	}
+}
+
+
+void select_data(){
+	
+	switch (message)
+	{
+		case timer_value:
 		
+		handle_value(&measure_timer);
+		break;
 		
-		#if MODULE_TYPE == TEMP // Handle temperature
-		// init temp sensor
-		initSensorTMP();
-		#elif  MODULE_TYPE == LIGHT // Handle light
-		// init ldr sensor
-		initSensorLDR();
-		#endif // End statement
+		default:
+		/* Your code here */
+		transmit_word(50);
+		break;
+	}
+}
+
+void handle_state(){
+	if(current_comm_state == receive_state){
+		transmit_word(succeed);
+		old_comm_state = current_comm_state; // set old state to current state
+		current_comm_state = wait_for_index_state; // wait for type select in uart
 		
-		
-		SCH_Start(); // Starts SEI
+	}
+	
+	if(current_comm_state == send_state){
+		transmit_word(succeed);
+		old_comm_state = current_comm_state; // set old state to current state
+		current_comm_state = wait_for_index_state; // wait for type select in uart
+	}
+	
+	if(current_comm_state == send_data_state || current_comm_state == receive_data_state){ // if type is selected
+		old_comm_state = default_state;
+		transmit_word(succeed);
+		select_data();
+		current_comm_state = default_state;
+	}
 }
 
 int main(void)
@@ -144,84 +197,53 @@ int main(void)
 		// Handle light sensor
 		sensor_value = readLDR(); // Example
 		#endif // End statement
-
 		
-		sensor_value = readTemp();
-		if(current_comm_state == id_state){
-			// send succeed
-			transmit_word(succeed);
-			
-			// send id
-			transmit_array(id);
-			current_comm_state = old_comm_state;
-		}
-		
-		if(current_comm_state == send_state){
-			// Send succeed
-			transmit_word(succeed);
-			
-			transmit_word(send_value); // Send highest possible value
-			current_comm_state = old_comm_state;
-		}
+		handle_state();
 		
 	}
 }
 
 ISR (USART_RX_vect)
 {
-	uint8_t command = receive(); // Check the message
 	
 	// If we are sending, dont do anything!
-	if(current_comm_state == send_state){
-		return;
+	
+	if(current_comm_state == default_state){ // Wait for a command
+		uint8_t command = receive();
+		
+		switch(command) {
+			
+			case detect :
+			current_comm_state = id_state;
+			break;
+			
+			case 14: // receive new setting
+			current_comm_state = receive_state;
+			break;
+			
+			case 15 : // send setting - values
+			current_comm_state = send_state;
+			break;
+
+			
+			/*default :	// Error
+			current_comm_state = send_state;
+			send_value = wrong; */
+		}
+	}
+
+	if(current_comm_state == wait_for_index_state  && old_comm_state == receive_state){
+		uint8_t command = receive(); // Receive data type command
+		message = command;
+		current_comm_state = receive_data_state; // Set state to send our data!
 	}
 	
-	old_comm_state = current_comm_state;
-	
-	switch(command) {
-		
-		case detect :
-		current_comm_state = id_state;
-		break;
-		
-		case get_sensor_value:
-		current_comm_state = send_state;
-		send_value = sensor_value;
-		break;
-		
-		case get_timer :
-		current_comm_state = send_state;
-		send_value = measure_timer;
-		break;
-		
-		case get_sensor_min :
-		current_comm_state = send_state;
-		send_value = sensor_min_value;
-		break;
-		
-		case get_sensor_max :
-		current_comm_state = send_state;
-		send_value = sensor_max_value;
-		break;
-		
-		case get_distance_min :
-		current_comm_state = send_state;
-		send_value = min_distance;
-		break;
-		
-		case get_distance_max :
-		current_comm_state = send_state;
-		send_value = max_distance;
-		break;
-		
-		case get_current_state :
-		current_comm_state = send_state;
-		send_value = 100;
-		break;
-		
-		
-		default : /* Error */
-		current_comm_state = send_state;
-		send_value = wrong;
+	if(current_comm_state == wait_for_index_state  && old_comm_state == send_state){
+		uint8_t command = receive(); // Receive data type command
+		message = command;
+		current_comm_state = send_data_state; // Set state to send our data!
 	}
+	
+	
+	
 }
