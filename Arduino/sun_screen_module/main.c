@@ -22,9 +22,10 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "AVR_TTC_scheduler.h"
-#include "getTemp.h"
 #include "communication.h"
+#include "getTemp.h"
 #include "getLDR.h"
+#include "ultrasone.h"
 
 
 #define TRUE 1
