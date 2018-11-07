@@ -47,9 +47,9 @@ int measure_timer = 30;
 #endif
 
 
-int sensor_value = 0; // Can we handle light sensor in 8 bit?
-int sensor_min_value = -5;
-int sensor_max_value = 20;
+float sensor_value = 20; // Can we handle light sensor in 8 bit?
+float sensor_min_value = 19;
+float sensor_max_value = 22;
 
 // 40 for temperature and 30 for light sensor
 //uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
@@ -128,6 +128,7 @@ void handle_value(int *value){
 
 // Selecteds data based on message
 void select_data(){
+	int sen_value =0;
 	
 	switch (message)
 	{
@@ -136,21 +137,24 @@ void select_data(){
 		break;
 		
 		case sensor_min:
-		handle_value(&sensor_min_value);
+		 sen_value = (int)(sensor_min_value * 10);
+		handle_value(&sen_value);
+		sensor_min_value = (float)(sen_value * 0.1);
 		break;
 		
 		case sensor_max:
-		handle_value(&sensor_max_value);
+		 sen_value = (int)(sensor_max_value * 10);
+		handle_value(&sen_value);
+		sensor_max_value = (float)(sen_value * 0.1);
 		break;
 		
 		case send_sensor_value:
-		#if MODULE_TYPE == TEMP // Handle temperature
-		sensor_value = (int)(get_temp() * 10);
-		#elif  MODULE_TYPE == LIGHT // Handle light
-		// Handle light sensor
-		sensor_value = readLDR(); // Example
-		#endif // End statement
-		handle_value(&sensor_value);
+		// Should handle LDR and TEMP
+		sensor_value = get_temp();
+		
+		sen_value = (int)(sensor_value * 10);
+		handle_value(&sen_value);
+		sensor_value = (float)(sen_value * 0.1);
 		break;
 		
 		case distance_min:
@@ -202,9 +206,12 @@ void handle_state(){
 }
 
 void check_sensor(){
-	float min = sensor_min_value / 10;
-	float max = sensor_max_value / 10; 
-	float value = sensor_value / 10;
+	
+	if(sensor_value < sensor_min_value){
+		set_screen_state(0); // roll in
+	}else if(sensor_value > sensor_max_value){
+		set_screen_state(1); // roll out
+	}
 
 
 }
@@ -215,9 +222,9 @@ void initialize(){
 	screen_init();
 	
 	SCH_Add_Task(handle_state, 0, 10);
-	SCH_Add_Task(handle_screen, 0, 50);
+	SCH_Add_Task(handle_screen, 80, 50);
 	SCH_Add_Task(update_temp, 0, measure_timer);
-	SCH_Add_Task(check_sensor, 0, 100);
+	SCH_Add_Task(check_sensor, 0, 20);
 	
 	
 	// Initialize sensor type

@@ -20,8 +20,8 @@ enum screen_states{
 	rolling = 1,
 	rolled_out = 2,
 };
-enum screen_states old_screen_status = rolled_out;
-enum screen_states current_screen_status = rolling;
+enum screen_states old_screen_status = rolled_in;
+enum screen_states current_screen_status = rolled_in;
 
 //Init
 void screen_init(){
@@ -36,7 +36,7 @@ void blink(void){
 	{
 		led_state = ON;
 		if (old_screen_status  == rolled_out){
-			leds = (ON<< led_green) | (OFF<< led_red) | (ON<< led_yellow);	
+			leds = (ON<< led_green) | (OFF<< led_red) | (ON<< led_yellow);
 		}
 		else{
 			leds = (OFF<< led_green) | (ON<< led_red) | (ON<< led_yellow);
@@ -46,10 +46,10 @@ void blink(void){
 	{
 		led_state = OFF;
 		if (old_screen_status  == rolled_out){
-			leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);	
+			leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
 		}
 		else{
-			leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);	
+			leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
 		}
 	}
 }
@@ -84,17 +84,20 @@ uint8_t get_old_screen_state(){
 }
 //Sets screen state
 void set_screen_state(uint8_t state){
-	if (state == 0)
-	{ &&
-	}
-	return;	
-	
-	
+
+	// If not rolling, state may be changed!
 	if (current_screen_status != rolling)
 	{
-		old_screen_status = current_screen_status;
-		current_screen_status = rolling;
+		if (state == ON && current_screen_status != rolled_out) // If not rolled out and state = on, roll in
+		{
+			// roll out
+			old_screen_status = current_screen_status;
+			current_screen_status = rolling;
+		}
+		else if(state == OFF && current_screen_status != rolled_in){ // If not rolled in and state = off, roll in
+			// roll in
+			old_screen_status = current_screen_status;
+			current_screen_status = rolling;
+		}
 	}
-	
-	
 }
