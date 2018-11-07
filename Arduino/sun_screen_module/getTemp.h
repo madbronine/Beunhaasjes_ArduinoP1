@@ -1,5 +1,5 @@
 
-float readTemp(void);
-void conversion(int);
-void analogToDigital(void);
 void initSensorTMP(void);
+void conversion(int);
+void update_temp(void);
+float get_temp(void);

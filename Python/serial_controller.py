@@ -77,9 +77,13 @@ def identify_devices(comports):
 
     # Identify every comport
     for comport in comports:
+        print('Testing comport:', comport)
+
         result = identy_device(comport) # Check every device
         if result["error"] == False:    # Didnt get an error
             new_devices[comport] = result["module"] # Add it
+        else:
+            print('Not added')
 
     return new_devices
 
@@ -114,28 +118,30 @@ def create_module(ser, type, comport):
 
 # Get all data from the arduino to initialize the module class
 def create_data(module):
-    timer = get_sensor_setting(module, 'get_timer')
-    sensor_min = get_sensor_setting(module, 'get_sensor_min')
-    sensor_max = get_sensor_setting(module, 'get_sensor_max')
-    distance_min = get_sensor_setting(module, 'get_distance_min')
-    distance_max = get_sensor_setting(module, 'get_distance_max')
+    timer = get_sensor_setting(module, 'timer')
+    sensor_min = get_sensor_setting(module, 'sensor_min')
+    sensor_max = get_sensor_setting(module, 'sensor_max')
+    distance_min = get_sensor_setting(module, 'distance_min')
+    distance_max = get_sensor_setting(module, 'distance_max')
 
     data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
+    #data = Module_Data(timer['data'], 0,0,0,0)
     return data
 
 # Get given sensor setting from specified module
 def get_sensor_setting(module, send_cmd):
     result = {'error' : False, 'message' : None, 'data' : None} # Store result!
+    port = module.get_port()
 
-    isConnected = ser_scan.check_connection(module.get_port()) #Check connection
+    isConnected = ser_scan.check_connection(port) #Check connection
+    send_code = msg.send_code(send_cmd)   # Get send code
+    resp_code = msg.response_code('succeed') # Get response code
+
 
     if isConnected == True: # are we connected
-        send_code = msg.send_code(send_cmd)   # Get send code
-        resp_code = msg.response_code('succeed') # Get response code
-
         if  send_code['error'] == False and resp_code['error'] == False: # No error
             response = get_value(module, send_code['code'], resp_code['code']) # Get data
-
+            #print('My response: ', response)
             if response['error'] == False:
                 result['error'] = False
                 result['data'] = response['data']
@@ -145,30 +151,51 @@ def get_sensor_setting(module, send_cmd):
         else:
             # Invalid code
             result['error'] = True
-            result['message'] = "Invalid send code!"
+            result['message'] = "Invalid send or resp code!"
+            print(result['message'])
     else:
         result['error'] = True
         result['message'] = "No connection!"
+        print(result['message'])
 
     return result
 
 # Handles sending and receiving
 def get_value(module, send_code, resp_code):
-    result = {}
+    getCode = msg.send_code('get')
+    result = {'error' : True}
+    ser = module.get_ser()
 
-    resp = ser_com.send_data(module.get_ser(), send_code) # Retrieve message
+    if getCode['error'] == False: #Code exists
+        res = ser_com.send_data(ser, getCode['code']) # Get var
 
+        if res['data'] == 10:
+            rest = ser_com.send_data(ser, send_code) # Get var
 
-    if resp['error'] == False:
-        if resp['data'] == resp_code:
-            data = ser_com.get_message(module.get_ser()) # Retrieve message
-            result['error'] = False
-            result['data'] = data['data']
-        else:
-            result['message'] = "Invalid response code: {0} - asked for {1}".format(resp[data], resp_code)
-            result['error'] = True
+            if rest['data'] == 10:
+                result['data'] = ser_com.get_message(ser)['data']
+                result['error'] = False
+
     else:
-        result['message'] = "Invalid device"
+        # Invalid code
         result['error'] = True
+        result['message'] = "Invalid get code!"
+        print(result['message'])
 
-    return result
+    return result;
+
+
+
+
+# Handles sending and receiving
+def set_sensor_data(module, send_code, value):
+    ser = module.get_ser()
+    var = msg.send_code(send_code)['code']
+
+    res = ser_com.send_data(ser, 14) # Get var
+
+    if res['data'] == 10:
+        rest = ser_com.send_data(ser, var) # Get var
+        if rest['data'] == 10:
+            #final = get_message(ser)['data']
+            ser_com.send_word(ser, value)

@@ -10,10 +10,20 @@ def identify_device(com_port, cmd, res):
     result = {}
 
     # create serial with comport and max timeout 2 seconds
-    ser = initialize_serial(com_port, 2)
+
+    try:
+        ser = initialize_serial(com_port, 2)
+    except (OSError, serial.SerialException):
+        print('ERROR:', com_port, '- COM IN USE')
+        result['error'] = True
+        return result
+    pass
+
+
+
 
     # Give serial Initialize time
-    time.sleep(2)
+    time.sleep(4)
 
     # Send our command + expected result length
     response = send_data(ser, cmd)
@@ -22,7 +32,7 @@ def identify_device(com_port, cmd, res):
         # if response matched expected result command
         if response['data'] == res:
             # Get the next text messages with the ID
-            msg = get_text_message(ser,  4) # expect 4 bits return result
+            msg = get_text_message(ser)
 
             if msg['error'] == False:
                 # Fill in the result
@@ -56,10 +66,21 @@ def initialize_serial(com_port, time_out):
     return ser
 
 
-# Sends data to the module
+# Sends data to the module with a response
 def send_data(ser, data_to_send):
     response = {'error' : True, 'data' : None}
 
+    transmit_data(ser, data_to_send);
+
+    # Get response message
+    response = get_message(ser)
+
+    # Return the response message
+    return response
+
+
+# Sends data to the module (doesn't handle any responses)
+def transmit_data(ser, data_to_send):
     # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
     ser.flushInput();
 
@@ -75,14 +96,9 @@ def send_data(ser, data_to_send):
     # Send data
     ser.write(converted_data)
 
-    # Get response message
-    response = get_message(ser)
-
-    # Return the response message
-    return response
 
 # Returns data from the module, msg_length is by default high and low byte
-def get_message(ser, msg_length = 2):
+def get_message(ser):
     response = {'error' : True, 'data' : None}
     # Retrieve data!
     bytes = read_untill_eol(ser)
@@ -104,7 +120,7 @@ def get_message(ser, msg_length = 2):
 
 
 # Get an character messe
-def get_text_message(ser, length):
+def get_text_message(ser):
     response = {'error': True, 'data' : None}
     bytes = read_untill_eol(ser)
 
@@ -125,7 +141,7 @@ def read_untill_eol(ser):
     bytes = bytearray()
 
     while done == False:
-        value = ser.read(1) # Retrieve data! (4 bits)
+        value = ser.read(1) # Retrieve data!
 
         if value == eol:
             done = True
@@ -139,3 +155,21 @@ def read_untill_eol(ser):
 
 
     return message # return the message
+
+# Sends an 16 bit signed int (in low and high byte)
+def send_word(ser, value):
+    #print('result', value)
+
+    # Split int to two bytes
+    result = split_int(value);
+    #print('result (split)', result)
+
+    #Send low and high byte
+    transmit_data(ser, result['low'])
+    transmit_data(ser, result['high'])
+
+
+# Splits value in 2 bytes (low, high)
+def split_int(value):
+    result = {'low' : value // 256, 'high' : value % 256}
+    return result

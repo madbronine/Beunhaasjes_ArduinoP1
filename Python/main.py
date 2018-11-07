@@ -1,15 +1,13 @@
 import serial_controller as ser_con
 import time
-import module
-import gui_package.overviewgui as ou
+from module import *
 
 def main():
 
-    overView = ou.OverviewGUI()
-    overView.build()
 
     # program loop
     while(True):
+
         print('=============')
 
         #Refresh the port list, could be threaded?
@@ -23,8 +21,16 @@ def main():
         for port, device in current_devices.items():
             print('---------')
             print(device)
-            print('---------')
-            print('Sensor reading:', ser_con.get_sensor_data(device))
+            #print('---------')
+            print('Time reading:', ser_con.get_sensor_setting(device, 'timer')['data'])
+
+            testValue = ser_con.get_sensor_setting(device, 'timer')['data']
+            testValue += 10
+            ser_con.set_sensor_data(device, 'timer', testValue)
+            print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
+
+            print('Temperature reading:', ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
+
             print('---------')
 
         # handle data of devices:
@@ -35,7 +41,9 @@ def main():
         print('')
 
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
+
 #####################################################
+
 
 # Start program!
 main()
