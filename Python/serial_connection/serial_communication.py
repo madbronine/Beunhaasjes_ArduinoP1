@@ -22,7 +22,7 @@ def identify_device(com_port, cmd, res):
         # if response matched expected result command
         if response['data'] == res:
             # Get the next text messages with the ID
-            msg = get_text_message(ser,  4) # expect 4 bits return result
+            msg = get_text_message(ser)
 
             if msg['error'] == False:
                 # Fill in the result
@@ -88,7 +88,7 @@ def transmit_data(ser, data_to_send):
 
 
 # Returns data from the module, msg_length is by default high and low byte
-def get_message(ser, msg_length = 2):
+def get_message(ser):
     response = {'error' : True, 'data' : None}
     # Retrieve data!
     bytes = read_untill_eol(ser)
@@ -110,7 +110,7 @@ def get_message(ser, msg_length = 2):
 
 
 # Get an character messe
-def get_text_message(ser, length):
+def get_text_message(ser):
     response = {'error': True, 'data' : None}
     bytes = read_untill_eol(ser)
 
@@ -131,7 +131,7 @@ def read_untill_eol(ser):
     bytes = bytearray()
 
     while done == False:
-        value = ser.read(1) # Retrieve data! (4 bits)
+        value = ser.read(1) # Retrieve data!
 
         if value == eol:
             done = True
