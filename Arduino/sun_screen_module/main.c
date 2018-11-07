@@ -201,6 +201,13 @@ void handle_state(){
 	}
 }
 
+void check_sensor(){
+	float min = sensor_min_value / 10;
+	float max = sensor_max_value / 10; 
+	float value = sensor_value / 10;
+
+
+}
 // Initializes all defaults
 void initialize(){
 	SCH_Init_T1();
@@ -208,8 +215,10 @@ void initialize(){
 	screen_init();
 	
 	SCH_Add_Task(handle_state, 0, 10);
-	SCH_Add_Task(handle_screen, 0, 100);
+	SCH_Add_Task(handle_screen, 0, 50);
 	SCH_Add_Task(update_temp, 0, measure_timer);
+	SCH_Add_Task(check_sensor, 0, 100);
+	
 	
 	// Initialize sensor type
 	#if MODULE_TYPE == TEMP // Handle temperature

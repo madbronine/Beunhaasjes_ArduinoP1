@@ -84,6 +84,11 @@ uint8_t get_old_screen_state(){
 }
 //Sets screen state
 void set_screen_state(uint8_t state){
+	if (state == 0)
+	{ &&
+	}
+	return;	
+	
 	
 	if (current_screen_status != rolling)
 	{
