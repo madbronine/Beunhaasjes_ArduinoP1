@@ -10,7 +10,19 @@ def identify_device(com_port, cmd, res):
     result = {}
 
     # create serial with comport and max timeout 2 seconds
-    ser = initialize_serial(com_port, 2)
+
+    try:
+        ser = initialize_serial(com_port, 2)
+    except (OSError, serial.SerialException):
+        print('ERROR:', com_port, '- COM IN USE')
+        result['error'] = True
+        return result
+    pass
+
+
+
+
+
 
     # Give serial Initialize time
     time.sleep(2)
