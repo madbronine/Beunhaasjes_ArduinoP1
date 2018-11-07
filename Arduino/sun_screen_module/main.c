@@ -275,7 +275,4 @@ ISR (USART_RX_vect)
 		message = command;
 		current_comm_state = send_data_state; // Set state to send our data!
 	}
-	
-	
-	
 }
