@@ -7,8 +7,9 @@ class GUI(Frame):
     sizeX = 50
     sizeY = 50
     root = None
+    functions = []
 
-    def gui_main(self):
+    def gui_build(self):
         root = Tk()
         for i in range(0,10):
             root.columnconfigure(i, weight=1)
@@ -19,12 +20,21 @@ class GUI(Frame):
         root.minsize(self.sizeX, self.sizeY)
         root.mainloop()
 
+    def gui_main(self):
+        while(True):
+            pass
+        #     for f in self.functions:
+        #         f()
+
     def __init__(self, title, sizeX, sizeY):
         self.title = title
         self.sizeX = sizeX
         self.sizeY = sizeY
-        thread = threading.Thread(target=self.gui_main)
-        thread.start()
+
+        mainThread = threading.Thread(target=self.gui_main)
+        mainThread.start()
+        uiThread = threading.Thread(target=self.gui_build)
+        uiThread.start()
 
     def add_label(self, title, column, row):
         label = Label(self.root, text=title)
@@ -45,3 +55,6 @@ class GUI(Frame):
         scale = Scale(self.root, from_=min, to=max, orient=HORIZONTAL)
         scale.grid(column=column, row=row, columnspan=2, sticky="nsew")
         return scale
+
+    def add_action(self, function):
+        self.functions.append(function)

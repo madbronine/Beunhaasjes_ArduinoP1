@@ -1,10 +1,11 @@
 import serial_controller as ser_con
+import gui_package.overviewgui as ui
 import time
 from module import *
 
 def main():
 
-
+    overview = ui.OverviewGUI()
     # program loop
     while(True):
 
