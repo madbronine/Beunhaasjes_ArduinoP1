@@ -22,8 +22,6 @@ def identify_device(com_port, cmd, res):
 
 
 
-
-
     # Give serial Initialize time
     time.sleep(2)
 

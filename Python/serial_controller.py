@@ -77,9 +77,13 @@ def identify_devices(comports):
 
     # Identify every comport
     for comport in comports:
+        print('Testing comport:', comport)
+
         result = identy_device(comport) # Check every device
         if result["error"] == False:    # Didnt get an error
             new_devices[comport] = result["module"] # Add it
+        else:
+            print('Not added')
 
     return new_devices
 
