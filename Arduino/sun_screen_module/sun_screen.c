@@ -25,46 +25,36 @@ enum screen_states old_screen_status = rolled_out;
 enum screen_states current_screen_status = rolling;
 
 void screen_init(){
-	old_screen_status = rolled_in;
-	current_screen_status = rolled_in;
 	DDRB = 0xFF;
-	leds =(OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
+	leds =(OFF<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
 	PORTB = leds;
 }
 
 void blink(void){
-	
-	
-	
 	if (led_state == 0)
 	{
 		led_state = 1;
 		if (old_screen_status  == rolled_out){
-			leds = (ON<< led_green) | (OFF<< led_red) | (ON<< led_yellow);
-			
+			leds = (ON<< led_green) | (OFF<< led_red) | (ON<< led_yellow);	
 		}
 		else{
 			leds = (OFF<< led_green) | (ON<< led_red) | (ON<< led_yellow);
-			
 		}
 	}
 	else if (led_state == 1)
 	{
 		led_state = 0;
 		if (old_screen_status  == rolled_out){
-			leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
-			
+			leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);	
 		}
 		else{
-			leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
-			
+			leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);	
 		}
 	}
 }
 
 void handle_screen(void)
 {
-	current_screen_status = rolling;
 	switch(current_screen_status){
 		case rolled_in :
 		leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
@@ -77,6 +67,7 @@ void handle_screen(void)
 		case rolled_out :
 		leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
 		break;
-		PORTB = leds;
+		
 	}
+	PORTB = leds;
 }

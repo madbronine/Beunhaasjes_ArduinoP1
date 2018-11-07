@@ -208,7 +208,7 @@ void initialize(){
 	screen_init();
 	
 	SCH_Add_Task(handle_state, 0, 10);
-	SCH_Add_Task(handle_screen, 0, 1000);
+	SCH_Add_Task(handle_screen, 0, 100);
 	SCH_Add_Task(update_temp, 0, measure_timer);
 	
 	// Initialize sensor type
