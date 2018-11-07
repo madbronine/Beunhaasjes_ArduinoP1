@@ -71,3 +71,19 @@ void handle_screen(void)
 	}
 	PORTB = leds;
 }
+uint8_t get_screen_state(){
+	return (uint8_t) current_screen_status;
+}
+uint8_t get_old_screen_state(){
+	return (uint8_t) old_screen_status;
+}
+void set_screen_state(uint8_t state){
+	
+	if (current_screen_status != rolling)
+	{
+		old_screen_status = current_screen_status;
+		current_screen_status = rolling;
+	}
+	
+	
+}

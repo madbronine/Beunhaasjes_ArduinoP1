@@ -9,6 +9,10 @@
 void screen_init();
 void blink();
 void handle_screen();
+uint8_t get_screen_state();
+uint8_t get_old_screen_state();
+void set_screen_state(uint8_t);
+
 
 
 
