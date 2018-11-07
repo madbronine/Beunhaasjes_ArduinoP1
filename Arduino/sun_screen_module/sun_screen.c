@@ -15,6 +15,9 @@ uint8_t led_red = 1; //Assign red led to port 9
 uint8_t led_yellow = 2; //Assign yellow led to port 10
 uint8_t led_state = 0;
 
+uint8_t cur_dist = 0;
+uint8_t max_dist = 20;
+
 enum screen_states{
 	rolled_in = 0,
 	rolling = 1,
@@ -52,11 +55,35 @@ void blink(void){
 			leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
 		}
 	}
+
 }
+
+void debug_roll(){
+	if(current_screen_status == rolling){
+		if(old_screen_status == rolled_out){
+			cur_dist--;
+			
+			if(cur_dist <= 0){
+				current_screen_status = rolled_in;
+				cur_dist = 0;
+			}
+			}else if(old_screen_status == rolled_in){
+			cur_dist++;
+			
+			if(cur_dist >= max_dist){
+				current_screen_status = rolled_out;
+				cur_dist = max_dist;
+			}
+		}
+	}
+}
+
 
 //Toggles LED based on screen status
 void handle_screen(void)
 {
+	debug_roll();
+	
 	switch(current_screen_status){
 		case rolled_in : //If rolled in
 		leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
@@ -76,11 +103,11 @@ void handle_screen(void)
 
 //Returns current screen state
 uint8_t get_screen_state(){
-	return (uint8_t) current_screen_status;
+	return (uint8_t)current_screen_status;
 }
 //Returns old screen state
 uint8_t get_old_screen_state(){
-	return (uint8_t) old_screen_status;
+	return (uint8_t)old_screen_status;
 }
 //Sets screen state
 void set_screen_state(uint8_t state){

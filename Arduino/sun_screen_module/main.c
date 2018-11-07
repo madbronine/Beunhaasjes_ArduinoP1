@@ -47,8 +47,8 @@ int measure_timer = 30;
 #endif
 
 
-float sensor_value = 20; // Can we handle light sensor in 8 bit?
-float sensor_min_value = 20;
+float sensor_value = 21; // Can we handle light sensor in 8 bit?
+float sensor_min_value = 20.9;
 float sensor_max_value = 22;
 
 // 40 for temperature and 30 for light sensor
