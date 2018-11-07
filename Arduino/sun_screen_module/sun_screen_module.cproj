@@ -144,6 +144,9 @@
     <Compile Include="getTemp.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="sun_screen.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="sun_screen.c">
       <SubType>compile</SubType>
     </Compile>

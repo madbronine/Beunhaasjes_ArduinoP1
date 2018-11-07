@@ -26,6 +26,8 @@
 #include "getTemp.h"
 #include "getLDR.h"
 #include "ultrasone.h"
+#include "sun_screen.h"
+
 
 
 #define TRUE 1
@@ -108,13 +110,8 @@ int wait_for_message = FALSE;
 
 
 // Sunscreen state
-enum screen_states{
-	rolled_in = 0,
-	rolling = 1,
-	rolled_out = 2
-};
-enum screen_states old_screen_state = rolled_in;
-enum screen_states current_screen_state = rolled_in;
+
+int current_screen_state = 0;
 
 
 // Can be used to edit or parse value pack
@@ -208,8 +205,10 @@ void handle_state(){
 void initialize(){
 	SCH_Init_T1();
 	uart_init();
+	screen_init();
 	
 	SCH_Add_Task(handle_state, 0, 10);
+	SCH_Add_Task(handle_screen, 0, 1000);
 	SCH_Add_Task(update_temp, 0, measure_timer);
 	
 	// Initialize sensor type
