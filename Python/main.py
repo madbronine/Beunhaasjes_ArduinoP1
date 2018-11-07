@@ -1,12 +1,15 @@
 import serial_controller as ser_con
 import time
 import module
+import gui_package.overviewgui as ou
 
 def main():
 
+    overView = ou.OverviewGUI()
+    overView.build()
+
     # program loop
     while(True):
-
         print('=============')
 
         #Refresh the port list, could be threaded?
@@ -32,9 +35,7 @@ def main():
         print('')
 
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
-
 #####################################################
-
 
 # Start program!
 main()
