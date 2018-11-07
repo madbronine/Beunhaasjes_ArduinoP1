@@ -48,7 +48,7 @@ int measure_timer = 30;
 
 
 float sensor_value = 20; // Can we handle light sensor in 8 bit?
-float sensor_min_value = 19;
+float sensor_min_value = 20;
 float sensor_max_value = 22;
 
 // 40 for temperature and 30 for light sensor
@@ -150,8 +150,6 @@ void select_data(){
 		
 		case send_sensor_value:
 		// Should handle LDR and TEMP
-		sensor_value = get_temp();
-		
 		sen_value = (int)(sensor_value * 10);
 		handle_value(&sen_value);
 		sensor_value = (float)(sen_value * 0.1);
@@ -206,7 +204,8 @@ void handle_state(){
 }
 
 void check_sensor(){
-	
+	sensor_value = get_temp();
+		
 	if(sensor_value < sensor_min_value){
 		set_screen_state(0); // roll in
 	}else if(sensor_value > sensor_max_value){

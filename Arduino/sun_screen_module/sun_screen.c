@@ -59,7 +59,7 @@ void handle_screen(void)
 {
 	switch(current_screen_status){
 		case rolled_in : //If rolled in
-		leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
+		leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
 		break;
 		
 		case rolling : //If rolling
@@ -67,7 +67,7 @@ void handle_screen(void)
 		break;
 		
 		case rolled_out : //If rolled out
-		leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
+		leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
 		break;
 		
 	}
