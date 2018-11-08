@@ -1,7 +1,8 @@
 from tkinter import *
 import threading
+import time
 
-class GUI(Frame):
+class GUI():
 
     title = "Untitled"
     sizeX = 50
@@ -22,6 +23,7 @@ class GUI(Frame):
 
     def gui_main(self):
         while(True):
+            time.sleep(0.1)
             for f in self.functions:
                 f()
 

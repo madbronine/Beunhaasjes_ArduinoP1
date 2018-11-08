@@ -31,6 +31,7 @@ def main():
             print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
 
             print('Temperature reading:', ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
+            overview.update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
 
             print('---------')
 
@@ -41,7 +42,7 @@ def main():
         print('')
         print('')
 
-        time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
+        # time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
 
