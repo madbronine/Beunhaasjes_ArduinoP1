@@ -55,9 +55,9 @@ float sensor_max_value = 22;
 //uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
 
 // Min and max and current distance of the sunscreen
-int min_distance = 5;	//	min: 0.05m =    5cm
-int max_distance = 160;	//  max: 1.60m		= 160cm
-int cur_distance = 0;	//
+uint16_t min_distance = 5;	//	min: 0.05m =    5cm
+uint16_t max_distance = 160;	//  max: 1.60m		= 160cm
+uint16_t cur_distance = 0;	//
 
 // Temp variable to store our sending value
 int send_value = 0;
@@ -211,9 +211,23 @@ void check_sensor(){
 	}else if(sensor_value > sensor_max_value){
 		set_screen_state(1); // roll out
 	}
-
-
 }
+
+void check_distance(){
+	uint8_t state = get_old_screen_state();
+	cur_distance = get_distance();
+	
+	if(cur_distance <= min_distance){
+		if(state == 2){ // if old state rolled_out
+			stop_rolling();
+		}
+	}else if(cur_distance >= max_distance){
+		if(state == 0){ // if old state rolled_in
+			stop_rolling();
+		}
+	}
+}
+
 // Initializes all defaults
 void initialize(){
 	SCH_Init_T1();
@@ -225,8 +239,8 @@ void initialize(){
 	SCH_Add_Task(handle_screen, 80, 50);
 	SCH_Add_Task(update_temp, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 20);
-	
-	SCH_Add_Task(send_trigger, 0, 100);
+	SCH_Add_Task(send_trigger, 0, 500);
+	SCH_Add_Task(check_distance, 0, 50);
 	
 	
 	
@@ -250,6 +264,7 @@ int main(void)
 	while (1)
 	{
 		SCH_Dispatch_Tasks();
+		check_distance();
 	}
 }
 

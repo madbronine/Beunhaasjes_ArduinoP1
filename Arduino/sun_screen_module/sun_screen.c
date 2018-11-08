@@ -55,25 +55,18 @@ void blink(void){
 			leds = (OFF<< led_green) | (ON<< led_red) | (OFF<< led_yellow);
 		}
 	}
-
+	
 }
 
-void debug_roll(){
+void stop_rolling(){
 	if(current_screen_status == rolling){
 		if(old_screen_status == rolled_out){
-			cur_dist--;
-			
-			if(cur_dist <= 0){
-				current_screen_status = rolled_in;
-				cur_dist = 0;
-			}
-			}else if(old_screen_status == rolled_in){
-			cur_dist++;
-			
-			if(cur_dist >= max_dist){
-				current_screen_status = rolled_out;
-				cur_dist = max_dist;
-			}
+			current_screen_status = rolled_in;
+			old_screen_status = rolling;
+		}
+		else if(old_screen_status == rolled_in){
+			current_screen_status = rolled_out;
+			old_screen_status = rolling;
 		}
 	}
 }
@@ -82,8 +75,6 @@ void debug_roll(){
 //Toggles LED based on screen status
 void handle_screen(void)
 {
-	debug_roll();
-	
 	switch(current_screen_status){
 		case rolled_in : //If rolled in
 		leds = (ON<< led_green) | (OFF<< led_red) | (OFF<< led_yellow);
