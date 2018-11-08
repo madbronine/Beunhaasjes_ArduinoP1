@@ -30,5 +30,7 @@ class OverviewGUI():
         return 1
 
     def updateSlider(self):
+        if(self.slider == None):
+            return
         self.slider['label'] = "{}".format(self.number)
         self.number = self.number + 1

@@ -18,23 +18,21 @@ class GUI(Frame):
         self.root = root
         root.title(self.title)
         root.minsize(self.sizeX, self.sizeY)
-        root.mainloop()
 
     def gui_main(self):
         while(True):
-            pass
-        #     for f in self.functions:
-        #         f()
+            for f in self.functions:
+                f()
 
     def __init__(self, title, sizeX, sizeY):
         self.title = title
         self.sizeX = sizeX
         self.sizeY = sizeY
-
+        self.gui_build()
+        uiThread = threading.Thread(target=self.root.mainloop())
+        uiThread.start()
         mainThread = threading.Thread(target=self.gui_main)
         mainThread.start()
-        uiThread = threading.Thread(target=self.gui_build)
-        uiThread.start()
 
     def add_label(self, title, column, row):
         label = Label(self.root, text=title)
