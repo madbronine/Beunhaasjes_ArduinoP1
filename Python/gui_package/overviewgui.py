@@ -12,6 +12,7 @@ class OverviewGUI():
         self.build()
         self.gui.add_action(self.updateSlider)
 
+
     def build(self):
         self.gui.add_label("Temp", 1, 1)
         self.gui.add_button("0024", 2, 1, None)

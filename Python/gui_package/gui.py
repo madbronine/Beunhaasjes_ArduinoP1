@@ -18,6 +18,7 @@ class GUI(Frame):
         self.root = root
         root.title(self.title)
         root.minsize(self.sizeX, self.sizeY)
+        root.mainloop()
 
     def gui_main(self):
         while(True):
@@ -28,8 +29,7 @@ class GUI(Frame):
         self.title = title
         self.sizeX = sizeX
         self.sizeY = sizeY
-        self.gui_build()
-        uiThread = threading.Thread(target=self.root.mainloop())
+        uiThread = threading.Thread(target=self.gui_build)
         uiThread.start()
         mainThread = threading.Thread(target=self.gui_main)
         mainThread.start()
