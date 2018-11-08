@@ -219,11 +219,15 @@ void initialize(){
 	SCH_Init_T1();
 	uart_init();
 	screen_init();
+	init_ultrasone();
 	
 	SCH_Add_Task(handle_state, 0, 10);
 	SCH_Add_Task(handle_screen, 80, 50);
 	SCH_Add_Task(update_temp, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 20);
+	
+	SCH_Add_Task(send_trigger, 0, 100);
+	
 	
 	
 	// Initialize sensor type

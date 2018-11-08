@@ -2,17 +2,10 @@
  * IncFile1.h
  *
  * Created: 6-11-2018 13:12:40
- *  Author: GraphX
+ *  Author: GraphX & Jeroen
  */ 
 
-void initSensorUltrasone(void);
-void timer(void);
-
-#ifndef INCFILE1_H_
-#define INCFILE1_H_
-
-
-
-
-
-#endif /* INCFILE1_H_ */
+void init_ultrasone(void);
+void send_trigger(void);
+void handle_echo(void);
+uint16_t get_distance(void);
