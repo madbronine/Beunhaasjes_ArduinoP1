@@ -138,7 +138,6 @@ void select_data(){
 		// Should handle LDR and TEMP
 		sen_value = (int)(sensor_value);
 		handle_value(&sen_value);
-		sensor_value = (float)(sen_value * 0.1);
 		break;
 		
 		case distance_min:
@@ -216,12 +215,11 @@ void update_sensor(){
 	
 	#if MODULE_TYPE == TEMP // Handle temperature
 	update_temp(); // Update temperature!
-	sensor_value = get_temp() * 10; // Set temperature
+	sensor_value = get_temp(); // Set temperature
 
 	#elif MODULE_TYPE == LIGHT // handle ldr
 	update_ldr();
 	sensor_value = readLDR();
-	
 	#endif
 }
 
