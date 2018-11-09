@@ -29,7 +29,6 @@ class OverviewGUI():
 
 
         slider = self.gui.add_slider(tempframe, 10.0, 40.0, 2, 3)
-        slider['showvalue']=False
         self.tempSlider = slider
 
     def update(self, temp):

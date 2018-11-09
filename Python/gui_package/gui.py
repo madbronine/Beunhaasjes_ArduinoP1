@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import threading
 import time
 
@@ -39,22 +40,22 @@ class GUI():
         mainThread.start()
 
     def add_label(self, root, title, column, row):
-        label = Label(root, text=title)
+        label = ttk.Label(root, text=title)
         label.grid(column=column, row=row, sticky="nsew")
         return label
 
     def add_button(self, root, text, column, row, command):
-        button = Button(root, text=text, command=command)
+        button = ttk.Button(root, text=text, command=command)
         button.grid(column=column, row=row, sticky="nsew")
         return button
 
     def add_frame(self, background, column, row):
-        frame = Frame(self.root, background=background)
+        frame = ttk.Frame(self.root)
         frame.grid(column=column, row=row, sticky="nsew")
         return frame
 
     def add_slider(self, root, min, max, column, row):
-        scale = Scale(root, from_=min, to=max, orient=HORIZONTAL)
+        scale = ttk.Scale(root, from_=min, to_=max, orient=HORIZONTAL)
         scale.grid(column=column, row=row, columnspan=2, sticky="nsew")
         return scale
 
