@@ -7,10 +7,14 @@
 
 #include <avr/io.h>
 
-float analogValue;
+int analogValue;
 float lux;
-float LDRValue = 20000;
 
+float volt = 5;				// Voltage
+float max_value = 1013;		// Highest reading with bright light
+float resistor = 10000;		// Resitor
+float LUX_CALC_SCALAR = 12518931;
+float expo = -1.405;		// exponent
 
 
 void initSensorLDR(void){
@@ -24,12 +28,22 @@ void initSensorLDR(void){
 }
 
 void luxConversion(void){
-	lux = (250.0/(analogValue*LDRValue))-50.0;	
+	// Calculation Source: https://www.allaboutcircuits.com/projects/design-a-luxmeter-using-a-light-dependent-resistor/
+	
+	float resistor_volt = (float)analogValue / max_value * 5; // max 1023 as value reading  // 5 volt
+	float ldrVoltage = volt - resistor_volt;
+	float ldrResistance = ldrVoltage/resistor_volt * resistor;  // REF_RESISTANCE is 5 kohm
+	
+	float ldrLux = LUX_CALC_SCALAR * pow(ldrResistance, expo); // Calculate lux
+	lux = ldrLux;
+}
+
+void update_ldr(){
+	analogValue = ADCW; // Read analog value
+	luxConversion();
 }
 
 int readLDR(void){
-	analogValue = ADCW; // Read analog value
-	luxConversion();
-	// temporary int casting for debugging
-	return lux = (int)lux*10;	
+	update_ldr();
+	return lux;
 }

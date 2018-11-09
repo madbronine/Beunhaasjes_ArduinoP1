@@ -43,6 +43,7 @@ char id[] = "TEMP";
 
 // Identifier
 char id[] = "LIGHT";
+
 #endif
 
 
@@ -111,7 +112,7 @@ void handle_value(int *value){
 	}
 }
 
-// Selecteds data based on message
+// Selecteds data based on data message
 void select_data(){
 	int sen_value =0;
 	
@@ -122,22 +123,60 @@ void select_data(){
 		break;
 		
 		case sensor_min:
-		 sen_value = (int)(sensor_min_value * 10);
+		
+		// Initialize variables
+		#if MODULE_TYPE == TEMP // Handle temperature
+		
+		sen_value = (int)(sensor_min_value * 10);
 		handle_value(&sen_value);
 		sensor_min_value = (float)(sen_value * 0.1);
+
+		#elif MODULE_TYPE == LIGHT // handle ldr
+
+		sen_value = (int)(sensor_min_value);
+		handle_value(&sen_value);
+		sensor_min_value = (float)(sen_value);
+		
+		#endif
+		
 		break;
 		
 		case sensor_max:
-		 sen_value = (int)(sensor_max_value * 10);
+		
+		// Initialize variables
+		#if MODULE_TYPE == TEMP // Handle temperature
+		
+		sen_value = (int)(sensor_max_value * 10);
 		handle_value(&sen_value);
 		sensor_max_value = (float)(sen_value * 0.1);
+
+		#elif MODULE_TYPE == LIGHT // handle ldr
+
+		sen_value = (int)(sensor_max_value);
+		handle_value(&sen_value);
+		sensor_max_value = (float)(sen_value);
+
+		#endif
+		
 		break;
 		
 		case send_sensor_value:
-		// Should handle LDR and TEMP
+		
+		
+		#if MODULE_TYPE == TEMP // Handle temperature
+		
 		sen_value = (int)(sensor_value * 10);
 		handle_value(&sen_value);
 		sensor_value = (float)(sen_value * 0.1);
+
+		#elif MODULE_TYPE == LIGHT // handle ldr
+
+		sen_value = (int)(sensor_value);
+		handle_value(&sen_value);
+		sensor_value = (float)(sen_value);
+
+		#endif
+		
 		break;
 		
 		case distance_min:
@@ -160,6 +199,7 @@ void select_data(){
 	}
 }
 
+// Handles the state of the communication
 void handle_state(){
 	if(current_comm_state == id_state){
 		transmit_word(succeed);
@@ -188,16 +228,17 @@ void handle_state(){
 	}
 }
 
+// Checks if the sensor value matches its max or min
 void check_sensor(){
-	sensor_value = get_temp();
-		
 	if(sensor_value < sensor_min_value){
 		set_screen_state(0); // roll in
-	}else if(sensor_value > sensor_max_value){
+		}else if(sensor_value > sensor_max_value){
 		set_screen_state(1); // roll out
 	}
 }
 
+
+// Retrieves the distance and updates the sun screen
 void check_distance(){
 	uint8_t state = get_old_screen_state();
 	cur_distance = get_distance();
@@ -206,11 +247,23 @@ void check_distance(){
 		if(state == 2){ // if old state rolled_out
 			stop_rolling();
 		}
-	}else if(cur_distance >= max_distance){
+		}else if(cur_distance >= max_distance){
 		if(state == 0){ // if old state rolled_in
 			stop_rolling();
 		}
 	}
+}
+
+void update_sensor(){
+	
+	#if MODULE_TYPE == TEMP // Handle temperature
+	update_temp(); // Update temperature!
+	sensor_value = get_temp(); // Set temperature
+
+	#elif MODULE_TYPE == LIGHT // handle ldr
+	update_ldr();
+	sensor_value = readLDR();
+	#endif
 }
 
 // Initializes all defaults
@@ -222,7 +275,7 @@ void initialize(){
 	
 	SCH_Add_Task(handle_state, 0, 10);
 	SCH_Add_Task(handle_screen, 80, 50);
-	SCH_Add_Task(update_temp, 0, measure_timer);
+	SCH_Add_Task(update_sensor, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 20);
 	SCH_Add_Task(send_trigger, 0, 500);
 	SCH_Add_Task(check_distance, 0, 50);
