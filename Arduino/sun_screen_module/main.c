@@ -112,7 +112,7 @@ void handle_value(int *value){
 	}
 }
 
-// Selecteds data based on message
+// Selecteds data based on data message
 void select_data(){
 	int sen_value =0;
 	
@@ -160,6 +160,7 @@ void select_data(){
 	}
 }
 
+// Handles the state of the communication
 void handle_state(){
 	if(current_comm_state == id_state){
 		transmit_word(succeed);
@@ -188,6 +189,7 @@ void handle_state(){
 	}
 }
 
+// Checks if the sensor value matches its max or min
 void check_sensor(){
 	if(sensor_value < sensor_min_value){
 		set_screen_state(0); // roll in
@@ -196,6 +198,8 @@ void check_sensor(){
 	}
 }
 
+
+// Retrieves the distance and updates the sun screen
 void check_distance(){
 	uint8_t state = get_old_screen_state();
 	cur_distance = get_distance();
