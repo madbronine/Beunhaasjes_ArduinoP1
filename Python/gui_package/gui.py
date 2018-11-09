@@ -9,6 +9,7 @@ class GUI():
     sizeY = 50
     root = None
     functions = []
+    refreshRate = 60
 
     def gui_build(self):
         root = Tk()
@@ -23,7 +24,7 @@ class GUI():
 
     def gui_main(self):
         while(True):
-            time.sleep(0.1)
+            time.sleep(self.refreshRate)
             for f in self.functions:
                 f()
 
@@ -31,18 +32,19 @@ class GUI():
         self.title = title
         self.sizeX = sizeX
         self.sizeY = sizeY
+        self.refreshRate = 1 / self.refreshRate
         uiThread = threading.Thread(target=self.gui_build)
         uiThread.start()
         mainThread = threading.Thread(target=self.gui_main)
         mainThread.start()
 
-    def add_label(self, title, column, row):
-        label = Label(self.root, text=title)
+    def add_label(self, root, title, column, row):
+        label = Label(root, text=title)
         label.grid(column=column, row=row, sticky="nsew")
         return label
 
-    def add_button(self, text, column, row, command):
-        button = Button(self.root, text=text, command=command)
+    def add_button(self, root, text, column, row, command):
+        button = Button(root, text=text, command=command)
         button.grid(column=column, row=row, sticky="nsew")
         return button
 
@@ -51,8 +53,8 @@ class GUI():
         frame.grid(column=column, row=row, sticky="nsew")
         return frame
 
-    def add_slider(self, min, max, column, row):
-        scale = Scale(self.root, from_=min, to=max, orient=HORIZONTAL)
+    def add_slider(self, root, min, max, column, row):
+        scale = Scale(root, from_=min, to=max, orient=HORIZONTAL)
         scale.grid(column=column, row=row, columnspan=2, sticky="nsew")
         return scale
 
