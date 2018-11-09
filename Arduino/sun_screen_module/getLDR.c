@@ -27,9 +27,12 @@ void luxConversion(void){
 	lux = (250.0/(analogValue*LDRValue))-50.0;	
 }
 
-int readLDR(void){
+void update_ldr(){
 	analogValue = ADCW; // Read analog value
 	luxConversion();
+}
+
+int readLDR(void){
 	// temporary int casting for debugging
-	return lux = (int)lux*10;	
+	return lux = (int)lux*10;
 }

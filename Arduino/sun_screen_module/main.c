@@ -37,12 +37,29 @@
 char id[] = "TEMP";
 
 
+// TEMP
+int measure_timer = 40;
+float sensor_value = 21;
+float sensor_min_value = 20.9;
+float sensor_max_value = 22;
+
+
+
+
 #elif MODULE_TYPE == LIGHT // handle ldr
 // Include ldr sensor file
 #include "getLDR.h"
 
 // Identifier
 char id[] = "LIGHT";
+
+
+// LDR
+int measure_timer = 30;
+float sensor_value = 21; // LDR
+float sensor_min_value = 20.9;
+float sensor_max_value = 22;
+
 #endif
 
 
@@ -122,13 +139,13 @@ void select_data(){
 		break;
 		
 		case sensor_min:
-		 sen_value = (int)(sensor_min_value * 10);
+		sen_value = (int)(sensor_min_value * 10);
 		handle_value(&sen_value);
 		sensor_min_value = (float)(sen_value * 0.1);
 		break;
 		
 		case sensor_max:
-		 sen_value = (int)(sensor_max_value * 10);
+		sen_value = (int)(sensor_max_value * 10);
 		handle_value(&sen_value);
 		sensor_max_value = (float)(sen_value * 0.1);
 		break;
@@ -189,11 +206,9 @@ void handle_state(){
 }
 
 void check_sensor(){
-	sensor_value = get_temp();
-		
 	if(sensor_value < sensor_min_value){
 		set_screen_state(0); // roll in
-	}else if(sensor_value > sensor_max_value){
+		}else if(sensor_value > sensor_max_value){
 		set_screen_state(1); // roll out
 	}
 }
@@ -206,11 +221,24 @@ void check_distance(){
 		if(state == 2){ // if old state rolled_out
 			stop_rolling();
 		}
-	}else if(cur_distance >= max_distance){
+		}else if(cur_distance >= max_distance){
 		if(state == 0){ // if old state rolled_in
 			stop_rolling();
 		}
 	}
+}
+
+void update_senser(){
+	
+	#if MODULE_TYPE == TEMP // Handle temperature
+	update_temp(); // Update temperature!
+	sensor_value = get_temp(); // Set temperature
+
+	#elif MODULE_TYPE == LIGHT // handle ldr
+	update_ldr();
+	sensor_value = readLDR();
+	
+	#endif
 }
 
 // Initializes all defaults
@@ -222,7 +250,7 @@ void initialize(){
 	
 	SCH_Add_Task(handle_state, 0, 10);
 	SCH_Add_Task(handle_screen, 80, 50);
-	SCH_Add_Task(update_temp, 0, measure_timer);
+	SCH_Add_Task(update_senser, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 20);
 	SCH_Add_Task(send_trigger, 0, 500);
 	SCH_Add_Task(check_distance, 0, 50);
