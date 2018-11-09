@@ -33,6 +33,5 @@ void update_ldr(){
 }
 
 int readLDR(void){
-	// temporary int casting for debugging
-	return lux = (int)lux*10;
+	return lux;
 }

@@ -136,7 +136,7 @@ void select_data(){
 		
 		case send_sensor_value:
 		// Should handle LDR and TEMP
-		sen_value = (int)(sensor_value * 10);
+		sen_value = (int)(sensor_value);
 		handle_value(&sen_value);
 		sensor_value = (float)(sen_value * 0.1);
 		break;
@@ -212,11 +212,11 @@ void check_distance(){
 	}
 }
 
-void update_senser(){
+void update_sensor(){
 	
 	#if MODULE_TYPE == TEMP // Handle temperature
 	update_temp(); // Update temperature!
-	sensor_value = get_temp(); // Set temperature
+	sensor_value = get_temp() * 10; // Set temperature
 
 	#elif MODULE_TYPE == LIGHT // handle ldr
 	update_ldr();
@@ -234,7 +234,7 @@ void initialize(){
 	
 	SCH_Add_Task(handle_state, 0, 10);
 	SCH_Add_Task(handle_screen, 80, 50);
-	SCH_Add_Task(update_senser, 0, measure_timer);
+	SCH_Add_Task(update_sensor, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 20);
 	SCH_Add_Task(send_trigger, 0, 500);
 	SCH_Add_Task(check_distance, 0, 50);
