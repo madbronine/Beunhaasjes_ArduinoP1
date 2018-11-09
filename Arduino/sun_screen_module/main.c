@@ -23,50 +23,35 @@
 #include <avr/interrupt.h>
 #include "AVR_TTC_scheduler.h"
 #include "communication.h"
-#include "getTemp.h"
-#include "getLDR.h"
 #include "ultrasone.h"
 #include "sun_screen.h"
+
+
+
+
+// Initialize variables
+#if MODULE_TYPE == TEMP // Handle temperature
+// Include temp sensor file
+#include "getTemp.h"
+// Identifier
+char id[] = "TEMP";
+
+
+#elif MODULE_TYPE == LIGHT // handle ldr
+// Include ldr sensor file
+#include "getLDR.h"
+
+// Identifier
+char id[] = "LIGHT";
+#endif
 
 
 
 #define TRUE 1
 #define FALSE 0
 
-
-
-// Initialize variables
-#if MODULE_TYPE == TEMP // Handle temperature
-// Identifier
-char id[] = "TEMP";
-int measure_timer = 40;
-#elif MODULE_TYPE == LIGHT // handle ldr
-// Identifier
-char id[] = "LIGHT";
-int measure_timer = 30;
-#endif
-
-
-float sensor_value = 21; // Can we handle light sensor in 8 bit?
-float sensor_min_value = 20.9;
-float sensor_max_value = 22;
-
-// 40 for temperature and 30 for light sensor
-//uint8_t send_timer = 0; // send every 60 seconds: Sunscreen state and sensor state,  (handled by our python client)??
-
-// Min and max and current distance of the sunscreen
-uint16_t min_distance = 5;	//	min: 0.05m =    5cm
-uint16_t max_distance = 160;	//  max: 1.60m		= 160cm
-uint16_t cur_distance = 0;	//
-
 // Temp variable to store our sending value
 int send_value = 0;
-
-
-// Pins to indicate if the sunscreen is rolling, out or in
-uint8_t led_pin_out = 0;		// Red led
-uint8_t led_pin_in = 0;			// Green led
-uint8_t led_pin_rolling = 0;	// Blinking yellow led + steady out or in pin indicating it's rolling out or in
 
 
 enum com_messages{

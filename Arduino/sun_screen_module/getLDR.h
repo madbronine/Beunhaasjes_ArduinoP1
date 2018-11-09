@@ -5,6 +5,12 @@
  *  Author: GraphX
  */ 
 
+int measure_timer = 30;
+float sensor_value = 21; // LDR
+float sensor_min_value = 20.9;
+float sensor_max_value = 22;
+
+
 int readLDR(void);
 void initSensorLDR(void);
 void luxConversion(void);
