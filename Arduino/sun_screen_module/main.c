@@ -123,21 +123,60 @@ void select_data(){
 		break;
 		
 		case sensor_min:
+		
+		// Initialize variables
+		#if MODULE_TYPE == TEMP // Handle temperature
+		
 		sen_value = (int)(sensor_min_value * 10);
 		handle_value(&sen_value);
 		sensor_min_value = (float)(sen_value * 0.1);
+
+		#elif MODULE_TYPE == LIGHT // handle ldr
+
+		sen_value = (int)(sensor_min_value);
+		handle_value(&sen_value);
+		sensor_min_value = (float)(sen_value);
+		
+		#endif
+		
 		break;
 		
 		case sensor_max:
+		
+		// Initialize variables
+		#if MODULE_TYPE == TEMP // Handle temperature
+		
 		sen_value = (int)(sensor_max_value * 10);
 		handle_value(&sen_value);
 		sensor_max_value = (float)(sen_value * 0.1);
+
+		#elif MODULE_TYPE == LIGHT // handle ldr
+
+		sen_value = (int)(sensor_max_value);
+		handle_value(&sen_value);
+		sensor_max_value = (float)(sen_value);
+
+		#endif
+		
 		break;
 		
 		case send_sensor_value:
-		// Should handle LDR and TEMP
+		
+		
+		#if MODULE_TYPE == TEMP // Handle temperature
+		
+		sen_value = (int)(sensor_value * 10);
+		handle_value(&sen_value);
+		sensor_value = (float)(sen_value * 0.1);
+
+		#elif MODULE_TYPE == LIGHT // handle ldr
+
 		sen_value = (int)(sensor_value);
 		handle_value(&sen_value);
+		sensor_value = (float)(sen_value);
+
+		#endif
+		
 		break;
 		
 		case distance_min:
