@@ -25,9 +25,6 @@ def data_points():
 
 def build(root, xName, yName, min, max):
     # initialise a window.
-
-    lab = Label(root, text="Live Plotting", bg = 'white').pack()
-
     fig = Figure()
 
     ax = fig.add_subplot(111)
