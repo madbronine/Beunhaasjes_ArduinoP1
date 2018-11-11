@@ -44,9 +44,9 @@ class GUI():
         label.grid(column=column, row=row, sticky="nsew")
         return label
 
-    def add_button(self, root, text, column, row, command):
+    def add_button(self, root, text, column, row, command, columnspan):
         button = ttk.Button(root, text=text, command=command)
-        button.grid(column=column, row=row, sticky="nsew")
+        button.grid(column=column, row=row, columnspan=columnspan, sticky="nsew")
         return button
 
     def add_frame(self, root, background, column, row, columnspan, rowspan):
