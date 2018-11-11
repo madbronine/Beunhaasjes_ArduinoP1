@@ -38,8 +38,21 @@ def get_sensor_data(module):
     return distance_min['data'] # Example value:    namedtuple('sensor_value' : 5)
 
 
+# Refreshes the data of the device
+def refresh_device(module):
+    create_data(module)
+    module.set_data(module)
 
+# Sends new settings to the arduino, returns True if done
+def update_device(timer, sens_min, sens_max, dist_min, dist_max, cur_state):
+    set_sensor_data(device, 'timer', timer)
+    set_sensor_data(device, 'sensor_min', sens_min)
+    set_sensor_data(device, 'sensor_max', sens_max)
+    set_sensor_data(device, 'distance_min', dist_min)
+    set_sensor_data(device, 'distance_max', dist_max)
+    set_sensor_data(device, 'current_state', cur_state)
 
+    return True
 
 #       Code below is handled by the controller
 #------------------------------------------------------
