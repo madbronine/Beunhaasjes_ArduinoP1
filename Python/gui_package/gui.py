@@ -11,12 +11,12 @@ class GUI():
     root = None
     functions = []
     refreshRate = 60
+    notebook = None
 
     def gui_build(self):
         root = Tk()
-        for i in range(0,10):
-            root.columnconfigure(i, weight=1)
-            root.rowconfigure(i, weight=1)
+        root.columnconfigure(0, weight=1)
+        root.rowconfigure(0, weight=1)
 
         self.root = root
         root.title(self.title)
@@ -49,15 +49,27 @@ class GUI():
         button.grid(column=column, row=row, sticky="nsew")
         return button
 
-    def add_frame(self, background, column, row):
-        frame = ttk.Frame(self.root)
-        frame.grid(column=column, row=row, sticky="nsew")
+    def add_frame(self, root, background, column, row):
+        gui_style = ttk.Style()
+        gui_style.configure('My.TFrame', background=background)
+
+        frame = ttk.Frame(root, style='My.TFrame')
+        frame.grid(column=column, row=row)
         return frame
 
     def add_slider(self, root, min, max, column, row):
         scale = ttk.Scale(root, from_=min, to_=max, orient=HORIZONTAL)
         scale.grid(column=column, row=row, sticky="nsew")
         return scale
+
+    def add_notebook(self):
+        notebook = ttk.Notebook(self.root)
+        self.notebook = notebook
+        notebook.grid(sticky="nsew")
+        return notebook
+
+    def hideFrame(self, frame):
+        pass
 
     def add_action(self, function):
         self.functions.append(function)

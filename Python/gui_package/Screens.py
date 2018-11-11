@@ -15,8 +15,8 @@ class Screen:
 
     def light(self, main_frame):
 
-        Light_frame = Frame.configure(main_frame, width = 200, height =150, bg="pink")
-        light_frame.grid(column= 0 , row=0 ,sticky=W)
+        Light_frame = Frame.configure(main_frame, width=200, height=150, bg="pink")
+        light_frame.grid(column=0 ,row=0 ,sticky=W)
         Light_lable = Lable.grid(light_frame, tekst ="Licht sterkte", column=0, row=0, sticky =N)
         Light_info = Lable.grid(light_frame, tekst = "4", column= 1, row =1, sticky =S)
         #IF Censor outpute = Thrue:
@@ -58,10 +58,3 @@ class Screen:
 
     def start_GUI(self):
         print(main)
-
-
-
-
-
-
-

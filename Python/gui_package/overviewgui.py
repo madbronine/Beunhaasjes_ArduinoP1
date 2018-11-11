@@ -12,19 +12,24 @@ class OverviewGUI():
     statusText = None
     lightIntensitySlider = None
     temperature = 0.1;
+    type = "Unknown"
+    mainframe = None
 
-    def __init__(self):
-        gui = ui.GUI("Centrale", 600, 400)
-        self.gui = gui
+    def __init__(self, root, type):
+        self.type = type
+        self.gui = root
         self.build()
         self.gui.add_action(self.updateSlider)
 
     def build(self):
-        tempframe = self.gui.add_frame("grey", 0, 0)
-        tempSliderFrame = self.gui.add_frame("grey", 1, 0)
-        lightSliderFrame = self.gui.add_frame("grey", 2, 0)
-        lightIntensityFrame = self.gui.add_frame("grey", 0, 1)
-        sunScreenStatusFrame = self.gui.add_frame("grey", 1, 1)
+        mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0)
+        self.mainframe = mainframe
+
+        tempframe = self.gui.add_frame(mainframe, "grey", 0, 0)
+        tempSliderFrame = self.gui.add_frame(mainframe, "grey", 1, 0)
+        lightSliderFrame = self.gui.add_frame(mainframe, "grey", 2, 0)
+        lightIntensityFrame = self.gui.add_frame(mainframe, "grey", 0, 1)
+        sunScreenStatusFrame = self.gui.add_frame(mainframe, "grey", 1, 1)
 
         self.gui.add_label(tempframe, "Gemiddelde temperatuur", 0, 0)['background']="#64B5F6"
         self.tempText = self.gui.add_label(tempframe, "##,# °C", 0, 1)
@@ -65,12 +70,17 @@ class OverviewGUI():
         lightIntensityFrame['padding'] = 8
         sunScreenStatusFrame['padding'] = 8
 
+        self.gui.notebook.add(mainframe, text=self.type)
+
     def update(self, temp):
         self.temperature = temp * 0.1
+
+    def remove(self):
+        self.gui.notebook.forget(self.mainframe)
 
     def updateSlider(self):
         if(self.tempSlider == None):
             return
         self.tempSlider.set(self.temperature)
-        self.tempText['text'] = "{} °C".format(self.temperature)
-        self.tempText2['text'] = "{} °C".format(self.temperature)
+        self.tempText['text'] = "%.1f °C" % self.temperature
+        self.tempText2['text'] = "%.1f °C" % self.temperature

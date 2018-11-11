@@ -1,11 +1,15 @@
 import serial_controller as ser_con
 import gui_package.overviewgui as ui
+import gui_package.gui as central
 import time
 from module import *
 
 def main():
 
-    overview = ui.OverviewGUI()
+    centrale = central.GUI("Centrale", 600, 400)
+    centrale.add_notebook()
+    framelist = {}
+
     # program loop
     while(True):
 
@@ -19,7 +23,13 @@ def main():
 
         print('Current identified devices: {0}'.format(current_devices))
         print('ALL DEVICE INFO:')
+
+        # for x in todelete
+        #     x.grid_forget()
+        #     mylist.remove(x)
+
         for port, device in current_devices.items():
+
             print('---------')
             print(device)
             print('Time reading:', ser_con.get_sensor_setting(device, 'timer')['data'])
@@ -30,18 +40,31 @@ def main():
             print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
 
             print('Temperature reading:', ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
-            overview.update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
-
+            if device not in framelist:
+                framelist[device] = ui.OverviewGUI(centrale, device.get_type())
+            framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
             print('---------')
 
-        # handle data of devices:
-        # print('data not handled')
+            # handle data of devices:
+            # print('data not handled')
 
-        print('===========')
-        print('')
-        print('')
+            print('===========')
+            print('')
+            print('')
 
-        # time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
+        todelete = []
+
+        for device in framelist:
+            if device.get_port() not in current_devices:
+                todelete.append(framelist[device])
+
+        for frame in todelete:
+            frame.remove()
+            print("DELETE=----------------------------------------------=", frame)
+
+
+
+        time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
 
