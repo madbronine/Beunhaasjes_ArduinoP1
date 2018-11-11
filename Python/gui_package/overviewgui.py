@@ -11,6 +11,7 @@ class OverviewGUI():
     lux = 0;
 
     type = "UNKNOWN"
+    vartype = IntVar()
 
     tempText = None
     luxText = None
@@ -68,11 +69,11 @@ class OverviewGUI():
 
         self.gui.add_label(settingFrame, "Max:", 0, 1)['padding'] = 8
         self.gui.add_slider(settingFrame, 0, 100, 1, 1)
-        self.gui.add_radiobutton(settingFrame, "Rol in", IntVar(), 0, self.radioButton, 2, 1)
+        self.gui.add_radiobutton(settingFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
 
         self.gui.add_label(settingFrame, "Interval:", 0, 2)['padding'] = 8
         self.gui.add_slider(settingFrame, 0, 100, 1, 2)
-        self.gui.add_radiobutton(settingFrame, "Rol out", IntVar(), 1, self.radioButton, 2, 2)
+        self.gui.add_radiobutton(settingFrame, "Rol out", self.vartype, 1, self.radioButton, 2, 2)
 
         self.gui.add_button(settingFrame, "Update Settings", 0, 3, self.sendSettings, 3)
 
