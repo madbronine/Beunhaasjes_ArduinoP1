@@ -52,9 +52,8 @@ class GUI():
     def add_frame(self, root, background, column, row):
         gui_style = ttk.Style()
         gui_style.configure('My.TFrame', background=background)
-
         frame = ttk.Frame(root, style='My.TFrame')
-        frame.grid(column=column, row=row)
+        frame.grid(column=column, row=row, sticky="nsew")
         return frame
 
     def add_slider(self, root, min, max, column, row):
@@ -62,14 +61,22 @@ class GUI():
         scale.grid(column=column, row=row, sticky="nsew")
         return scale
 
+    def add_radiobutton(self, root, text, var, value, command,column, row):
+        radiobutton = ttk.Radiobutton(root, text=text, variable=var, value=value, command=command)
+        radiobutton.grid(column=column, row=row, sticky="nsew")
+        return radiobutton
+
+    def add_checkbutton(self, root, text, column, row):
+        checkbutton = ttk.Checkbutton(root, text=text)
+        checkbutton.grid(column=column, row=row, sticky="nsew")
+        checkbutton.invoke()
+        return checkbutton
+
     def add_notebook(self):
         notebook = ttk.Notebook(self.root)
         self.notebook = notebook
         notebook.grid(sticky="nsew")
         return notebook
-
-    def hideFrame(self, frame):
-        pass
 
     def add_action(self, function):
         self.functions.append(function)

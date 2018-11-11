@@ -4,16 +4,12 @@ import gui_package.gui as ui
 class OverviewGUI():
 
     gui = None
-    tempSlider = None
-    tempText = None
-    tempText2 = None
-    sunText = None
-    sunSlider = None
-    statusText = None
-    lightIntensitySlider = None
-    temperature = 0.1;
-    type = "Unknown"
     mainframe = None
+
+    temperature = 0.0;
+    lux = 0;
+
+    type = "UNKNOWN"
 
     def __init__(self, root, type):
         self.type = type
@@ -21,54 +17,57 @@ class OverviewGUI():
         self.build()
         self.gui.add_action(self.updateSlider)
 
+    def radioButton(self):
+        pass
+
+    def sendSettings(self):
+        pass
+
     def build(self):
         mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0)
         self.mainframe = mainframe
 
-        tempframe = self.gui.add_frame(mainframe, "grey", 0, 0)
-        tempSliderFrame = self.gui.add_frame(mainframe, "grey", 1, 0)
-        lightSliderFrame = self.gui.add_frame(mainframe, "grey", 2, 0)
-        lightIntensityFrame = self.gui.add_frame(mainframe, "grey", 0, 1)
-        sunScreenStatusFrame = self.gui.add_frame(mainframe, "grey", 1, 1)
+        overviewFrame = self.gui.add_frame(mainframe, "grey", 0, 0)
+        settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1)
+        graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0)
 
-        self.gui.add_label(tempframe, "Gemiddelde temperatuur", 0, 0)['background']="#64B5F6"
-        self.tempText = self.gui.add_label(tempframe, "##,# °C", 0, 1)
-        self.tempText['anchor']=CENTER
-        self.tempText['padding']=8
-        self.tempText['font']=("Standard", 24)
-        self.tempText['background']="#9be7ff"
+        if self.type == "TEMP":
+            self.gui.add_label(overviewFrame, "Temperatuur", 0, 0)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Min: 0", 1, 0)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Max: 0", 1, 1)['padding'] = 8
 
-        self.tempText2 = self.gui.add_label(tempSliderFrame, "##,# °C", 0, 0)
-        slider = self.gui.add_slider(tempSliderFrame, 0.0, 30.0, 0, 1)
-        self.tempSlider = slider
-        self.tempText2['anchor']=CENTER
-        self.tempText2['padding']=8
-        self.tempText2['font']=("Standard", 16)
-        self.tempText2['background']="#9be7ff"
+            self.gui.add_label(overviewFrame, "Status:", 0, 2)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Ingerold", 1, 2)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
+            self.gui.add_label(overviewFrame, "20.3 °C", 1, 3)['padding'] = 8
 
-        self.sunText = self.gui.add_label(lightSliderFrame, "##%", 0, 0)
-        sunSlider = self.gui.add_slider(lightSliderFrame, 0.0, 30.0, 0, 1)
-        self.sunSlider = sunSlider
-        self.sunText['anchor']=CENTER
-        self.sunText['padding']=8
-        self.sunText['font']=("Standard", 16)
-        self.sunText['background']="#9be7ff"
+        elif self.type == "LIGHT":
+            self.gui.add_label(overviewFrame, "Licht", 0, 0)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Min: 100", 1, 0)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Max: 200", 1, 1)['padding'] = 8
 
-        self.gui.add_label(lightIntensityFrame, "Gem. lichtintensiteit", 0, 0)['background']="#64B5F6"
-        self.lightIntensitySlider = self.gui.add_slider(lightIntensityFrame, 0.0, 100.0, 0, 1)
+            self.gui.add_label(overviewFrame, "Status:", 0, 2)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Ingerold", 1, 2)['padding'] = 8
+            self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
+            self.gui.add_label(overviewFrame, "150 Lux", 1, 3)['padding'] = 8
 
-        self.gui.add_label(sunScreenStatusFrame, "Status", 0, 0)['background']="#64B5F6"
-        self.statusText = self.gui.add_label(sunScreenStatusFrame, "Open", 0, 1)
-        self.statusText['anchor']=CENTER
-        self.statusText['padding']=8
-        self.statusText['font']=("Standard", 16)
-        self.statusText['background']="#9be7ff"
+        else:
+            print("Unkown device type")
 
-        tempframe['padding'] = 8
-        tempSliderFrame['padding'] = 8
-        lightSliderFrame['padding'] = 8
-        lightIntensityFrame['padding'] = 8
-        sunScreenStatusFrame['padding'] = 8
+        self.gui.add_label(settingFrame, "Min:", 0, 0)['padding'] = 8
+        self.gui.add_slider(settingFrame, 0, 100, 1, 0)
+        self.gui.add_checkbutton(settingFrame, "Automatisch", 2, 0)
+
+        self.gui.add_label(settingFrame, "Max:", 0, 1)['padding'] = 8
+        self.gui.add_slider(settingFrame, 0, 100, 1, 1)
+        self.gui.add_radiobutton(settingFrame, "Rol in", IntVar(), 0, self.radioButton, 2, 1)
+
+        self.gui.add_label(settingFrame, "Interval:", 0, 2)['padding'] = 8
+        self.gui.add_slider(settingFrame, 0, 100, 1, 2)
+        self.gui.add_radiobutton(settingFrame, "Rol out", IntVar(), 1, self.radioButton, 2, 2)
+
+        overviewFrame['padding'] = 8
+        settingFrame['padding'] = 8
 
         self.gui.notebook.add(mainframe, text=self.type)
 
@@ -79,8 +78,9 @@ class OverviewGUI():
         self.gui.notebook.forget(self.mainframe)
 
     def updateSlider(self):
-        if(self.tempSlider == None):
-            return
-        self.tempSlider.set(self.temperature)
-        self.tempText['text'] = "%.1f °C" % self.temperature
-        self.tempText2['text'] = "%.1f °C" % self.temperature
+        pass
+        # if(self.tempSlider == None):
+        #     return
+        # self.tempSlider.set(self.temperature)
+        # self.tempText['text'] = "%.1f °C" % self.temperature
+        # self.tempText2['text'] = "%.1f °C" % self.temperature
