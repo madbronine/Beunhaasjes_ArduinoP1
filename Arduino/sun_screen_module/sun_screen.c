@@ -15,9 +15,6 @@ uint8_t led_red = 1; //Assign red led to port 9
 uint8_t led_yellow = 2; //Assign yellow led to port 10
 uint8_t led_state = 0;
 
-uint8_t cur_dist = 0;
-uint8_t max_dist = 20;
-
 enum screen_states{
 	rolled_in = 0,
 	rolling = 1,
