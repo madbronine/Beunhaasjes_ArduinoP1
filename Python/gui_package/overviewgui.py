@@ -1,5 +1,6 @@
 from tkinter import *
 import gui_package.gui as ui
+import gui_package.graph_builder as graph
 
 class OverviewGUI():
 
@@ -12,12 +13,12 @@ class OverviewGUI():
     type = "UNKNOWN"
 
     tempText = None
+    luxText = None
 
     def __init__(self, root, type):
         self.type = type
         self.gui = root
         self.build()
-        self.gui.add_action(self.updateSlider)
 
     def radioButton(self):
         pass
@@ -33,6 +34,8 @@ class OverviewGUI():
         settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
         graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0, 1, 2)
 
+        graph.build(graphFrame, 'Tijd', 'Temperatuur in ℃',  -20, 50)
+
         if self.type == "TEMP":
             self.gui.add_label(overviewFrame, "Temperatuur", 0, 0)['padding'] = 8
             self.gui.add_label(overviewFrame, "Min: 0", 1, 0)['padding'] = 8
@@ -43,6 +46,7 @@ class OverviewGUI():
             self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
             self.tempText = self.gui.add_label(overviewFrame, "20.3 °C", 1, 3)
             self.tempText['padding'] = 8
+            self.gui.add_action(self.updateTemp)
 
         elif self.type == "LIGHT":
             self.gui.add_label(overviewFrame, "Licht", 0, 0)['padding'] = 8
@@ -52,8 +56,9 @@ class OverviewGUI():
             self.gui.add_label(overviewFrame, "Status:", 0, 2)['padding'] = 8
             self.gui.add_label(overviewFrame, "Ingerold", 1, 2)['padding'] = 8
             self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
-            self.gui.add_label(overviewFrame, "150 Lux", 1, 3)['padding'] = 8
-
+            self.luxText = self.gui.add_label(overviewFrame, "150 Lux", 1, 3)
+            self.luxText['padding'] = 8
+            self.gui.add_action(self.updateLight)
         else:
             print("Unkown device type")
 
@@ -69,18 +74,24 @@ class OverviewGUI():
         self.gui.add_slider(settingFrame, 0, 100, 1, 2)
         self.gui.add_radiobutton(settingFrame, "Rol out", IntVar(), 1, self.radioButton, 2, 2)
 
+        self.gui.add_button(settingFrame, "Update Settings", 0, 3, self.sendSettings, 3)
+
         overviewFrame['padding'] = 8
         settingFrame['padding'] = 8
 
         self.gui.notebook.add(mainframe, text=self.type)
 
-    def update(self, temp):
-        self.temperature = temp * 0.1
+    def update(self, value):
+        if self.type == "TEMP":
+            self.temperature = value * 0.1
+        elif self.type == "LIGHT":
+            self.lux = lux
 
     def remove(self):
         self.gui.notebook.forget(self.mainframe)
 
-    def updateSlider(self):
-        # if(self.tempSlider == None):
-        #     return
+    def updateTemp(self):
         self.tempText['text'] = "%.1f °C" % self.temperature
+
+    def updateLight(self):
+        self.luxText['text'] = "{} Lux".format(self.lux)
