@@ -24,10 +24,6 @@ def main():
         print('Current identified devices: {0}'.format(current_devices))
         print('ALL DEVICE INFO:')
 
-        # for x in todelete
-        #     x.grid_forget()
-        #     mylist.remove(x)
-
         for port, device in current_devices.items():
 
             print('---------')
@@ -60,14 +56,10 @@ def main():
 
         for frame in todelete:
             frame.remove()
-            print("DELETE=----------------------------------------------=", frame)
-
-
 
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
-
 
 # Start program!
 main()

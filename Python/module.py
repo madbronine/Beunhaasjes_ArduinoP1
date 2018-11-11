@@ -32,8 +32,6 @@ class Module:
     def __str__(self):
         return "Port: {0} \nser: {1} \ntype: {2} \ndata: {3}".format(self.port, self.ser, self.type, self.module_data)
 
-
-
 # Class containing the data of the modules
 class Module_Data:
     def __init__(self, timer, sensor_min, sensor_max, distance_min, distance_max):
