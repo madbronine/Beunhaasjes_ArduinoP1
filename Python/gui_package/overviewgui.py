@@ -1,5 +1,6 @@
 from tkinter import *
 import gui_package.gui as ui
+import gui_package.graph_builder as graph
 
 class OverviewGUI():
 
@@ -32,6 +33,8 @@ class OverviewGUI():
         overviewFrame = self.gui.add_frame(mainframe, "grey", 0, 0, 1, 1)
         settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
         graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0, 1, 2)
+
+        graph.build(graphFrame, 'Tijd', 'Tempeartuur in ℃',  -20, 50)
 
         if self.type == "TEMP":
             self.gui.add_label(overviewFrame, "Temperatuur", 0, 0)['padding'] = 8
