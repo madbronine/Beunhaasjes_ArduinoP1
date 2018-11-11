@@ -10,7 +10,7 @@
 #define LIGHT 1
 
 // Change this to compile for other modules
-#define MODULE_TYPE 0 // Set to temp
+#define MODULE_TYPE 1 // Set to temp
 // #define MODULE_TYPE 1 // Set to light
 
 
@@ -230,28 +230,28 @@ void handle_state(){
 
 // Checks if the sensor value matches its max or min
 void check_sensor(){
-	if(sensor_value < sensor_min_value){
-		set_screen_state(0); // roll in
-		}else if(sensor_value > sensor_max_value){
-		set_screen_state(1); // roll out
+	// If we are not rolling!
+	if(is_rolling() == FALSE){
+		if(sensor_value < sensor_min_value){
+			set_screen_state(0); // roll in
+			}else if(sensor_value > sensor_max_value){
+			set_screen_state(1); // roll out
+		}
 	}
 }
 
 
 // Retrieves the distance and updates the sun screen
 void check_distance(){
-	uint8_t state = get_old_screen_state();
-	cur_distance = get_distance();
-	
-	if(cur_distance <= min_distance){
-		if(state == 2){ // if old state rolled_out
-			stop_rolling();
-		}
-		}else if(cur_distance >= max_distance){
-		if(state == 0){ // if old state rolled_in
-			stop_rolling();
-		}
+	// If we are rolling!
+	if(is_rolling() == TRUE){
+		send_trigger();		// Refresh distance
+		
+		cur_distance = get_distance();
+		// Check if we still need to roll
+		check_remaining_distance(min_distance, max_distance, cur_distance);
 	}
+
 }
 
 void update_sensor(){
@@ -263,6 +263,10 @@ void update_sensor(){
 	#elif MODULE_TYPE == LIGHT // handle ldr
 	update_ldr();
 	sensor_value = readLDR();
+	
+	long int digit = get_distance();
+	to_array(digit);
+	
 	#endif
 }
 
@@ -277,7 +281,6 @@ void initialize(){
 	SCH_Add_Task(handle_screen, 80, 50);
 	SCH_Add_Task(update_sensor, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 20);
-	SCH_Add_Task(send_trigger, 0, 500);
 	SCH_Add_Task(check_distance, 0, 50);
 	
 	
@@ -299,10 +302,13 @@ int main(void)
 {
 	initialize();
 	
+	setup_tm();
+	
+	
+	
 	while (1)
 	{
 		SCH_Dispatch_Tasks();
-		check_distance();
 	}
 }
 

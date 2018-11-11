@@ -119,3 +119,21 @@ void set_screen_state(uint8_t state){
 		}
 	}
 }
+
+// returns 0 or 1
+uint8_t is_rolling(){
+	if(current_screen_status == rolling){
+		return ON;
+	}
+	
+	return OFF;
+}
+
+void check_remaining_distance(int min, int max, int cur){
+		
+	if(cur <= min && old_screen_status == rolled_out){
+		stop_rolling();
+	}else if(cur >= max && old_screen_status == rolled_in){
+		stop_rolling();
+	}
+}
