@@ -49,11 +49,11 @@ class GUI():
         button.grid(column=column, row=row, sticky="nsew")
         return button
 
-    def add_frame(self, root, background, column, row):
+    def add_frame(self, root, background, column, row, columnspan, rowspan):
         gui_style = ttk.Style()
         gui_style.configure('My.TFrame', background=background)
         frame = ttk.Frame(root, style='My.TFrame')
-        frame.grid(column=column, row=row, sticky="nsew")
+        frame.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
         return frame
 
     def add_slider(self, root, min, max, column, row):

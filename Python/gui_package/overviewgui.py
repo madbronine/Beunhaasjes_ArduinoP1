@@ -11,6 +11,8 @@ class OverviewGUI():
 
     type = "UNKNOWN"
 
+    tempText = None
+
     def __init__(self, root, type):
         self.type = type
         self.gui = root
@@ -24,12 +26,12 @@ class OverviewGUI():
         pass
 
     def build(self):
-        mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0)
+        mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
         self.mainframe = mainframe
 
-        overviewFrame = self.gui.add_frame(mainframe, "grey", 0, 0)
-        settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1)
-        graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0)
+        overviewFrame = self.gui.add_frame(mainframe, "grey", 0, 0, 1, 1)
+        settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
+        graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0, 1, 2)
 
         if self.type == "TEMP":
             self.gui.add_label(overviewFrame, "Temperatuur", 0, 0)['padding'] = 8
@@ -39,7 +41,8 @@ class OverviewGUI():
             self.gui.add_label(overviewFrame, "Status:", 0, 2)['padding'] = 8
             self.gui.add_label(overviewFrame, "Ingerold", 1, 2)['padding'] = 8
             self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
-            self.gui.add_label(overviewFrame, "20.3 °C", 1, 3)['padding'] = 8
+            self.tempText = self.gui.add_label(overviewFrame, "20.3 °C", 1, 3)
+            self.tempText['padding'] = 8
 
         elif self.type == "LIGHT":
             self.gui.add_label(overviewFrame, "Licht", 0, 0)['padding'] = 8
@@ -78,9 +81,6 @@ class OverviewGUI():
         self.gui.notebook.forget(self.mainframe)
 
     def updateSlider(self):
-        pass
         # if(self.tempSlider == None):
         #     return
-        # self.tempSlider.set(self.temperature)
-        # self.tempText['text'] = "%.1f °C" % self.temperature
-        # self.tempText2['text'] = "%.1f °C" % self.temperature
+        self.tempText['text'] = "%.1f °C" % self.temperature

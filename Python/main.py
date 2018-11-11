@@ -57,9 +57,12 @@ def main():
         for frame in todelete:
             frame.remove()
 
+
+
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
+
 
 # Start program!
 main()
