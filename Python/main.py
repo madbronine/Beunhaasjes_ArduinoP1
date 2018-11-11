@@ -41,7 +41,7 @@ def main():
         print('')
         print('')
 
-        # time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
+        time.sleep(15) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
 

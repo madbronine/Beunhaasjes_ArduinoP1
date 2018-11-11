@@ -38,7 +38,10 @@ def get_sensor_data(module):
     return distance_min['data'] # Example value:    namedtuple('sensor_value' : 5)
 
 
-
+# Refreshes the data of the device
+def refresh_device(module):
+    create_data(module)
+    module.set_data(module)
 
 
 #       Code below is handled by the controller
