@@ -23,11 +23,8 @@ def data_points():
         l.append(int(10))
     return l
 
-def build(frame, xName, yName, min, max):
+def build(root, xName, yName, min, max):
     # initialise a window.
-    root = Tk()
-    root.config(background='white')
-    root.geometry("700x700")
 
     lab = Label(root, text="Live Plotting", bg = 'white').pack()
 
@@ -39,7 +36,7 @@ def build(frame, xName, yName, min, max):
     ax.grid()
 
     graph = FigureCanvasTkAgg(fig, master=root)
-    graph.get_tk_widget().pack(side="top",fill='both',expand=True)
+    graph.get_tk_widget().pack(side="top",fill='both')
 
     def plotter():
         while continuePlotting:
@@ -53,11 +50,3 @@ def build(frame, xName, yName, min, max):
     def gui_handler():
         change_state()
         threading.Thread(target=plotter).start()
-
-    b = Button(root, text="Start/Stop", command=gui_handler, bg="red", fg="white")
-    b.pack()
-
-    root.mainloop()
-
-
-build(None, 'Tijd', 'Tempeartuur in ℃',  -20, 50)

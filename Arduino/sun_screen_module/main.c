@@ -280,8 +280,8 @@ void initialize(){
 	SCH_Add_Task(handle_state, 0, 10);
 	SCH_Add_Task(handle_screen, 80, 50);
 	SCH_Add_Task(update_sensor, 0, measure_timer);
-	SCH_Add_Task(check_sensor, 0, 20);
-	SCH_Add_Task(check_distance, 0, 20);
+	SCH_Add_Task(check_sensor, 0, 40);
+	SCH_Add_Task(check_distance, 0, 100);
 	
 	
 	
