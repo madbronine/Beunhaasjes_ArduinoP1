@@ -22,7 +22,6 @@ def main():
         for port, device in current_devices.items():
             print('---------')
             print(device)
-            #print('---------')
             print('Time reading:', ser_con.get_sensor_setting(device, 'timer')['data'])
 
             testValue = ser_con.get_sensor_setting(device, 'timer')['data']

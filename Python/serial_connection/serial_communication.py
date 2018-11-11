@@ -19,12 +19,9 @@ def identify_device(com_port, cmd, res):
         return result
     pass
 
-
-
-
     # Give serial Initialize time
     time.sleep(2)
-
+    
     # Send our command + expected result length
     response = send_data(ser, cmd)
 

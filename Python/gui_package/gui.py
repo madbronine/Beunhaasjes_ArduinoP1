@@ -56,7 +56,7 @@ class GUI():
 
     def add_slider(self, root, min, max, column, row):
         scale = ttk.Scale(root, from_=min, to_=max, orient=HORIZONTAL)
-        scale.grid(column=column, row=row, columnspan=2, sticky="nsew")
+        scale.grid(column=column, row=row, sticky="nsew")
         return scale
 
     def add_action(self, function):
