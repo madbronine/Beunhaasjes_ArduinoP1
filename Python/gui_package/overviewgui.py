@@ -20,14 +20,20 @@ class OverviewGUI():
 
     minDistSlider = None
     maxDistSlider = None
-    intervalslider = None
+
+    minDistText = None
+    maxDistText = None
+
+    intervalSlider = None
 
     minText = None
     maxText = None
 
     min = -10
     max = 40
-    interval = 300
+    minDist = 10
+    maxDist = 200
+    interval = 40
     rolUp = True
     automatic = False
 
@@ -44,69 +50,81 @@ class OverviewGUI():
         self.rolUp = not self.rolUp
 
     def sendSettings(self):
-        ser_con.update_device(self.device, 40, int(self.min * 10), int(self.max * 10), 10, 150, None)
+        ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist), None)
 
     def build(self):
         mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
         self.mainframe = mainframe
 
-        overviewFrame = self.gui.add_frame(mainframe, "grey", 0, 0, 1, 1)
-        settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
+        sensorFrame = self.gui.add_frame(mainframe, "grey", 0, 0, 1, 1)
+        sunscreenFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
 
 
         if self.type == "TEMP":
-            self.gui.add_label(overviewFrame, "Temperatuur", 0, 0)['padding'] = 8
-            self.tempText = self.gui.add_label(overviewFrame, "20.3 °C", 1, 3)
+            self.gui.add_label(sensorFrame, "Temperatuur", 0, 0)['padding'] = 8
+            self.tempText = self.gui.add_label(sensorFrame, "20.3 °C", 1, 3)
             self.tempText['padding'] = 8
             self.gui.add_action(self.updateTemp)
 
         elif self.type == "LIGHT":
-            self.gui.add_label(overviewFrame, "Licht", 0, 0)['padding'] = 8
-            self.luxText = self.gui.add_label(overviewFrame, "150 Lux", 1, 3)
+            self.gui.add_label(sensorFrame, "Licht", 0, 0)['padding'] = 8
+            self.luxText = self.gui.add_label(sensorFrame, "150 Lux", 1, 3)
             self.luxText['padding'] = 8
             self.gui.add_action(self.updateLight)
         else:
             print("Unkown device type")
 
-        self.minText = self.gui.add_label(overviewFrame, "Min: 100", 1, 0)
+        self.minText = self.gui.add_label(sensorFrame, "Min: 100", 1, 0)
         self.minText['padding'] = 8
-        self.maxText = self.gui.add_label(overviewFrame, "Max: 200", 1, 1)
+        self.maxText = self.gui.add_label(sensorFrame, "Max: 200", 1, 1)
         self.maxText['padding'] = 8
 
-        self.gui.add_label(overviewFrame, "Status:", 0, 2)['padding'] = 8
-        self.gui.add_label(overviewFrame, "Ingerold", 1, 2)['padding'] = 8
-        self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
+        self.gui.add_label(sensorFrame, "Interval:", 0, 2)['padding'] = 8
+        self.intervalSlider = self.gui.add_slider(sensorFrame, 5, 60, 1, 2, 1, 1)
+        self.intervalSlider['command']=self.updateInterval
+        self.intervalSlider['variable']=IntVar()
+        self.gui.add_label(sensorFrame, "Huidig:", 0, 3)['padding'] = 8
 
-        self.gui.add_label(overviewFrame, "Min:", 3, 0)['padding'] = 8
-        self.minslider = self.gui.add_slider(overviewFrame, 0, 15, 3, 1, 1, 3)
+        self.gui.add_label(sensorFrame, "Min", 3, 0)['padding'] = 8
+        self.minslider = self.gui.add_slider(sensorFrame, 0, 15, 3, 1, 1, 3)
         self.minslider['orient']=VERTICAL
         self.minslider['command']=self.updateTempMinMax
-        self.gui.add_label(overviewFrame, "Max", 4, 0)['padding'] = 8
-        self.maxslider = self.gui.add_slider(overviewFrame, 15, 50, 4, 1, 1, 3)
+        self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
+        self.maxslider = self.gui.add_slider(sensorFrame, 15, 50, 4, 1, 1, 3)
         self.maxslider['orient']=VERTICAL
         self.maxslider['command']=self.updateTempMinMax
+
+
+        self.minDistSlider = self.gui.add_slider(sunscreenFrame, 5, 50, 1, 0, 1, 1)
+        self.minDistSlider['command']=self.updateDistMinMax
+        self.minDistSlider['variable']=IntVar()
+        self.maxDistSlider = self.gui.add_slider(sunscreenFrame, 10, 400, 1, 1, 1, 1)
+        self.maxDistSlider['command']=self.updateDistMinMax
+        self.maxDistSlider['variable']=IntVar()
+
+
+        self.minDistText = self.gui.add_label(sunscreenFrame, "Min:", 0, 0)
+        self.minDistText['padding'] = 8
+        self.gui.add_checkbutton(sunscreenFrame, "Automatisch", 2, 0, self.checkbox)
+        self.maxDistText = self.gui.add_label(sunscreenFrame, "Max:", 0, 1)
+        self.maxDistText['padding'] = 8
+        self.gui.add_radiobutton(sunscreenFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
+
+        self.gui.add_label(sunscreenFrame, "Status:", 0, 2)['padding'] = 8
+        self.gui.add_label(sunscreenFrame, "Ingerold", 1, 2)['padding'] = 8
+
+        self.gui.add_radiobutton(sunscreenFrame, "Rol out", self.vartype, 1, self.radioButton, 2, 2)
+
+        self.gui.add_button(sunscreenFrame, "Update Settings", 0, 3, self.sendSettings, 3)
+
+        sensorFrame['padding'] = 8
+        sunscreenFrame['padding'] = 8
+
+        self.updateDistMinMax(0)
+        self.maxDistSlider.set(self.maxDist)
+        self.minDistSlider.set(self.minDist)
         self.maxslider.set(self.max)
         self.minslider.set(self.min)
-
-        # self.maxslider = self.gui.add_slider(overviewFrame, 15, 50, 4, 1, 1, 3)
-        # self.maxslider['command']=self.updateDistMinMax
-        #
-        # self.maxslider = self.gui.add_slider(overviewFrame, 15, 50, 4, 1, 1, 3)
-        # self.maxslider['command']=self.updateDistMinMax
-
-        self.gui.add_label(settingFrame, "Min:", 0, 0)['padding'] = 8
-        self.gui.add_checkbutton(settingFrame, "Automatisch", 2, 0, self.checkbox)
-        self.gui.add_label(settingFrame, "Max:", 0, 1)['padding'] = 8
-        self.gui.add_radiobutton(settingFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
-
-        self.gui.add_label(settingFrame, "Interval:", 0, 2)['padding'] = 8
-        self.gui.add_slider(settingFrame, 0, 100, 1, 2, 1, 1)
-        self.gui.add_radiobutton(settingFrame, "Rol out", self.vartype, 1, self.radioButton, 2, 2)
-
-        self.gui.add_button(settingFrame, "Update Settings", 0, 3, self.sendSettings, 3)
-
-        overviewFrame['padding'] = 8
-        settingFrame['padding'] = 8
 
         self.gui.notebook.add(mainframe, text=self.type)
 
@@ -119,18 +137,29 @@ class OverviewGUI():
         elif self.type == "LIGHT":
             self.lux = value
 
+    def updateDistMinMax(self, value):
+        self.minDist = int(self.minDistSlider.get())
+        self.maxDist = int(self.maxDistSlider.get())
+
+        if self.minDist > self.maxDist:
+            self.maxDist = self.minDist
+            self.maxDistSlider.set(self.maxDist)
+
+        if self.maxDist < self.minDist:
+            self.minDist = self.maxDist
+            self.minDistSlider.set(self.maxDist)
+
+        self.minDistText['text'] = "Min: {} cm".format(self.minDist)
+        self.maxDistText['text'] = "Max: {} cm".format(self.maxDist)
+
     def updateTempMinMax(self, value):
         self.min = self.minslider.get()
         self.max = self.maxslider.get()
         self.minText['text'] = "Min: %.1f °C" % self.min
         self.maxText['text'] = "Max: %.1f °C" % self.max
 
-    def updateDistMinMax(self, value):
-        # self.min = self.minslider.get()
-        # self.max = self.maxslider.get()
-        # self.minText['text'] = "Min: %.1f °C" % self.min
-        # self.maxText['text'] = "Max: %.1f °C" % self.max
-        pass
+    def updateInterval(self, value):
+        self.interval = int(self.intervalSlider.get())
 
     def remove(self):
         self.gui.notebook.forget(self.mainframe)
