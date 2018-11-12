@@ -56,6 +56,13 @@ void update_sensor();
 // Temp variable to store our sending value
 int send_value = 0;
 
+uint8_t screen_direction = 0;
+
+enum screen_control_state{
+	automatic = 0,
+	manual = 1
+};
+enum screen_control_state s_control_state = automatic;
 
 enum com_messages{
 	no_message = 0,
@@ -75,7 +82,9 @@ enum com_messages{
 	sensor_max = 24,
 	distance_min = 26,
 	distance_max = 28,
-	current_state = 30
+	current_state = 30,
+	toggle_manual = 32,
+	set_screen = 34
 };
 enum com_messages message = no_message;
 
@@ -198,6 +207,14 @@ void select_data(){
 		handle_value(&current_screen_state);
 		break;
 		
+		case toggle_manual:
+		handle_value(&s_control_state);
+		break;
+		
+		case set_screen:
+		handle_value(&screen_direction);
+		break;
+		
 		
 		default:
 		/* Your code here */
@@ -237,13 +254,18 @@ void handle_state(){
 
 // Checks if the sensor value matches its max or min
 void check_sensor(){
-	
-	// If we are not rolling!
-	if(is_rolling() == FALSE){
-		if(sensor_value < sensor_min_value){
-			set_screen_state(0); // roll in
-			}else if(sensor_value > sensor_max_value){
-			set_screen_state(1); // roll out
+	if(s_control_state == automatic){
+		// If we are not rolling!
+		if(is_rolling() == FALSE){
+			if(sensor_value < sensor_min_value){
+				set_screen_state(0); // roll in
+				}else if(sensor_value > sensor_max_value){
+				set_screen_state(1); // roll out
+			}
+		}
+	}else if(s_control_state == manual){
+		if(is_rolling() == FALSE){
+			set_screen_state(screen_direction); // roll
 		}
 	}
 }
