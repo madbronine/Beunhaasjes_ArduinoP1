@@ -1,10 +1,10 @@
 from tkinter import *
 import gui_package.gui as ui
 import gui_package.graph_builder as graph
+import serial_controller as ser_con
 
 class OverviewGUI():
 
-    main = None
     device = None
 
     gui = None
@@ -18,12 +18,15 @@ class OverviewGUI():
     tempText = None
     luxText = None
 
-    minslider = None
-    maxslider = None
+    minDistSlider = None
+    maxDistSlider = None
     intervalslider = None
 
-    min = 0
-    max = 0
+    minText = None
+    maxText = None
+
+    min = -10
+    max = 40
     interval = 300
     rolUp = True
     automatic = False
@@ -39,15 +42,9 @@ class OverviewGUI():
 
     def radioButton(self):
         self.rolUp = not self.rolUp
-        print(self.rolUp)
 
     def sendSettings(self):
-        self.min = self.minslider.get()
-        if self.automatic:
-            print("Automatic")
-        else:
-            print(self.rolUp)
-        #self.main.sendSettings(self.device, self.min, self.max, self.automatic, self.rolUp)
+        ser_con.update_device(self.device, 40, int(self.min * 10), int(self.max * 10), 10, 150, None)
 
     def build(self):
         mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
@@ -55,9 +52,7 @@ class OverviewGUI():
 
         overviewFrame = self.gui.add_frame(mainframe, "grey", 0, 0, 1, 1)
         settingFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
-        graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0, 1, 2)
 
-        graph.build(graphFrame, 'Tijd', 'Temperatuur in ℃',  -20, 50)
 
         if self.type == "TEMP":
             self.gui.add_label(overviewFrame, "Temperatuur", 0, 0)['padding'] = 8
@@ -73,39 +68,69 @@ class OverviewGUI():
         else:
             print("Unkown device type")
 
-        self.gui.add_label(overviewFrame, "Min: 100", 1, 0)['padding'] = 8
-        self.gui.add_label(overviewFrame, "Max: 200", 1, 1)['padding'] = 8
+        self.minText = self.gui.add_label(overviewFrame, "Min: 100", 1, 0)
+        self.minText['padding'] = 8
+        self.maxText = self.gui.add_label(overviewFrame, "Max: 200", 1, 1)
+        self.maxText['padding'] = 8
 
         self.gui.add_label(overviewFrame, "Status:", 0, 2)['padding'] = 8
         self.gui.add_label(overviewFrame, "Ingerold", 1, 2)['padding'] = 8
         self.gui.add_label(overviewFrame, "Huidig:", 0, 3)['padding'] = 8
 
-        self.gui.add_label(settingFrame, "Min:", 0, 0)['padding'] = 8
-        self.minslider = self.gui.add_slider(settingFrame, 0, 100, 1, 0)
-        self.gui.add_checkbutton(settingFrame, "Automatisch", 2, 0, self.checkbox)
+        self.gui.add_label(overviewFrame, "Min:", 3, 0)['padding'] = 8
+        self.minslider = self.gui.add_slider(overviewFrame, 0, 15, 3, 1, 1, 3)
+        self.minslider['orient']=VERTICAL
+        self.minslider['command']=self.updateTempMinMax
+        self.gui.add_label(overviewFrame, "Max", 4, 0)['padding'] = 8
+        self.maxslider = self.gui.add_slider(overviewFrame, 15, 50, 4, 1, 1, 3)
+        self.maxslider['orient']=VERTICAL
+        self.maxslider['command']=self.updateTempMinMax
+        self.maxslider.set(self.max)
+        self.minslider.set(self.min)
 
+        # self.maxslider = self.gui.add_slider(overviewFrame, 15, 50, 4, 1, 1, 3)
+        # self.maxslider['command']=self.updateDistMinMax
+        #
+        # self.maxslider = self.gui.add_slider(overviewFrame, 15, 50, 4, 1, 1, 3)
+        # self.maxslider['command']=self.updateDistMinMax
+
+        self.gui.add_label(settingFrame, "Min:", 0, 0)['padding'] = 8
+        self.gui.add_checkbutton(settingFrame, "Automatisch", 2, 0, self.checkbox)
         self.gui.add_label(settingFrame, "Max:", 0, 1)['padding'] = 8
-        self.maxslider = self.gui.add_slider(settingFrame, 0, 100, 1, 1)
-        self.maxslider.set
         self.gui.add_radiobutton(settingFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
 
         self.gui.add_label(settingFrame, "Interval:", 0, 2)['padding'] = 8
-        self.gui.add_slider(settingFrame, 0, 100, 1, 2)
+        self.gui.add_slider(settingFrame, 0, 100, 1, 2, 1, 1)
         self.gui.add_radiobutton(settingFrame, "Rol out", self.vartype, 1, self.radioButton, 2, 2)
 
         self.gui.add_button(settingFrame, "Update Settings", 0, 3, self.sendSettings, 3)
 
         overviewFrame['padding'] = 8
         settingFrame['padding'] = 8
-        graphFrame['padding'] = 8
 
         self.gui.notebook.add(mainframe, text=self.type)
 
     def update(self, value):
+        if value == None:
+            return
+
         if self.type == "TEMP":
             self.temperature = value * 0.1
         elif self.type == "LIGHT":
             self.lux = value
+
+    def updateTempMinMax(self, value):
+        self.min = self.minslider.get()
+        self.max = self.maxslider.get()
+        self.minText['text'] = "Min: %.1f °C" % self.min
+        self.maxText['text'] = "Max: %.1f °C" % self.max
+
+    def updateDistMinMax(self, value):
+        # self.min = self.minslider.get()
+        # self.max = self.maxslider.get()
+        # self.minText['text'] = "Min: %.1f °C" % self.min
+        # self.maxText['text'] = "Max: %.1f °C" % self.max
+        pass
 
     def remove(self):
         self.gui.notebook.forget(self.mainframe)

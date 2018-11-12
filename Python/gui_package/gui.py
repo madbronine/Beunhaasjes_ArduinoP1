@@ -56,9 +56,9 @@ class GUI():
         frame.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
         return frame
 
-    def add_slider(self, root, min, max, column, row):
+    def add_slider(self, root, min, max, column, row, columnspan, rowspan):
         scale = ttk.Scale(root, from_=min, to_=max, orient=HORIZONTAL)
-        scale.grid(column=column, row=row, sticky="nsew")
+        scale.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
         return scale
 
     def add_radiobutton(self, root, text, var, value, command,column, row):

@@ -50,7 +50,7 @@ def update_device(device, timer, sens_min, sens_max, dist_min, dist_max, cur_sta
     set_sensor_data(device, 'sensor_max', sens_max)
     set_sensor_data(device, 'distance_min', dist_min)
     set_sensor_data(device, 'distance_max', dist_max)
-    set_sensor_data(device, 'current_state', cur_state)
+    # set_sensor_data(device, 'current_state', cur_state)
 
     data = create_data(device)
 
