@@ -36,13 +36,15 @@ def main():
             print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
 
             print('Temperature reading:', ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
-            if device not in framelist:
-                framelist[device] = ui.OverviewGUI(centrale, device.get_type())
-            framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
+
             print('---------')
 
             # handle data of devices:
             # print('data not handled')
+
+            if device not in framelist:
+                framelist[device] = ui.OverviewGUI(centrale, device.get_type())
+            framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
 
             print('===========')
             print('')

@@ -11,7 +11,7 @@ class OverviewGUI():
     lux = 0;
 
     type = "UNKNOWN"
-    vartype = IntVar()
+
 
     tempText = None
     luxText = None
@@ -19,6 +19,7 @@ class OverviewGUI():
     def __init__(self, root, type):
         self.type = type
         self.gui = root
+        self.vartype = IntVar()
         self.build()
 
     def radioButton(self):
@@ -79,6 +80,8 @@ class OverviewGUI():
 
         overviewFrame['padding'] = 8
         settingFrame['padding'] = 8
+        graphFrame['padding'] = 8
+
 
         self.gui.notebook.add(mainframe, text=self.type)
 
