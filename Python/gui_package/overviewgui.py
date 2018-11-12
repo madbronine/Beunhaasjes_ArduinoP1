@@ -10,8 +10,8 @@ class OverviewGUI():
     gui = None
     mainframe = None
 
-    temperature = 0.0;
-    lux = 0;
+    temperature = 0.0
+    lux = 0
 
     type = "UNKNOWN"
 
@@ -26,7 +26,7 @@ class OverviewGUI():
     max = 0
     interval = 300
     rolUp = True
-    automatic = True
+    automatic = False
 
     sunscreenStatus = "Ingerold"
 
@@ -42,7 +42,7 @@ class OverviewGUI():
         print(self.rolUp)
 
     def sendSettings(self):
-        self.min = minslider
+        self.min = self.minslider.get()
         if self.automatic:
             print("Automatic")
         else:
@@ -86,6 +86,7 @@ class OverviewGUI():
 
         self.gui.add_label(settingFrame, "Max:", 0, 1)['padding'] = 8
         self.maxslider = self.gui.add_slider(settingFrame, 0, 100, 1, 1)
+        self.maxslider.set
         self.gui.add_radiobutton(settingFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
 
         self.gui.add_label(settingFrame, "Interval:", 0, 2)['padding'] = 8
@@ -104,7 +105,7 @@ class OverviewGUI():
         if self.type == "TEMP":
             self.temperature = value * 0.1
         elif self.type == "LIGHT":
-            self.lux = lux
+            self.lux = value
 
     def remove(self):
         self.gui.notebook.forget(self.mainframe)
@@ -113,8 +114,7 @@ class OverviewGUI():
         self.tempText['text'] = "%.1f °C" % self.temperature
 
     def checkbox(self):
-        # self.tempText['text'] = "%.1f °C" % self.temperature
-        pass
+        self.automatic = not self.automatic
 
     def updateLight(self):
         self.luxText['text'] = "{} Lux".format(self.lux)
