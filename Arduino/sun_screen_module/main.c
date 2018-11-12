@@ -51,6 +51,8 @@ char id[] = "LIGHT";
 #define TRUE 1
 #define FALSE 0
 
+void update_sensor();
+
 // Temp variable to store our sending value
 int send_value = 0;
 
@@ -93,7 +95,7 @@ enum comm_states current_comm_state = default_state;
 
 int wait_for_message = FALSE;
 
-
+unsigned char temp_update_id = 0;
 
 // Sunscreen state
 
@@ -120,6 +122,11 @@ void select_data(){
 	{
 		case timer_value:
 		handle_value(&measure_timer);
+		
+		// Delete old task
+		SCH_Delete_Task(temp_update_id);
+		// update new task
+		temp_update_id = SCH_Add_Task(update_sensor, 0, measure_timer);
 		break;
 		
 		case sensor_min:
@@ -265,9 +272,6 @@ void update_sensor(){
 	update_ldr();
 	sensor_value = readLDR();
 	
-	long int digit = get_distance();
-	to_array(digit);
-	
 	#endif
 }
 
@@ -280,7 +284,7 @@ void initialize(){
 	
 	SCH_Add_Task(handle_state, 0, 10);
 	SCH_Add_Task(handle_screen, 80, 50);
-	SCH_Add_Task(update_sensor, 0, measure_timer);
+	temp_update_id = SCH_Add_Task(update_sensor, 0, measure_timer);
 	SCH_Add_Task(check_sensor, 0, 40);
 	SCH_Add_Task(check_distance, 0, 100);
 	
@@ -302,10 +306,6 @@ void initialize(){
 int main(void)
 {
 	initialize();
-	
-	setup_tm();
-	
-	
 	
 	while (1)
 	{

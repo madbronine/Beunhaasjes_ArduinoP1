@@ -163,12 +163,6 @@
     <Compile Include="sun_screen.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="TM1638lib.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="TM1638lib.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="ultrasone.c">
       <SubType>compile</SubType>
     </Compile>
