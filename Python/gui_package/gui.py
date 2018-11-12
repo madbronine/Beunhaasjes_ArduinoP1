@@ -66,8 +66,8 @@ class GUI():
         radiobutton.grid(column=column, row=row, sticky="nsew")
         return radiobutton
 
-    def add_checkbutton(self, root, text, column, row):
-        checkbutton = ttk.Checkbutton(root, text=text)
+    def add_checkbutton(self, root, text, column, row, command):
+        checkbutton = ttk.Checkbutton(root, text=text, command=command)
         checkbutton.grid(column=column, row=row, sticky="nsew")
         checkbutton.invoke()
         return checkbutton

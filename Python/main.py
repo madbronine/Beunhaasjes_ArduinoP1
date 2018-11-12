@@ -43,7 +43,7 @@ def main():
             # print('data not handled')
 
             if device not in framelist:
-                framelist[device] = ui.OverviewGUI(centrale, device.get_type())
+                framelist[device] = ui.OverviewGUI(centrale, device.get_type(), device)
             framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
 
             print('===========')
@@ -59,12 +59,9 @@ def main():
         for frame in todelete:
             frame.remove()
 
-
-
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 
 #####################################################
-
 
 # Start program!
 main()
