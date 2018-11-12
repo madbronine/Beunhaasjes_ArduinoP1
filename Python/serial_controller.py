@@ -160,7 +160,7 @@ def get_sensor_setting(module, send_cmd):
                 result['data'] = response['data']
             else:
                 result['error'] = True
-                result['message'] = response['message']
+                result['message'] = 'Error occured'
         else:
             # Invalid code
             result['error'] = True
