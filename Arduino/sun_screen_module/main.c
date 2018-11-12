@@ -126,7 +126,7 @@ void select_data(){
 		// Delete old task
 		SCH_Delete_Task(temp_update_id);
 		// update new task
-		temp_update_id = SCH_Add_Task(update_sensor, 0, measure_timer);
+		temp_update_id = SCH_Add_Task(update_sensor, 0, measure_timer * 100); // Blink in 40 * 100 = 4000 (4seconds)   
 		break;
 		
 		case sensor_min:
@@ -282,11 +282,11 @@ void initialize(){
 	screen_init();
 	init_ultrasone();
 	
-	SCH_Add_Task(handle_state, 0, 10);
-	SCH_Add_Task(handle_screen, 80, 50);
-	temp_update_id = SCH_Add_Task(update_sensor, 0, measure_timer);
-	SCH_Add_Task(check_sensor, 0, 40);
-	SCH_Add_Task(check_distance, 0, 100);
+	SCH_Add_Task(handle_state, 0, 5); // Handles communcation, needs to be called often
+	SCH_Add_Task(handle_screen, 80, 100); // Blink every 1 second // handles rolling (if needed)
+	temp_update_id = SCH_Add_Task(update_sensor, 0, measure_timer * 100); // Blink in seconds
+	SCH_Add_Task(check_sensor, 0, 100); // Uses sensor value to trigger the sunscreen
+	SCH_Add_Task(check_distance, 0, 100); // Measure distance every 1 second
 	
 	
 	
