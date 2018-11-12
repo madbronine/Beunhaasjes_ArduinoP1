@@ -10,7 +10,7 @@
 #define LIGHT 1
 
 // Change this to compile for other modules
-#define MODULE_TYPE 0 // Set to temp
+#define MODULE_TYPE 1 // Set to temp
 // #define MODULE_TYPE 1 // Set to light
 
 
@@ -230,6 +230,7 @@ void handle_state(){
 
 // Checks if the sensor value matches its max or min
 void check_sensor(){
+	
 	// If we are not rolling!
 	if(is_rolling() == FALSE){
 		if(sensor_value < sensor_min_value){
@@ -244,7 +245,7 @@ void check_sensor(){
 // Retrieves the distance and updates the sun screen
 void check_distance(){
 	// If we are rolling!
-	if(is_rolling() == TRUE){
+	if(is_rolling() == TRUE  && current_comm_state == default_state){
 		send_trigger();		// Refresh distance
 		
 		cur_distance = get_distance();
