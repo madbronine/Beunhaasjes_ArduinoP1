@@ -102,10 +102,10 @@ class Graph():
             pos = 25 + (20*x)
             canv.create_line(pos, 25, pos, canv.winfo_height() - 25, width=1, tags="field", fill="lightgray") # Canvas.winfo_width
 
-        for y in range(1, 16):
+        for y in range(1, 8):
             pos = 20 + (20*y)
             canv.create_line(25, pos, canv.winfo_width() , pos,  width=1, tags="field", fill="lightgray") # Canvas.winfo_width
-            canv.create_text(10, pos,fill="darkblue",font="Times 7", text=45-y * 5, tags="field")
+            canv.create_text(10, pos,fill="darkblue",font="Times 7", text=10000-(y*1000), tags="field")
 
 
 
