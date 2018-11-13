@@ -33,7 +33,7 @@ class GUI():
         self.title = title
         self.sizeX = sizeX
         self.sizeY = sizeY
-        self.refreshRate = 1 / self.refreshRate
+        self.refreshRate = self.refreshRate
         uiThread = threading.Thread(target=self.gui_build)
         uiThread.start()
         mainThread = threading.Thread(target=self.gui_main)
@@ -77,6 +77,11 @@ class GUI():
         self.notebook = notebook
         notebook.grid(sticky="nsew")
         return notebook
+
+    def add_progressbar(self, root, mode, column, row):
+        progressbar = ttk.Progressbar(root, mode=mode)
+        progressbar.grid(column=column, row=row, sticky="nsew")
+        return progressbar
 
     def add_action(self, function):
         self.functions.append(function)

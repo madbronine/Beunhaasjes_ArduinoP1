@@ -1,13 +1,16 @@
 import serial_controller as ser_con
 import gui_package.overviewgui as ui
+import gui_package.welcomegui as welcomeui
 import gui_package.gui as central
 import time
 from module import *
 
 def main():
 
-    centrale = central.GUI("Centrale", 600, 400)
+    centrale = central.GUI("Centrale", 300, 300)
     centrale.add_notebook()
+    welcomescreen = welcomeui.WelcomeGUI(centrale)
+
     framelist = {}
 
     # program loop
@@ -46,6 +49,7 @@ def main():
                 framelist[device] = ui.OverviewGUI(centrale, device.get_type(), device)
             framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
             framelist[device].updateScreenState(ser_con.get_screen_state(device))
+            welcomescreen.device_amount(len(current_devices.items()))
 
             print('===========')
             print('')

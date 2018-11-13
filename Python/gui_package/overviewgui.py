@@ -62,7 +62,9 @@ class OverviewGUI():
 
         sensorFrame = self.gui.add_frame(mainframe, "grey", 0, 0, 1, 1)
         sunscreenFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
+        graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0, 1, 2)
 
+        # graph.build(graphFrame, 'Tijd', 'Temperatuur in ℃',  -20, 50)
 
         if self.type == "TEMP":
             self.gui.add_label(sensorFrame, "Temperatuur", 0, 0)['padding'] = 8
@@ -112,7 +114,6 @@ class OverviewGUI():
         self.maxDistSlider['command']=self.updateDistMinMax
         self.maxDistSlider['variable']=IntVar()
 
-
         self.minDistText = self.gui.add_label(sunscreenFrame, "Min:", 0, 0)
         self.minDistText['padding'] = 8
         self.gui.add_checkbutton(sunscreenFrame, "Automatisch", 2, 0, self.checkbox)
@@ -138,7 +139,6 @@ class OverviewGUI():
 
         self.isset = True
 
-
     def updateValues(self, interval, tempMin, tempMax, distMin, distMax, automatic, screen_state):
         self.interval = interval
         if self.type == "TEMP":
@@ -153,16 +153,12 @@ class OverviewGUI():
         self.automatic = automatic
         self.screen_state = screen_state
 
-        print(self.min)
-        print(self.max)
-
         self.intervalSlider.set(interval)
         self.maxDistSlider.set(distMax)
         self.minDistSlider.set(distMin)
+
         self.minslider.set(self.min)
         self.maxslider.set(self.max)
-        print(self.max)
-        print(self.maxslider.get())
         self.updateDistMinMax(None)
         self.updateTempMinMax(None)
         self.updateInterval(None)
@@ -184,8 +180,10 @@ class OverviewGUI():
 
         if self.type == "TEMP":
             self.temperature = value * 0.1
+            self.updateTemp()
         elif self.type == "LIGHT":
             self.lux = value
+            self.updateLight()
 
     def updateDistMinMax(self, value):
         self.minDist = int(self.minDistSlider.get())
@@ -203,7 +201,6 @@ class OverviewGUI():
         self.maxDistText['text'] = "Max: {} cm".format(self.maxDist)
 
     def updateTempMinMax(self, value):
-
         if self.isset == True:
             self.min = self.minslider.get()
             self.max = self.maxslider.get()
