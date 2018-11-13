@@ -37,6 +37,12 @@ def get_sensor_data(module):
 
     return distance_min['data'] # Example value:    namedtuple('sensor_value' : 5)
 
+def get_screen_state(module):
+    screen_state = get_sensor_setting(module, 'set_screen')
+
+    return screen_state['data'] # Example value:    namedtuple('sensor_value' : 5)
+
+
 
 # Refreshes the data of the device
 def refresh_device(module):
@@ -146,8 +152,10 @@ def create_data(module):
     sensor_max = get_sensor_setting(module, 'sensor_max')
     distance_min = get_sensor_setting(module, 'distance_min')
     distance_max = get_sensor_setting(module, 'distance_max')
+    manual_state = get_sensor_setting(module, 'toggle_manual')
 
-    data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'])
+
+    data = Module_Data(timer['data'], sensor_min['data'], sensor_max['data'], distance_min['data'], distance_max['data'], manual_state['data'])
     #data = Module_Data(timer['data'], 0,0,0,0)
     return data
 

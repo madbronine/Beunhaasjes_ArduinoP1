@@ -208,7 +208,9 @@ void select_data(){
 		break;
 		
 		case toggle_manual:
-		handle_value(&s_control_state);
+		sen_value = (int)s_control_state;
+		handle_value(&sen_value);
+		s_control_state = sen_value;
 		break;
 		
 		case set_screen:

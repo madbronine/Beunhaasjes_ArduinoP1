@@ -29,17 +29,20 @@ class Module:
     def set_data(self, module_data):
         self.module_data = module_data
 
+
     def __str__(self):
         return "Port: {0} \nser: {1} \ntype: {2} \ndata: {3}".format(self.port, self.ser, self.type, self.module_data)
 
 # Class containing the data of the modules
 class Module_Data:
-    def __init__(self, timer, sensor_min, sensor_max, distance_min, distance_max):
+    def __init__(self, timer, sensor_min, sensor_max, distance_min, distance_max, toggle_manual):
         self.timer = timer                  # Timer value in MS ??
         self.sensor_min = sensor_min        # Sensor min value
         self.sensor_max = sensor_max        # Sensor max value
         self.distance_min = distance_min    # Distance sensor min value
         self.distance_max = distance_max    # Distance sensor max value
+
+        self.toggle_manual = toggle_manual
 
     # Sets the timer setting
     def set_timer(self, timer):
@@ -61,11 +64,16 @@ class Module_Data:
     def get_setting_max(self):
         return self.sensor_max
 
+<<<<<<< HEAD
     def get_setting_min_distance(self):
         return self.distance_min
 
     def get_setting_max_distance(self):
         return self.distance_max
+=======
+    def get_manual(self):
+        return self.toggle_manual
+>>>>>>> 3bec8f2e2c1666459f22f1473ba57356b57300ae
 
     def __str__(self):
-        return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}  dist_max: {4} ".format(self.timer, self.sensor_min, self.sensor_max, self.distance_min, self.distance_max)
+        return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}  dist_max: {4} manual: {5} ".format(self.timer, self.sensor_min, self.sensor_max, self.distance_min, self.distance_max, self.toggle_manual)
