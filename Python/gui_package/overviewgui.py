@@ -64,7 +64,8 @@ class OverviewGUI():
         sunscreenFrame = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
         graphFrame = self.gui.add_frame(mainframe, "grey", 1, 0, 1, 2)
 
-        # graph.build(graphFrame, 'Tijd', 'Temperatuur in ℃',  -20, 50)
+        #graph.build(graphFrame, 'Tijd', 'Temperatuur in ℃',  -20, 50)
+        my_graph = graph.Graph(graphFrame)
 
         if self.type == "TEMP":
             self.gui.add_label(sensorFrame, "Temperatuur", 0, 0)['padding'] = 8
