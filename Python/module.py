@@ -61,5 +61,11 @@ class Module_Data:
     def get_setting_max(self):
         return self.sensor_max
 
+    def get_setting_min_distance(self):
+        return self.distance_min
+
+    def get_setting_max_distance(self):
+        return self.distance_max
+
     def __str__(self):
         return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}  dist_max: {4} ".format(self.timer, self.sensor_min, self.sensor_max, self.distance_min, self.distance_max)

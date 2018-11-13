@@ -43,8 +43,9 @@ class OverviewGUI():
         self.type = type
         self.gui = root
         self.vartype = IntVar()
-        self.build()
         self.device = device
+        self.isset = False
+        self.build()
 
     def radioButton(self):
         self.screen_state = not self.screen_state
@@ -86,7 +87,7 @@ class OverviewGUI():
         self.gui.add_label(sensorFrame, "Huidig:", 0, 3)['padding'] = 8
 
         self.gui.add_label(sensorFrame, "Min", 3, 0)['padding'] = 8
-        self.minslider = self.gui.add_slider(sensorFrame, 0, 15, 3, 1, 1, 3)
+        self.minslider = self.gui.add_slider(sensorFrame, 0, 30, 3, 1, 1, 3)
         self.minslider['orient']=VERTICAL
         self.minslider['command']=self.updateTempMinMax
         self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
@@ -120,28 +121,38 @@ class OverviewGUI():
         sensorFrame['padding'] = 8
         sunscreenFrame['padding'] = 8
 
-        self.updateDistMinMax(0)
-        self.maxDistSlider.set(self.maxDist)
-        self.minDistSlider.set(self.minDist)
-        self.maxslider.set(self.max)
-        self.minslider.set(self.min)
+        data = self.device.get_data()
+        self.updateValues(data.get_timer(), data.get_setting_min(), data.get_setting_max(), data.get_setting_min_distance(), data.get_setting_max_distance(), 1, 0)
 
         self.gui.notebook.add(mainframe, text=self.type)
 
-    def updateValues(self, inverval, tempMin, tempMax, distMin, distMax, automatic, screen_state):
+        self.isset = True
+
+
+    def updateValues(self, interval, tempMin, tempMax, distMin, distMax, automatic, screen_state):
         self.interval = interval
-        self.min = tempMin
-        self.max = tempMax
+        if self.type == "TEMP":
+            self.min = float(tempMin) * 0.1
+            self.max = float(tempMax) * 0.1
+        elif self.type == "LIGHT":
+            self.min = tempMin
+            self.max = tempMax
+
         self.minDist = distMin
         self.maxDist = distMax
         self.automatic = automatic
         self.screen_state = screen_state
 
-        self.intervalSlider.set(inverval)
+        print(self.min)
+        print(self.max)
+
+        self.intervalSlider.set(interval)
         self.maxDistSlider.set(distMax)
         self.minDistSlider.set(distMin)
-        self.maxslider.set(tempMax)
-        self.minslider.set(tempMin)
+        self.minslider.set(self.min)
+        self.maxslider.set(self.max)
+        print(self.max)
+        print(self.maxslider.get())
         self.updateDistMinMax(None)
         self.updateTempMinMax(None)
         self.updateInterval(None)
@@ -171,8 +182,15 @@ class OverviewGUI():
         self.maxDistText['text'] = "Max: {} cm".format(self.maxDist)
 
     def updateTempMinMax(self, value):
-        self.min = self.minslider.get()
-        self.max = self.maxslider.get()
+
+        if self.isset == True:
+            self.min = self.minslider.get()
+            self.max = self.maxslider.get()
+
+        if self.min > self.max :
+            self.max = self.min
+            self.maxslider.set(self.max)
+
         self.minText['text'] = "Min: %.1f °C" % self.min
         self.maxText['text'] = "Max: %.1f °C" % self.max
 
