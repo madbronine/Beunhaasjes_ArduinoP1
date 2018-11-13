@@ -66,12 +66,28 @@ class OverviewGUI():
             self.tempText = self.gui.add_label(sensorFrame, "20.3 °C", 1, 3)
             self.tempText['padding'] = 8
             self.gui.add_action(self.updateTemp)
+            self.gui.add_label(sensorFrame, "Min", 3, 0)['padding'] = 8
+            self.minslider = self.gui.add_slider(sensorFrame, 0, 30, 3, 1, 1, 3)
+            self.minslider['orient']=VERTICAL
+            self.minslider['command']=self.updateTempMinMax
+            self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
+            self.maxslider = self.gui.add_slider(sensorFrame, 15, 50, 4, 1, 1, 3)
+            self.maxslider['orient']=VERTICAL
+            self.maxslider['command']=self.updateTempMinMax
 
         elif self.type == "LIGHT":
             self.gui.add_label(sensorFrame, "Licht", 0, 0)['padding'] = 8
             self.luxText = self.gui.add_label(sensorFrame, "150 Lux", 1, 3)
             self.luxText['padding'] = 8
             self.gui.add_action(self.updateLight)
+            self.gui.add_label(sensorFrame, "Min", 3, 0)['padding'] = 8
+            self.minslider = self.gui.add_slider(sensorFrame, 0, 1000, 3, 1, 1, 3)
+            self.minslider['orient']=VERTICAL
+            self.minslider['command']=self.updateTempMinMax
+            self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
+            self.maxslider = self.gui.add_slider(sensorFrame, 200, 10000, 4, 1, 1, 3)
+            self.maxslider['orient']=VERTICAL
+            self.maxslider['command']=self.updateTempMinMax
         else:
             print("Unkown device type")
 
@@ -81,20 +97,10 @@ class OverviewGUI():
         self.maxText['padding'] = 8
 
         self.gui.add_label(sensorFrame, "Interval:", 0, 2)['padding'] = 8
-        self.intervalSlider = self.gui.add_slider(sensorFrame, 5, 60, 1, 2, 1, 1)
+        self.intervalSlider = self.gui.add_slider(sensorFrame, 2, 60, 1, 2, 1, 1)
         self.intervalSlider['command']=self.updateInterval
         self.intervalSlider['variable']=IntVar()
         self.gui.add_label(sensorFrame, "Huidig:", 0, 3)['padding'] = 8
-
-        self.gui.add_label(sensorFrame, "Min", 3, 0)['padding'] = 8
-        self.minslider = self.gui.add_slider(sensorFrame, 0, 30, 3, 1, 1, 3)
-        self.minslider['orient']=VERTICAL
-        self.minslider['command']=self.updateTempMinMax
-        self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
-        self.maxslider = self.gui.add_slider(sensorFrame, 15, 50, 4, 1, 1, 3)
-        self.maxslider['orient']=VERTICAL
-        self.maxslider['command']=self.updateTempMinMax
-
 
         self.minDistSlider = self.gui.add_slider(sunscreenFrame, 5, 50, 1, 0, 1, 1)
         self.minDistSlider['command']=self.updateDistMinMax
@@ -160,7 +166,14 @@ class OverviewGUI():
 
     def updateScreenState(self, state):
         self.sunscreenStatus = state
-        self.sunScreenStatusText['text'] = state
+        word = "Unknown"
+        if state == 0:
+            word = "Opgerold."
+        elif state == 1:
+            word = "Rollen..."
+        elif state == 2:
+            word = "Uitgerold."
+        self.sunScreenStatusText['text'] = word
 
     def update(self, value):
         if value == None:
@@ -196,8 +209,12 @@ class OverviewGUI():
             self.max = self.min
             self.maxslider.set(self.max)
 
-        self.minText['text'] = "Min: %.1f °C" % self.min
-        self.maxText['text'] = "Max: %.1f °C" % self.max
+        if self.type == "LIGHT":
+            self.minText['text'] = "Min: {} Lux".format(int(self.min))
+            self.maxText['text'] = "Max: {} Lux".format(int(self.max))
+        elif self.type == "TEMP":
+            self.minText['text'] = "Min: %.1f °C" % self.min
+            self.maxText['text'] = "Max: %.1f °C" % self.max
 
     def updateInterval(self, value):
         self.interval = int(self.intervalSlider.get())
