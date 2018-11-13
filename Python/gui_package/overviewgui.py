@@ -88,7 +88,7 @@ class OverviewGUI():
             self.minslider['orient']=VERTICAL
             self.minslider['command']=self.updateTempMinMax
             self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
-            self.maxslider = self.gui.add_slider(sensorFrame, 200, 5000, 4, 1, 1, 3)
+            self.maxslider = self.gui.add_slider(sensorFrame, 200, 10000, 4, 1, 1, 3)
             self.maxslider['orient']=VERTICAL
             self.maxslider['command']=self.updateTempMinMax
         else:
