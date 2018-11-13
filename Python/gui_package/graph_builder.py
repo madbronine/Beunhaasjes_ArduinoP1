@@ -4,10 +4,6 @@ import random
 import threading
 import time
 
-continuePlotting = False
-
-
-
 class Point:
     def __init__(self, x, y, index):
         self.x = x
@@ -24,90 +20,102 @@ class Point:
         return self.index
 
 class Graph():
-    def __init__(self, root):
+    def __init__(self, root, min_value, max_value):
         self.root=root
         self.entry = tk.Entry(root)
         stvar=tk.StringVar()
         stvar.set("one")
-        self.offset = 20
+        self.offset = 50 #offset from bottom
 
-        self.canvas=tk.Canvas(root, width=480, height=360, background='white')
+        self.min_value = min_value
+        self.max_value = max_value
+
+
+        self.canvas=tk.Canvas(root, width=550, height=450, background='white')
         self.canvas.grid(row=0,column=1)
 
         frame = Frame(self.root)
         frame.grid(row=0,column=0, sticky="n")
 
-        #figure1=self.canvas.create_rectangle(80, 80, 120, 120, fill="blue")
-
         root.update()
 
-        self.data = self.create_data() # Create data
+        self.create_grid()
+        self.create_data()
 
-        self.max_x = 0
-
-        thread = threading.Thread(target = self.generate)
+        thread = threading.Thread(target = self.update)
         thread.start()
 
         #self.create_graph_line(0, 20, 10, 18)
 
-    def create_data(self):
-        data = list()
-        length = round(self.canvas.winfo_width() / self.offset)
-        for x in range(length):
-            v = 0
-            p = Point(x, v, x)
-            data.append(p)
-        return data
 
-
-    def add_data(self, yPos):
-        self.data.pop(0) # Remove first item
-
-
-        lastx = self.data[len(self.data)-1] # Get last list item
-        p = Point(lastx.get_x() + 1, yPos, lastx.get_index() + 1)
-        self.max_x = self.max_x + 1
-
-        self.data.append(p)
-
-
-    def generate(self):
-        self.create_grid()
-        while True:
-            v = random.randrange(0, 20)
-            self.add_data(v)
-            self.canvas.delete('data')
-            self.create_graph()
-            time.sleep(1)
 
     def create_grid(self):
         canv = self.canvas
 
+        self.value_width = canv.winfo_width()-(self.offset *2)
+        self.value_height = canv.winfo_height()-(self.offset *2)
 
-        start_x = 25
-        start_y = canv.winfo_height() - 25
-        end_x = canv.winfo_width()
-        end_y = canv.winfo_height()- 25
-
-        canv.create_line(start_x, start_y, end_x, end_y, width=2, tags="field") # Canvas.winfo_width
-
-        start_x = 25
-        start_y = 25
-        end_x = 25
-        end_y = canv.winfo_height()- 25
-        canv.create_line(start_x, start_y, end_x, end_y, width=2, tags="field") # Canvas.winfo_width
+        print(self.value_width)
 
 
-        for x in range(1, 25):
-            pos = 25 + (20*x)
-            canv.create_line(pos, 25, pos, canv.winfo_height() - 25, width=1, tags="field", fill="lightgray") # Canvas.winfo_width
+        value_length = 24 #max 24 items
 
-        for y in range(1, 8):
-            pos = 20 + (20*y)
-            canv.create_line(25, pos, canv.winfo_width() , pos,  width=1, tags="field", fill="lightgray") # Canvas.winfo_width
-            canv.create_text(10, pos,fill="darkblue",font="Times 7", text=10000-(y*1000), tags="field")
+        self.value_offset_height = round(self.value_height / value_length)
+
+        # Starting from offset self.offset
+        # our heigt = canv.winfo_height()
+        # our width = canv.winfo_width()
+        # amount = canv.winfo_width() - self.offset / 24
+        amount = 24
+        amount_box_x = round((canv.winfo_width() - self.offset) / amount)
+
+        max_difference = self.max_value - self.min_value
+        step_size = round(max_difference/amount)
+        print('max', step_size)
+
+        self.box_size = amount_box_x
+        self.step = step_size
+
+        # amount_box space
+        for x in range(0, amount):
+            start_xPos = self.offset
+            end_xPos = canv.winfo_width() - self.offset
+            end_yPos = canv.winfo_height() - self.offset
+            canv.create_line(start_xPos + (x * amount_box_x), 0, start_xPos+ (x * amount_box_x), end_yPos, width=1, tags="field", fill="lightgray")
 
 
+        amount_box_y = round((canv.winfo_height() - self.offset) / 24)
+        self.amount_boxy = amount_box_y
+        max_size = self.min_value + step_size * (amount-1)
+
+        for y in range(0, amount):
+            start_yPos = self.offset
+            end_xPos = canv.winfo_width()
+
+            value = max_size-(step_size * y)
+
+            canv.create_line(self.offset, start_yPos +(y * amount_box_y) - self.offset, end_xPos, start_yPos +(y * amount_box_y) - self.offset, width=1, tags="field", fill="lightgray")
+            canv.create_text(self.offset/2, start_yPos +(y * amount_box_y) - self.offset,fill="darkblue",font="Times 7", text=value, tags="field")
+
+            if value == 0:
+                self.zero_height = start_yPos +(y * amount_box_y) - self.offset;
+
+
+        canv.create_line(self.offset, 0, self.offset, start_yPos +(amount * amount_box_y) - self.offset, width=2, tags="field", fill="black")
+        canv.create_line(self.offset, start_yPos +(amount * amount_box_y) - self.offset, start_xPos + (amount * amount_box_x), start_yPos +(amount * amount_box_y) - self.offset, width=2, tags="field", fill="black")
+
+        #print(':', self.zero_height)
+
+    def create_data(self):
+        #print(':', self.zero_height)
+
+        data = list()
+        length = round(self.canvas.winfo_width() / self.offset)
+        for x in range(0, 25):
+            v = self.zero_height
+            p = Point(x, v, x)
+            data.append(p)
+        return data
 
 
     def create_graph(self):
@@ -119,14 +127,14 @@ class Graph():
 
         for point in self.data:
             if first == False:
-                xPos = (old_pos.get_x() - self.max_x ) * self.offset
+                xPos = (old_pos.get_x() - self.max_x ) * self.box_size
                 yPos = old_pos.get_y()
-                old_x = ( point.get_x() - self.max_x) * self.offset
+                old_x = ( point.get_x() - self.max_x) * self.box_size
                 old_y = point.get_y()
 
                 old_pos = point
 
-                self.create_graph_line(old_x, old_y + 50, xPos, yPos + 50, point.get_index())
+                self.create_graph_line(old_x, old_y, xPos, yPos, point.get_index())
 
             else:
                 old_pos = point
@@ -137,8 +145,48 @@ class Graph():
     def create_graph_line(self, old_x, old_y, new_x, new_y, index):
         canv = self.canvas
 
-        old_y = canv.winfo_height() - (old_y*2)
-        new_y = canv.winfo_height() - (new_y*2)
-        canv.create_line(old_x + 25, old_y - 65, new_x + 25, new_y - 65, width=2, tags="data") # Canvas.winfo_width
+        print(new_y)
+        canv.create_line(old_x + 25, old_y, new_x + 25, new_y, width=2, tags="data") # Canvas.winfo_width
 
-        canv.create_text(new_x + 25, canv.winfo_height() - 15,fill="darkblue",font="Times 7", text=index, tags="data")
+        canv.create_text(new_x + self.offset, canv.winfo_height() - (self.offset/2),fill="darkblue",font="Times 7", text=index, tags="data")
+
+
+
+
+
+    def add_data(self, value):
+        self.data.pop(0) # Remove first item
+        #yPos = (value / self.step)
+        value = self.zero_height - (20/self.step * (self.amount_boxy) )
+        lastx = self.data[len(self.data)-1] # Get last list item
+        p = Point(lastx.get_x() + 1, value, lastx.get_index() + 1)
+        self.max_x = self.max_x + 1
+
+        self.data.append(p)
+
+#self.box_size = amount_box_x
+#self.step = step_size
+#self.zero_height
+
+
+    def update(self):
+        self.data = self.create_data() # Create data
+        self.max_x = 0
+
+        while True:
+            v = random.randrange(0, 20)
+            print(v)
+            self.add_data(self.zero_height)
+            self.canvas.delete('data')
+            self.create_graph()
+            time.sleep(1)
+
+
+
+
+if __name__== '__main__':
+    root=tk.Tk()
+    #gui=Graph(root, 0, 6000) # for lux
+    gui=Graph(root, -20, 20) # for Temp
+    print('Start')
+    root.mainloop()
