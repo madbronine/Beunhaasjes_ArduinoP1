@@ -10,7 +10,7 @@
 #define LIGHT 1
 
 // Change this to compile for other modules
-#define MODULE_TYPE 0 // Set to temp
+#define MODULE_TYPE 1 // Set to temp
 // #define MODULE_TYPE 1 // Set to light
 
 

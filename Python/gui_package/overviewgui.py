@@ -51,7 +51,7 @@ class OverviewGUI():
         self.screen_state = not self.screen_state
 
     def sendSettings(self):
-        ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist), int(self.automatic), int(self.screen_state))
+        ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist), int(not self.automatic), int(self.screen_state))
 
     def build(self):
         mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
@@ -112,7 +112,8 @@ class OverviewGUI():
         self.gui.add_radiobutton(sunscreenFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
 
         self.gui.add_label(sunscreenFrame, "Status:", 0, 2)['padding'] = 8
-        self.gui.add_label(sunscreenFrame, "Ingerold", 1, 2)['padding'] = 8
+        self.sunScreenStatusText = self.gui.add_label(sunscreenFrame, "Ingerold", 1, 2)
+        self.sunScreenStatusText['padding'] = 8
 
         self.gui.add_radiobutton(sunscreenFrame, "Rol out", self.vartype, 1, self.radioButton, 2, 2)
 
@@ -156,6 +157,10 @@ class OverviewGUI():
         self.updateDistMinMax(None)
         self.updateTempMinMax(None)
         self.updateInterval(None)
+
+    def updateScreenState(self, state):
+        self.sunscreenStatus = state
+        self.sunScreenStatusText['text'] = state
 
     def update(self, value):
         if value == None:

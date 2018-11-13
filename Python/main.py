@@ -45,6 +45,7 @@ def main():
             if device not in framelist:
                 framelist[device] = ui.OverviewGUI(centrale, device.get_type(), device)
             framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
+            framelist[device].updateScreenState(ser_con.get_screen_state(device))
 
             print('===========')
             print('')
