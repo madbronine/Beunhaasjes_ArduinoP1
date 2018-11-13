@@ -51,7 +51,10 @@ class OverviewGUI():
         self.screen_state = not self.screen_state
 
     def sendSettings(self):
-        ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist), int(not self.automatic), int(self.screen_state))
+        if self.type == "TEMP":
+            ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist), int(not self.automatic), int(self.screen_state))
+        elif self.type == "LIGHT":
+            ser_con.update_device(self.device, int(self.interval), int(self.min), int(self.max), int(self.minDist), int(self.maxDist), int(not self.automatic), int(self.screen_state))
 
     def build(self):
         mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
@@ -85,7 +88,7 @@ class OverviewGUI():
             self.minslider['orient']=VERTICAL
             self.minslider['command']=self.updateTempMinMax
             self.gui.add_label(sensorFrame, "Max", 4, 0)['padding'] = 8
-            self.maxslider = self.gui.add_slider(sensorFrame, 200, 10000, 4, 1, 1, 3)
+            self.maxslider = self.gui.add_slider(sensorFrame, 200, 5000, 4, 1, 1, 3)
             self.maxslider['orient']=VERTICAL
             self.maxslider['command']=self.updateTempMinMax
         else:
