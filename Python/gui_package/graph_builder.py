@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import *
 import random
-import threading
 import time
 
 class Point:
@@ -42,8 +41,10 @@ class Graph():
         self.create_grid()
         self.create_data()
 
-        thread = threading.Thread(target = self.update)
-        thread.start()
+
+        self.data = self.create_data() # Create data
+        self.max_x = 0
+
 
         #self.create_graph_line(0, 20, 10, 18)
 
@@ -157,36 +158,27 @@ class Graph():
     def add_data(self, value):
         self.data.pop(0) # Remove first item
         #yPos = (value / self.step)
-        value = self.zero_height - (20/self.step * (self.amount_boxy) )
+        value = self.zero_height - (value/self.step * (self.amount_boxy) )
         lastx = self.data[len(self.data)-1] # Get last list item
         p = Point(lastx.get_x() + 1, value, lastx.get_index() + 1)
         self.max_x = self.max_x + 1
 
         self.data.append(p)
+        self.canvas.delete('data')
+        self.create_graph()
 
 #self.box_size = amount_box_x
 #self.step = step_size
 #self.zero_height
 
 
-    def update(self):
-        self.data = self.create_data() # Create data
-        self.max_x = 0
-
-        while True:
-            v = random.randrange(0, 20)
-            print(v)
-            self.add_data(self.zero_height)
-            self.canvas.delete('data')
-            self.create_graph()
-            time.sleep(1)
 
 
 
 
 if __name__== '__main__':
     root=tk.Tk()
-    #gui=Graph(root, 0, 6000) # for lux
-    gui=Graph(root, -20, 20) # for Temp
+    gui=Graph(root, 0, 6000) # for lux
+    #gui=Graph(root, -20, 20) # for Temp
     print('Start')
     root.mainloop()

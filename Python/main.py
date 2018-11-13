@@ -59,13 +59,18 @@ def main():
             print('')
 
         todelete = []
+        todeleteItem = []
 
         for device in framelist:
             if device.get_port() not in current_devices:
                 todelete.append(framelist[device])
+                todeleteItem.append(device)
 
         for frame in todelete:
             frame.remove()
+
+        for item in todeleteItem:
+            framelist.pop(item)
 
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
 

@@ -43,9 +43,9 @@ class WelcomeGUI():
 
     def device_amount(self, amount):
         if self.amount == 0:
-            fromZero = True
-        else:
             fromZero = False
+        else:
+            fromZero = True
 
         self.amount = amount
         self.connectionlabel['text']="Zoeken naar apparaten... ({} connected)".format(amount)
