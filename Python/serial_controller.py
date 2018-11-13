@@ -38,8 +38,8 @@ def get_sensor_data(module):
     return distance_min['data'] # Example value:    namedtuple('sensor_value' : 5)
 
 def get_screen_state(module):
-    screen_state = get_sensor_setting(module, 'set_screen')
-
+    screen_state = get_sensor_setting(module, 'current_state')
+    print('STATE:  ', screen_state)
     return screen_state['data'] # Example value:    namedtuple('sensor_value' : 5)
 
 

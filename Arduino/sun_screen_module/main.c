@@ -204,7 +204,8 @@ void select_data(){
 		break;
 		
 		case current_state:
-		handle_value(&current_screen_state);
+		sen_value = get_screen_state();
+		handle_value(&sen_value);
 		break;
 		
 		case toggle_manual:
