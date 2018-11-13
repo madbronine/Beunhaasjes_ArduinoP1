@@ -26,6 +26,9 @@ def main():
 
         print('Current identified devices: {0}'.format(current_devices))
         print('ALL DEVICE INFO:')
+        if len(current_devices.items()) == 0:
+            welcomescreen.device_amount(0)
+        print("devices:   ", len(current_devices.items()))
 
         for port, device in current_devices.items():
 

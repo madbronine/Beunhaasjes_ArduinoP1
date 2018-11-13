@@ -78,9 +78,9 @@ class GUI():
         notebook.grid(sticky="nsew")
         return notebook
 
-    def add_progressbar(self, root, mode, column, row):
+    def add_progressbar(self, root, mode, column, row, width):
         progressbar = ttk.Progressbar(root, mode=mode)
-        progressbar.grid(column=column, row=row, sticky="nsew")
+        progressbar.grid(column=column, row=row, columnspan=width, sticky="nsew")
         return progressbar
 
     def add_action(self, function):

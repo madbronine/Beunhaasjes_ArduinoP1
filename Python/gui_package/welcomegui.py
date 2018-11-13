@@ -25,10 +25,10 @@ class WelcomeGUI():
         label['padding'] = 8
         label['font'] = ("unspecified", 24)
         label['anchor'] = CENTER
-        label = self.gui.add_label(self.searchingframe, "Zoeken naar apparaten...", 0, 0)
-        label['padding'] = 8
-        label['anchor'] = CENTER
-        progressbar = self.gui.add_progressbar(self.searchingframe, "indeterminate", 0, 1)
+        self.connectionlabel = self.gui.add_label(self.searchingframe, "Zoeken naar apparaten... (0 connected)", 0, 0)
+        self.connectionlabel['padding'] = 8
+        self.connectionlabel['anchor'] = CENTER
+        progressbar = self.gui.add_progressbar(self.searchingframe, "indeterminate", 0, 1, 1)
         progressbar.start(10)
         self.gui.notebook.add(mainframe, text="Welkom")
 
@@ -48,9 +48,10 @@ class WelcomeGUI():
             fromZero = False
 
         self.amount = amount
-        if amount > 0:
-            if fromZero == True:
-                self.gui.notebook.select(1)
-            self.searchingframe.grid_remove()
-        else:
-            self.searchingframe.grid()
+        self.connectionlabel['text']="Zoeken naar apparaten... ({} connected)".format(amount)
+        # if amount > 0:
+        if fromZero == True:
+            self.gui.notebook.select(1)
+        #     self.searchingframe.grid_remove()
+        # else:
+        #     self.searchingframe.grid()
