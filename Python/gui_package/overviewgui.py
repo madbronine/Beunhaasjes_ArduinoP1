@@ -34,7 +34,7 @@ class OverviewGUI():
     minDist = 10
     maxDist = 200
     interval = 40
-    rolUp = True
+    screen_state = True
     automatic = False
 
     sunscreenStatus = "Ingerold"
@@ -47,10 +47,10 @@ class OverviewGUI():
         self.device = device
 
     def radioButton(self):
-        self.rolUp = not self.rolUp
+        self.screen_state = not self.screen_state
 
     def sendSettings(self):
-        ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist))
+        ser_con.update_device(self.device, int(self.interval), int(self.min * 10), int(self.max * 10), int(self.minDist), int(self.maxDist), int(self.automatic), int(self.screen_state))
 
     def build(self):
         mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
@@ -127,6 +127,24 @@ class OverviewGUI():
         self.minslider.set(self.min)
 
         self.gui.notebook.add(mainframe, text=self.type)
+
+    def updateValues(self, inverval, tempMin, tempMax, distMin, distMax, automatic, screen_state):
+        self.interval = interval
+        self.min = tempMin
+        self.max = tempMax
+        self.minDist = distMin
+        self.maxDist = distMax
+        self.automatic = automatic
+        self.screen_state = screen_state
+
+        self.intervalSlider.set(inverval)
+        self.maxDistSlider.set(distMax)
+        self.minDistSlider.set(distMin)
+        self.maxslider.set(tempMax)
+        self.minslider.set(tempMin)
+        self.updateDistMinMax(None)
+        self.updateTempMinMax(None)
+        self.updateInterval(None)
 
     def update(self, value):
         if value == None:
