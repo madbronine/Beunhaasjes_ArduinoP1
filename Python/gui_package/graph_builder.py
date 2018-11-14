@@ -147,7 +147,7 @@ class Graph():
         canv = self.canvas
 
         print(new_y)
-        canv.create_line(old_x + 25, old_y, new_x + 25, new_y, width=2, tags="data") # Canvas.winfo_width
+        canv.create_line(old_x + 50, old_y, new_x + 50, new_y, width=2, tags="data") # Canvas.winfo_width
 
         canv.create_text(new_x + self.offset, canv.winfo_height() - (self.offset/2),fill="darkblue",font="Times 7", text=index, tags="data")
 
