@@ -1,7 +1,9 @@
 # © Jeroen - 30-10-2018
 # file containing class for modules
 
-#Class containg modules
+# Class containg modules
+
+
 class Module:
     # Module contains its data, so we can use it
     def __init__(self, ser, port, type):
@@ -29,13 +31,19 @@ class Module:
     def set_data(self, module_data):
         self.module_data = module_data
 
-
     def __str__(self):
-        return "Port: {0} \nser: {1} \ntype: {2} \ndata: {3}".format(self.port, self.ser, self.type, self.module_data)
+        return "Port: {0} \nser: {1} \ntype:" +
+        "{2} \ndata: {3}".format(self.port,
+                                 self.ser,
+                                 self.type,
+                                 self.module_data)
 
 # Class containing the data of the modules
+
+
 class Module_Data:
-    def __init__(self, timer, sensor_min, sensor_max, distance_min, distance_max, toggle_manual):
+    def __init__(self, timer, sensor_min, sensor_max, distance_min,
+                 distance_max, toggle_manual):
         self.timer = timer                  # Timer value in MS ??
         self.sensor_min = sensor_min        # Sensor min value
         self.sensor_max = sensor_max        # Sensor max value
@@ -74,4 +82,8 @@ class Module_Data:
         return self.toggle_manual
 
     def __str__(self):
-        return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}  dist_max: {4} manual: {5} ".format(self.timer, self.sensor_min, self.sensor_max, self.distance_min, self.distance_max, self.toggle_manual)
+        return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}" +
+        "dist_max: {4} manual: {5} ".format(self.timer, self.sensor_min,
+                                            self.sensor_max, self.distance_min,
+                                            self.distance_max,
+                                            self.toggle_manual)
