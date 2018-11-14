@@ -5,6 +5,8 @@ import serial
 import time
 
 # Identifies the device on comport
+
+
 def identify_device(com_port, cmd, res):
     # Here do we store results
     result = {}
@@ -25,13 +27,13 @@ def identify_device(com_port, cmd, res):
     # Send our command + expected result length
     response = send_data(ser, cmd)
 
-    if response['error'] == False:
+    if response['error'] is False:
         # if response matched expected result command
         if response['data'] == res:
             # Get the next text messages with the ID
             msg = get_text_message(ser)
 
-            if msg['error'] == False:
+            if msg['error'] is False:
                 # Fill in the result
                 result['error'] = False
                 result['type'] = msg['data']
@@ -50,14 +52,14 @@ def identify_device(com_port, cmd, res):
 
 # Creates a serial connection
 def initialize_serial(com_port, time_out):
-    #Initialize serial connection based on parameters
+    # Initialize serial connection based on parameters
     ser = serial.Serial(
-       port = com_port,
-       baudrate = 19200,
-       bytesize = serial.EIGHTBITS,
-       parity = serial.PARITY_NONE,
-       stopbits = serial.STOPBITS_ONE,
-       timeout = time_out
+        port=com_port,
+        baudrate=19200,
+        bytesize=serial.EIGHTBITS,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        timeout=time_out
     )
     # Returns serial connection
     return ser
@@ -65,9 +67,9 @@ def initialize_serial(com_port, time_out):
 
 # Sends data to the module with a response
 def send_data(ser, data_to_send):
-    response = {'error' : True, 'data' : None}
+    response = {'error': True, 'data': None}
 
-    transmit_data(ser, data_to_send);
+    transmit_data(ser, data_to_send)
 
     # Get response message
     response = get_message(ser)
@@ -78,17 +80,18 @@ def send_data(ser, data_to_send):
 
 # Sends data to the module (doesn't handle any responses)
 def transmit_data(ser, data_to_send):
-    # If we missed data which we didn't need, remove it, otherwish this will conflict new data!
-    ser.flushInput();
+    # If we missed data which we didn't need,
+    # remove it, otherwish this will conflict new data!
+    ser.flushInput()
 
     # Debug line:
-    #print('Going to send int: ', data_to_send)
+    # print('Going to send int: ', data_to_send)
 
     # Convert data to bytes
     converted_data = bytearray([data_to_send])
 
     # Debug line:
-    #print('converted:', converted_data, '- type:', type(converted_data))
+    # print('converted:', converted_data, '- type:', type(converted_data))
 
     # Send data
     ser.write(converted_data)
@@ -96,53 +99,53 @@ def transmit_data(ser, data_to_send):
 
 # Returns data from the module, msg_length is by default high and low byte
 def get_message(ser):
-    response = {'error' : True, 'data' : None}
+    response = {'error': True, 'data': None}
     # Retrieve data!
     bytes = read_untill_eol(ser)
 
-    if bytes['error'] == True: # Got an error
+    if bytes['error'] is True:  # Got an error
         response['error'] = True
         return response
     # Debug line:
-    #print('received: ', msga, type(msga))
+    # print('received: ', msga, type(msga))
     # Create signed int from 2 bytes (little endian)
     val = int.from_bytes(bytes['data'], "little", signed=True)
     # Debug value
-    #print('Value is: ', val)
-    response['error'] = False;
-    response['data'] = val;
-
+    # print('Value is: ', val)
+    response['error'] = False
+    response['data'] = val
 
     return response
 
 
 # Get an character messe
 def get_text_message(ser):
-    response = {'error': True, 'data' : None}
+    response = {'error': True, 'data': None}
     bytes = read_untill_eol(ser)
 
-    if bytes['error'] == False:
-        response['data'] = bytes['data'].decode() # Decode the message
+    if bytes['error'] is False:
+        response['data'] = bytes['data'].decode()  # Decode the message
         response['error'] = False
 
     # Debug line:
-    #print('Module returns:', msg, '- Decoded:', dec_msg)
+    # print('Module returns:', msg, '- Decoded:', dec_msg)
     return response
 
+
 def read_untill_eol(ser):
-    message = {'error' : False, 'data' : None}
+    message = {'error': False, 'data': None}
     eol = '\r'
     eol = str.encode(eol)
     done = False
 
     bytes = bytearray()
 
-    while done == False:
-        value = ser.read(1) # Retrieve data!
+    while done is False:
+        value = ser.read(1)  # Retrieve data!
 
-        if value == eol:
+        if value is eol:
             done = True
-        elif value == b'': # if we got an empty byte
+        elif value is b'':  # if we got an empty byte
             message['error'] = True
             done = True
         else:
@@ -150,23 +153,24 @@ def read_untill_eol(ser):
 
     message['data'] = bytes
 
-
-    return message # return the message
+    return message  # return the message
 
 # Sends an 16 bit signed int (in low and high byte)
+
+
 def send_word(ser, value):
-    #print('result', value)
+    # print('result', value)
 
     # Split int to two bytes
-    result = split_int(value);
-    #print('result (split)', result)
+    result = split_int(value)
+    # print('result (split)', result)
 
-    #Send low and high byte
+    # Send low and high byte
     transmit_data(ser, result['low'])
     transmit_data(ser, result['high'])
 
 
 # Splits value in 2 bytes (low, high)
 def split_int(value):
-    result = {'low' : value // 256, 'high' : value % 256}
+    result = {'low': value // 256, 'high': value % 256}
     return result
