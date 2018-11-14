@@ -49,8 +49,8 @@ class OverviewGUI():
         elif self.type == "LIGHT":
             ser_con.update_device(self.device, int(self.interval),
                                   int(self.sensorMin), int(self.sensorMax),
-                                  int(self.minDist),
-                                  int(self.maxDist), int(not self.automatic),
+                                  int(self.minDist), int(self.maxDist),
+                                  int(not self.automatic),
                                   int(self.screen_state))
         self.progressbar.stop()
         self.stopped = True
