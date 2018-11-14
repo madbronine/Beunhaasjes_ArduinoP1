@@ -17,7 +17,7 @@ class WelcomeGUI():
         self.mainframe.grid_columnconfigure(0, weight=1)
         self.mainframe.grid_rowconfigure(0, weight=1)
 
-        self.searchingframe = self.gui.add_frame(mainframe, 0, 1, 1, 1)
+        self.searchingframe = self.gui.add_frame(mainframe, 0, 2, 1, 1)
         self.searchingframe.grid_columnconfigure(0, weight=1)
         self.searchingframe.grid_rowconfigure(0, weight=1)
         self.searchingframe.grid_rowconfigure(1, weight=1)
@@ -25,6 +25,9 @@ class WelcomeGUI():
         label['padding'] = 8
         label['font'] = ("unspecified", 24)
         label['anchor'] = CENTER
+        label = self.gui.add_label(self.mainframe, "Sluit een module aan.\nHet programma herkent de aangesloten module automatisch.\nWanneer een module is gevonden zal er een nieuw tabblad bijkomen met als titel het type module", 0, 1)
+        label['anchor'] = CENTER
+        label['padding'] = 24
         self.connectionlabel = self.gui.add_label(self.searchingframe, "Zoeken naar apparaten... (0 connected)", 0, 0)
         self.connectionlabel['padding'] = 8
         self.connectionlabel['anchor'] = CENTER
