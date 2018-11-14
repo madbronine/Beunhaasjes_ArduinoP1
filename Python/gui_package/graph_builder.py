@@ -56,7 +56,7 @@ class Graph():
         self.value_width = canv.winfo_width()-(self.offset *2)
         self.value_height = canv.winfo_height()-(self.offset *2)
 
-        print(self.value_width)
+        #print(self.value_width)
 
 
         value_length = 24 #max 24 items
@@ -72,7 +72,7 @@ class Graph():
 
         max_difference = self.max_value - self.min_value
         step_size = round(max_difference/amount)
-        print('max', step_size)
+        #print('max', step_size)
 
         self.box_size = amount_box_x
         self.step = step_size
@@ -146,7 +146,7 @@ class Graph():
     def create_graph_line(self, old_x, old_y, new_x, new_y, index):
         canv = self.canvas
 
-        print(new_y)
+        #print(new_y)
         canv.create_line(old_x + 50, old_y, new_x + 50, new_y, width=2, tags="data") # Canvas.winfo_width
 
         canv.create_text(new_x + self.offset, canv.winfo_height() - (self.offset/2),fill="darkblue",font="Times 7", text=index, tags="data")
