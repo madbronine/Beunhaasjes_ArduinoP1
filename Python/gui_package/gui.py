@@ -3,8 +3,8 @@ from tkinter import ttk
 import threading
 import time
 
-class GUI():
 
+class GUI():
     title = "Untitled"
     sizeX = 50
     sizeY = 50
@@ -44,23 +44,29 @@ class GUI():
         label.grid(column=column, row=row, sticky="nsew")
         return label
 
-    def add_button(self, root, text, column, row, command, columnspan, rowspan):
+    def add_button(self, root, text, column,
+                   row, command, columnspan, rowspan):
         button = ttk.Button(root, text=text, command=command)
-        button.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
+        button.grid(column=column, row=row, columnspan=columnspan,
+                    rowspan=rowspan, sticky="nsew")
         return button
 
     def add_frame(self, root, column, row, columnspan, rowspan):
         frame = ttk.Frame(root)
-        frame.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
+        frame.grid(column=column, row=row, columnspan=columnspan,
+                   rowspan=rowspan, sticky="nsew")
         return frame
 
-    def add_slider(self, root, min, max, column, row, columnspan, rowspan):
+    def add_slider(self, root, min, max, column,
+                   row, columnspan, rowspan):
         scale = ttk.Scale(root, from_=min, to_=max, orient=HORIZONTAL)
-        scale.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
+        scale.grid(column=column, row=row, columnspan=columnspan,
+                   rowspan=rowspan, sticky="nsew")
         return scale
 
-    def add_radiobutton(self, root, text, var, value, command,column, row):
-        radiobutton = ttk.Radiobutton(root, text=text, variable=var, value=value, command=command)
+    def add_radiobutton(self, root, text, var, value, command, column, row):
+        radiobutton = ttk.Radiobutton(root, text=text, variable=var,
+                                      value=value, command=command)
         radiobutton.grid(column=column, row=row, sticky="nsew")
         return radiobutton
 
@@ -78,7 +84,8 @@ class GUI():
 
     def add_progressbar(self, root, mode, column, row, width):
         progressbar = ttk.Progressbar(root, mode=mode)
-        progressbar.grid(column=column, row=row, columnspan=width, sticky="nsew")
+        progressbar.grid(column=column, row=row,
+                         columnspan=width, sticky="nsew")
         return progressbar
 
     def add_action(self, function):

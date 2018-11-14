@@ -1,8 +1,8 @@
 from tkinter import *
 import gui_package.gui as ui
 
-class WelcomeGUI():
 
+class WelcomeGUI():
     gui = None
     mainframe = None
     amount = 0
@@ -25,18 +25,27 @@ class WelcomeGUI():
         label['padding'] = 8
         label['font'] = ("unspecified", 24)
         label['anchor'] = CENTER
-        label = self.gui.add_label(self.mainframe, "Sluit een module aan.\nHet programma herkent de aangesloten module automatisch.\nWanneer een module is gevonden zal er een nieuw tabblad bijkomen met als titel het type module", 0, 1)
+        label = self.gui.add_label(
+            self.mainframe,
+            "Sluit een module aan.\nHet programma herkent de " +
+            "aangesloten module automatisch.\n" +
+            "Wanneer een module is gevonden zal er een nieuw " +
+            "tabblad bijkomen met als titel het type module",
+            0, 1)
         label['anchor'] = CENTER
         label['padding'] = 24
-        self.connectionlabel = self.gui.add_label(self.searchingframe, "Zoeken naar apparaten... (0 connected)", 0, 0)
+        self.connectionlabel = self.gui.add_label(
+            self.searchingframe, "Zoeken naar apparaten... (0 connected)", 0,
+            0)
         self.connectionlabel['padding'] = 8
         self.connectionlabel['anchor'] = CENTER
-        progressbar = self.gui.add_progressbar(self.searchingframe, "indeterminate", 0, 1, 1)
+        progressbar = self.gui.add_progressbar(
+            self.searchingframe, "indeterminate", 0, 1, 1)
         progressbar.start(10)
         self.gui.notebook.add(mainframe, text="Welkom")
 
     def update(self, value):
-        if value == None:
+        if value is None:
             return
 
         if self.type == "TEMP":
@@ -51,9 +60,11 @@ class WelcomeGUI():
             fromZero = False
 
         self.amount = amount
-        self.connectionlabel['text']="Zoeken naar apparaten... ({} connected)".format(amount)
+        self.connectionlabel['text'] = """Zoeken naar apparaten...
+        ({} connected)""".format(amount)
+
         if amount > 0:
-            if fromZero == True:
+            if fromZero is True:
                 self.gui.notebook.select(1)
         #     self.searchingframe.grid_remove()
         # else:
