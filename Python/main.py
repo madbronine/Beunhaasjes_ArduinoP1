@@ -18,7 +18,7 @@ def main():
 
         print('=============')
 
-        #Refresh the port list, could be threaded?
+        #Refresh the port list, could be threaded?7
         ser_con.run()
 
         #Returns an list of all connected devices
@@ -34,19 +34,7 @@ def main():
 
             print('---------')
             print(device)
-            # print('Time reading:', ser_con.get_sensor_setting(device, 'timer')['data'])
-
-            # testValue = ser_con.get_sensor_setting(device, 'timer')['data']
-            # testValue += 10
-            # ser_con.set_sensor_data(device, 'timer', testValue)
-            # print('Time reading after setting:', ser_con.get_sensor_setting(device, 'timer')['data'])
-            #
-            # print('Temperature reading:', ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
-
             print('---------')
-
-            # handle data of devices:
-            # print('data not handled')
 
             if device not in framelist:
                 framelist[device] = ui.OverviewGUI(centrale, device.get_type(), device)
@@ -59,22 +47,15 @@ def main():
             print('')
 
         todelete = []
-        todeleteItem = []
 
         for device in framelist:
             if device.get_port() not in current_devices:
                 todelete.append(framelist[device])
-                todeleteItem.append(device)
 
         for frame in todelete:
             frame.remove()
 
-        for item in todeleteItem:
-            framelist.pop(item)
-
         time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
-
-#####################################################
 
 # Start program!
 main()

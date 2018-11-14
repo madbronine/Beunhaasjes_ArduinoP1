@@ -44,15 +44,13 @@ class GUI():
         label.grid(column=column, row=row, sticky="nsew")
         return label
 
-    def add_button(self, root, text, column, row, command, columnspan):
+    def add_button(self, root, text, column, row, command, columnspan, rowspan):
         button = ttk.Button(root, text=text, command=command)
-        button.grid(column=column, row=row, columnspan=columnspan, sticky="nsew")
+        button.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
         return button
 
-    def add_frame(self, root, background, column, row, columnspan, rowspan):
-        gui_style = ttk.Style()
-        gui_style.configure('My.TFrame', background=background)
-        frame = ttk.Frame(root, style='My.TFrame')
+    def add_frame(self, root, column, row, columnspan, rowspan):
+        frame = ttk.Frame(root)
         frame.grid(column=column, row=row, columnspan=columnspan, rowspan=rowspan, sticky="nsew")
         return frame
 

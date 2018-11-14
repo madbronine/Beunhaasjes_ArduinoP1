@@ -12,12 +12,12 @@ class WelcomeGUI():
         self.build()
 
     def build(self):
-        mainframe = self.gui.add_frame(self.gui.notebook, "grey", 0, 0, 1, 1)
+        mainframe = self.gui.add_frame(self.gui.notebook, 0, 0, 1, 1)
         self.mainframe = mainframe
         self.mainframe.grid_columnconfigure(0, weight=1)
         self.mainframe.grid_rowconfigure(0, weight=1)
 
-        self.searchingframe = self.gui.add_frame(mainframe, "grey", 0, 1, 1, 1)
+        self.searchingframe = self.gui.add_frame(mainframe, 0, 1, 1, 1)
         self.searchingframe.grid_columnconfigure(0, weight=1)
         self.searchingframe.grid_rowconfigure(0, weight=1)
         self.searchingframe.grid_rowconfigure(1, weight=1)
@@ -43,15 +43,15 @@ class WelcomeGUI():
 
     def device_amount(self, amount):
         if self.amount == 0:
-            fromZero = False
-        else:
             fromZero = True
+        else:
+            fromZero = False
 
         self.amount = amount
         self.connectionlabel['text']="Zoeken naar apparaten... ({} connected)".format(amount)
-        # if amount > 0:
-        if fromZero == True:
-            self.gui.notebook.select(1)
+        if amount > 0:
+            if fromZero == True:
+                self.gui.notebook.select(1)
         #     self.searchingframe.grid_remove()
         # else:
         #     self.searchingframe.grid()
