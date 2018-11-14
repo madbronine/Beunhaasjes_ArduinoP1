@@ -32,11 +32,8 @@ class Module:
         self.module_data = module_data
 
     def __str__(self):
-        return "Port: {0} \nser: {1} \ntype:" +
-        "{2} \ndata: {3}".format(self.port,
-                                 self.ser,
-                                 self.type,
-                                 self.module_data)
+        return """Port: {0} \nser: {1} \ntype:" +"{2} \ndata: {3}
+        """.format(self.port, self.ser, self.type, self.module_data)
 
 # Class containing the data of the modules
 
@@ -82,8 +79,7 @@ class Module_Data:
         return self.toggle_manual
 
     def __str__(self):
-        return "Timer: {0} sensor_min: {1} sensor_max: {2}  dist_min: {3}" +
-        "dist_max: {4} manual: {5} ".format(self.timer, self.sensor_min,
-                                            self.sensor_max, self.distance_min,
-                                            self.distance_max,
-                                            self.toggle_manual)
+        return """Timer: {0} sensor_min: {1} sensor_max: {2}
+        dist_min: {3}" +"dist_max: {4} manual: {5}
+        """.format(self.timer, self.sensor_min, self.sensor_max,
+                   self.distance_min, self.distance_max, self.toggle_manual)

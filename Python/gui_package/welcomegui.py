@@ -60,8 +60,9 @@ class WelcomeGUI():
             fromZero = False
 
         self.amount = amount
-        self.connectionlabel['text'] =
-        "Zoeken naar apparaten... ({} connected)".format(amount)
+        self.connectionlabel['text'] = """Zoeken naar apparaten...
+        ({} connected)""".format(amount)
+
         if amount > 0:
             if fromZero is True:
                 self.gui.notebook.select(1)

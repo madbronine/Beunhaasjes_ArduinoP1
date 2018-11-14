@@ -37,8 +37,8 @@ class OverviewGUI():
 
     # Sends settings to Arduino
     def sendSettings(self):
-        self.progressbar['maximum'] = (self.interval) * 100 +
-        self.readingOffset
+        max_v = (self.interval) * 100 + self.readingOffset
+        self.progressbar['maximum'] = max_v
         if self.type == "TEMP":
             ser_con.update_device(self.device, int(self.interval),
                                   int(self.sensorMin * 10),
