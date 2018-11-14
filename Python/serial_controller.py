@@ -196,8 +196,7 @@ def get_sensor_setting(module, send_cmd):
     resp_code = msg.response_code('succeed')  # Get response code
 
     if isConnected is True:  # are we connected
-        if send_code['error'] is False and
-        resp_code['error'] is False:  # No error
+        if send_code['error'] is False and resp_code['error'] is False:
             response = get_value(
                 module, send_code['code'], resp_code['code'])  # Get data
             # print('My response: ', response)
