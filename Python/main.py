@@ -5,8 +5,8 @@ import gui_package.gui as central
 import time
 from module import *
 
-def main():
 
+def main():
     centrale = central.GUI("Centrale", 300, 300)
     centrale.add_notebook()
     welcomescreen = welcomeui.WelcomeGUI(centrale)
@@ -18,10 +18,10 @@ def main():
 
         print('=============')
 
-        #Refresh the port list, could be threaded?7
+        # Refresh the port list, could be threaded?7
         ser_con.run()
 
-        #Returns an list of all connected devices
+        # Returns an list of all connected devices
         current_devices = ser_con.get_devices()
 
         print('Current identified devices: {0}'.format(current_devices))
@@ -37,16 +37,17 @@ def main():
             print('---------')
 
             if device not in framelist:
-                framelist[device] = ui.OverviewGUI(centrale, device.get_type(), device)
-            framelist[device].update(ser_con.get_sensor_setting(device, 'get_sensor_value')['data'])
-            framelist[device].updateScreenState(ser_con.get_screen_state(device))
+                framelist[device] = ui.OverviewGUI(centrale,
+                                                   device.get_type(), device)
+            framelist[device].update(ser_con.get_sensor_setting(device,
+                                     'get_sensor_value')['data'])
+            framelist[device].updateScreenState(ser_con.get_screen_state(
+                                                device))
             welcomescreen.device_amount(len(current_devices.items()))
 
             print('===========')
             print('')
             print('')
-
-
 
         todelete = []
         todeleteItem = []
@@ -61,10 +62,9 @@ def main():
 
         for item in todeleteItem:
             framelist.pop(item)
-
-
-
-        time.sleep(5) #This and import time should be removed (when main program loop is added + timed)
+        # This and import time should be removed (when main program loop is
+        # added + timed)
+        time.sleep(5)
 
 # Start program!
 main()

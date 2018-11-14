@@ -5,7 +5,6 @@ import serial_controller as ser_con
 
 
 class OverviewGUI():
-
     temperature = 0.0
     lux = 0
 
@@ -38,8 +37,8 @@ class OverviewGUI():
 
     # Sends settings to Arduino
     def sendSettings(self):
-        self.progressbar['maximum'] = (
-            self.interval) * 100 + self.readingOffset
+        self.progressbar['maximum'] = (self.interval) * 100 +
+        self.readingOffset
         if self.type == "TEMP":
             ser_con.update_device(self.device, int(self.interval),
                                   int(self.sensorMin * 10),
@@ -70,8 +69,8 @@ class OverviewGUI():
         sensorFrameTitle['padding'] = 8
         sensorFrameTitle['font'] = ("unspecified", 18)
         sensorFrameTitle['anchor'] = CENTER
-        sunscreenFrameTitle = self.gui.add_label(
-            mainframe, "Zonnescherm", 0, 2)
+        sunscreenFrameTitle = self.gui.add_label(mainframe, "Zonnescherm", 0,
+                                                 2)
         sunscreenFrameTitle['padding'] = 8
         sunscreenFrameTitle['font'] = ("unspecified", 18)
         sunscreenFrameTitle['anchor'] = CENTER
@@ -85,11 +84,11 @@ class OverviewGUI():
             self.tempText = self.gui.add_label(sensorFrame, "20.3 °C", 1, 3)
             self.tempText['padding'] = 8
             self.gui.add_action(self.updateTemp)
-            self.minslider = self.gui.add_slider(
-                sensorFrame, 0, 30, 1, 0, 1, 1)
+            self.minslider = self.gui.add_slider(sensorFrame, 0, 30, 1, 0, 1,
+                                                 1)
             self.minslider['command'] = self.updateSensorMinMax
-            self.maxslider = self.gui.add_slider(
-                sensorFrame, 15, 50, 1, 1, 1, 1)
+            self.maxslider = self.gui.add_slider(sensorFrame, 15, 50, 1, 1,
+                                                 1, 1)
             self.maxslider['command'] = self.updateSensorMinMax
 
         elif self.type == "LIGHT":
@@ -97,11 +96,11 @@ class OverviewGUI():
             self.luxText = self.gui.add_label(sensorFrame, "150 Lux", 1, 3)
             self.luxText['padding'] = 8
             self.gui.add_action(self.updateLight)
-            self.minslider = self.gui.add_slider(
-                sensorFrame, 0, 1000, 1, 0, 1, 1)
+            self.minslider = self.gui.add_slider(sensorFrame, 0, 1000, 1, 0,
+                                                 1, 1)
             self.minslider['command'] = self.updateSensorMinMax
-            self.maxslider = self.gui.add_slider(
-                sensorFrame, 200, 6000, 1, 1, 1, 1)
+            self.maxslider = self.gui.add_slider(sensorFrame, 200, 6000, 1, 1,
+                                                 1, 1)
             self.maxslider['command'] = self.updateSensorMinMax
         else:
             print("Unkown device type")
@@ -113,45 +112,45 @@ class OverviewGUI():
 
         self.intervalText = self.gui.add_label(sensorFrame, "Interval:", 0, 2)
         self.intervalText['padding'] = 8
-        self.intervalSlider = self.gui.add_slider(
-            sensorFrame, 1, 12, 1, 2, 1, 1)
+        self.intervalSlider = self.gui.add_slider(sensorFrame, 1, 12, 1, 2, 1,
+                                                  1)
         self.intervalSlider['command'] = self.updateInterval
         self.intervalSlider['variable'] = IntVar()
         self.gui.add_label(sensorFrame, "Huidig:", 0, 3)['padding'] = 8
 
         self.gui.add_label(sensorFrame, "Refresh:", 0, 4)['padding'] = 8
-        self.progressbar = self.gui.add_progressbar(
-            sensorFrame, "determinate", 1, 4, 4)
+        self.progressbar = self.gui.add_progressbar(sensorFrame, "determinate",
+                                                    1, 4, 4)
         self.progressbar.start(10)
 
-        self.minDistSlider = self.gui.add_slider(
-            sunscreenFrame, 5, 50, 1, 0, 1, 1)
+        self.minDistSlider = self.gui.add_slider(sunscreenFrame, 5, 50, 1, 0,
+                                                 1, 1)
         self.minDistSlider['command'] = self.updateDistMinMax
         self.minDistSlider['variable'] = IntVar()
-        self.maxDistSlider = self.gui.add_slider(
-            sunscreenFrame, 10, 400, 1, 1, 1, 1)
+        self.maxDistSlider = self.gui.add_slider(sunscreenFrame, 10, 400, 1, 1,
+                                                 1, 1)
         self.maxDistSlider['command'] = self.updateDistMinMax
         self.maxDistSlider['variable'] = IntVar()
 
         self.minDistText = self.gui.add_label(sunscreenFrame, "Min:", 0, 0)
         self.minDistText['padding'] = 8
-        self.gui.add_checkbutton(
-            sunscreenFrame, "Automatisch", 2, 0, self.checkbox)
+        self.gui.add_checkbutton(sunscreenFrame, "Automatisch", 2, 0,
+                                 self.checkbox)
         self.maxDistText = self.gui.add_label(sunscreenFrame, "Max:", 0, 1)
         self.maxDistText['padding'] = 8
-        self.gui.add_radiobutton(
-            sunscreenFrame, "Rol in", self.vartype, 0, self.radioButton, 2, 1)
+        self.gui.add_radiobutton(sunscreenFrame, "Rol in", self.vartype, 0,
+                                 self.radioButton, 2, 1)
 
         self.gui.add_label(sunscreenFrame, "Status:", 0, 2)['padding'] = 8
-        self.sunScreenStatusText = self.gui.add_label(
-            sunscreenFrame, "Ingerold", 1, 2)
+        self.sunScreenStatusText = self.gui.add_label(sunscreenFrame,
+                                                      "Ingerold", 1, 2)
         self.sunScreenStatusText['padding'] = 8
 
-        self.gui.add_radiobutton(
-            sunscreenFrame, "Rol out", self.vartype, 1, self.radioButton, 2, 2)
+        self.gui.add_radiobutton(sunscreenFrame, "Rol out", self.vartype, 1,
+                                 self.radioButton, 2, 2)
 
-        self.gui.add_button(sunscreenFrame, "Update Settings",
-                            0, 3, self.sendSettings, 3, 2)
+        self.gui.add_button(sunscreenFrame, "Update Settings", 0, 3,
+                            self.sendSettings, 3, 2)
 
         sensorFrame['padding'] = 8
         sunscreenFrame['padding'] = 8
@@ -218,11 +217,11 @@ class OverviewGUI():
         self.step = self.step + 1
 
         if self.step >= int(self.finalInterval * 0.2):
-            if self.type == "TEMP":
+            if self.type is "TEMP":
                 self.temperature = value * 0.1
                 self.my_graph.add_data(self.temperature)
                 self.updateTemp()
-            elif self.type == "LIGHT":
+            elif self.type is "LIGHT":
                 self.lux = value
                 self.my_graph.add_data(self.lux)
                 self.updateLight()
@@ -254,10 +253,10 @@ class OverviewGUI():
             self.sensorMax = self.sensorMin
             self.maxslider.set(self.sensorMax)
 
-        if self.type == "LIGHT":
+        if self.type is "LIGHT":
             self.minText['text'] = "Min: {} Lux".format(int(self.sensorMin))
             self.maxText['text'] = "Max: {} Lux".format(int(self.sensorMax))
-        elif self.type == "TEMP":
+        elif self.type is "TEMP":
             self.minText['text'] = "Min: %.1f °C" % self.sensorMin
             self.maxText['text'] = "Max: %.1f °C" % self.sensorMax
 
