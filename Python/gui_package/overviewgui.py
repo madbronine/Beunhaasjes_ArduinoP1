@@ -69,6 +69,8 @@ class OverviewGUI():
         elif self.type == "LIGHT":
             self.my_graph = graph.Graph(graphFrame, 0, 6000)
 
+        self.my_graph.add_data(0)
+
         if self.type == "TEMP":
 
             self.tempText = self.gui.add_label(sensorFrame, "20.3 °C", 1, 3)
